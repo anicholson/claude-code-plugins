@@ -722,6 +722,14 @@ assert_exit 2 "git-block: git checkout is blocked"
 run_git_block "$(make_bash_input "git status")"
 assert_exit 2 "git-block: git status is blocked"
 
+# 28k2. git stash is blocked
+run_git_block "$(make_bash_input "git stash")"
+assert_exit 2 "git-block: git stash is blocked"
+
+# 28k3. git stash pop is blocked
+run_git_block "$(make_bash_input "git stash pop")"
+assert_exit 2 "git-block: git stash pop is blocked"
+
 # 28l. non-git command passes through
 run_git_block "$(make_bash_input "ls -la")"
 assert_exit 0 "git-block: non-git command passes through"
