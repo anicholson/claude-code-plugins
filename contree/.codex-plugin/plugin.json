@@ -7,6 +7,7 @@
   "license": "MIT",
   "keywords": ["tdd", "test-trees", "skills", "specifications", "contracts"],
   "skills": "./skills/",
+  "hooks": "./hooks/hooks.json",
   "interface": {
     "displayName": "Contree",
     "shortDescription": "Test trees as the contract: change → sync → tdd, agent-driven.",
