@@ -15,7 +15,7 @@ Then install what you need:
 | Tool | Install | What it does |
 |------|---------|--------------|
 | [trunk-sync](trunk-sync/README.md) | `npm i -g trunk-sync && trunk-sync install` | Auto-commit every edit to trunk — run multiple agents in parallel |
-| [contree](contree/README.md) | `claude plugin install contree@susu-eng` (Claude Code) — Codex CLI: install from this repo via `/plugins` (skills only, no hooks) | Test trees as living requirements — TDD with auto-synced specs in CLAUDE.md |
+| [contree](contree/README.md) | `claude plugin install contree@susu-eng` (Claude Code) — Codex CLI: install from this repo via `/plugins` | Test trees as living requirements — TDD with auto-synced specs in CLAUDE.md |
 | openclaw-notifier | `claude plugin install openclaw-notifier@susu-eng` | Notify OpenClaw when a subagent completes a task |
 
 ---
