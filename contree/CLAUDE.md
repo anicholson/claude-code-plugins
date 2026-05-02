@@ -33,7 +33,8 @@ Flow: `setup` prepares the project for test-tree-driven development → `change`
 
 - `CLAUDE.md` — this file
 - `TEST_TREES.md` — functional and cross-functional requirements as test trees (the authoritative behaviour contract)
-- `.claude-plugin/plugin.json` — plugin manifest (name, version, description)
+- `.claude-plugin/plugin.json` — Claude Code plugin manifest (name, version, description)
+- `.codex-plugin/plugin.json` — Codex CLI plugin manifest (skills-only; mirrors Claude version, bumped together by `publish-contree.sh`)
 - `package.json` — dev dependencies (bats-support, bats-assert) and test scripts
 - `hooks/hooks.json` — wires SessionStart (rules + pressure phrase), Stop (drift check), UserPromptSubmit (self-care), and PostToolUse (mental-model validator)
 - `hooks/session-start.sh` — SessionStart hook: prints the skill Directions block, the inline rules list, and one random pressure phrase (sourced from `hooks/pressure-phrases.sh`) to stdout
