@@ -18,11 +18,12 @@ if [ -n "$DIRTY" ]; then
   exit 1
 fi
 
-# Bump version in plugin.json
+# Bump version in both plugin.json files (Claude + Codex manifests stay in lockstep)
 echo "==> Version bump ($BUMP)"
 VERSION=$(node "$REPO_ROOT/scripts/bump-plugin-version.js" .claude-plugin/plugin.json "$BUMP")
+node "$REPO_ROOT/scripts/bump-plugin-version.js" .codex-plugin/plugin.json "$BUMP" >/dev/null
 
-git -C "$REPO_ROOT" add contree/.claude-plugin/plugin.json
+git -C "$REPO_ROOT" add contree/.claude-plugin/plugin.json contree/.codex-plugin/plugin.json
 git -C "$REPO_ROOT" commit -m "contree v$VERSION"
 git -C "$REPO_ROOT" tag "contree-v$VERSION"
 
