@@ -1,6 +1,6 @@
 ---
 name: tdd
-description: "Close gaps between intent and implementation — one failing test at a time, outside-in, until the contract is fulfilled. TRIGGER when: implementing behaviour, writing code, or writing tests."
+description: "Close gaps between intent and implementation — one failing test at a time, outside-in, until the contract is fulfilled. TRIGGER when: implementing behaviour, writing code, or writing tests. Trees in TEST_TREES.md are the authoritative behaviour contract — preserve mental-model invariants; surface conflicts rather than routing around them. Honour: KISS, YAGNI, no fake code, fail fast, explicit names, no comments, hexagonal layers (domain pure, I/O in adapters), in-memory twin per driven port, one tree → one test file."
 ---
 
 # TDD — Test-Driven Development
