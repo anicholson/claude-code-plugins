@@ -18,14 +18,14 @@ Plus a **stop hook** that prompts Claude to keep test trees, mental model, CLAUD
 
 ## Install
 
-**Claude Code** — full enforcement (skills + SessionStart, Stop, PostToolUse, UserPromptSubmit hooks):
+**Claude Code:**
 
 ```sh
 claude plugin marketplace add elimydlarz/claude-code-plugins
 claude plugin install contree@susu-eng --scope project
 ```
 
-**Codex CLI** — skills only. Codex's plugin model deliberately excludes plugin-bundled hooks, so the Codex install is advisory: no deterministic drift check, no mental-model validator, no pressure phrase. The contract content (rules, trees-are-authoritative stanza) rides in skill `description` fields, which Codex always loads into context. Install via `/plugins` in the Codex CLI, pointing at this repository.
+**Codex CLI** — install via `/plugins` in the Codex CLI, pointing at this repository. Skills and hooks both run; Codex sets `CLAUDE_PLUGIN_ROOT` in hook command env so the existing scripts work unchanged.
 
 ## How it works
 
