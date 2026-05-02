@@ -7,7 +7,7 @@ This is the **susu-eng** monorepo — source code, plugin marketplace, and docum
 Four products live in this repo:
 
 - **trunk-sync** — multi-agent sync hook + seance CLI (Claude Code plugin + npm package `@susu-eng/trunk-sync`)
-- **contree** — test trees as living requirements: setup, change, sync, and TDD skills with stop hook + coding rules (Claude Code plugin, pure Markdown skills + stop hook)
+- **contree** — test trees as living requirements: setup, change, sync, and TDD skills with stop hook + coding rules. Ships as a Claude Code plugin (skills + hooks for deterministic enforcement) and a Codex CLI plugin (skills only — Codex plugins cannot bundle hooks, so the contract content rides in skill descriptions)
 - **openclaw-notifier** — notifies OpenClaw when a subagent completes a task (Claude Code plugin, SubagentStop hook)
 - **climber** — build an autonomous clone that directs a Claude Code session the way you do (Claude Code plugin, Markdown skills + SessionStart & Stop hooks; `/climb` mines transcripts at build time, test-time skills consume artefacts, SessionStart hook injects the manual, Stop hook drives toward VISION.md)
 
