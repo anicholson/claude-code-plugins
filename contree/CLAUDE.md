@@ -2,7 +2,12 @@
 
 ## What This Is
 
-A Claude Code plugin that unifies test-tree-driven development with living requirements. Test trees ARE the requirements — they live in `TEST_TREES.md` at the project root, describe what the system does using EARS syntax, and are kept in sync with implementation automatically.
+A plugin that unifies test-tree-driven development with living requirements. Test trees ARE the requirements — they live in `TEST_TREES.md` at the project root, describe what the system does using EARS syntax, and are kept in sync with implementation automatically.
+
+Ships under two harnesses from the same `skills/` directory:
+
+- **Claude Code** (`.claude-plugin/plugin.json` + `hooks/`) — full enforcement: SessionStart injects directions, rules, and a pressure phrase; Stop guards drift; PostToolUse validates mental-model edits; UserPromptSubmit nudges 20-20-20.
+- **Codex CLI** (`.codex-plugin/plugin.json`, no hooks) — Codex's plugin model deliberately excludes plugin-bundled hooks, so contract content (rules, trees-are-authoritative stanza) rides in skill `description` fields, which Codex loads into context unconditionally up to ~8k chars. Advisory only — no deterministic drift check, no validator, no pressure phrase.
 
 Mechanisms:
 
