@@ -4,10 +4,10 @@
 
 A plugin that unifies test-tree-driven development with living requirements. Test trees ARE the requirements — they live in `TEST_TREES.md` at the project root, describe what the system does using EARS syntax, and are kept in sync with implementation automatically.
 
-Ships under two harnesses from the same `skills/` directory:
+Ships under two harnesses from the same `skills/` and `hooks/` directories:
 
-- **Claude Code** (`.claude-plugin/plugin.json` + `hooks/`) — full enforcement: SessionStart injects directions, rules, and a pressure phrase; Stop guards drift; PostToolUse validates mental-model edits; UserPromptSubmit nudges 20-20-20.
-- **Codex CLI** (`.codex-plugin/plugin.json`, no hooks) — Codex's plugin model deliberately excludes plugin-bundled hooks, so contract content (rules, trees-are-authoritative stanza) rides in skill `description` fields, which Codex loads into context unconditionally up to ~8k chars. Advisory only — no deterministic drift check, no validator, no pressure phrase.
+- **Claude Code** — `.claude-plugin/plugin.json` + `hooks/hooks.json`.
+- **Codex CLI** — `.codex-plugin/plugin.json` declaring `"hooks": "./hooks/hooks.json"`. Codex injects `CLAUDE_PLUGIN_ROOT` (and `PLUGIN_ROOT`) into hook command env, so the existing hook commands work verbatim. `apply_patch` is aliased to match the `Edit|Write` PostToolUse matcher. SessionStart plain stdout becomes `additionalContext`. Stop hook stdin includes `transcript_path` (same shape as Claude). Net: full enforcement on both harnesses from the same hook scripts and hooks.json.
 
 Mechanisms:
 
