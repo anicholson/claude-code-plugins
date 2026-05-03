@@ -2,7 +2,7 @@ import { execSync, spawnSync } from "node:child_process";
 import { randomUUID } from "node:crypto";
 import { join, relative, resolve } from "node:path";
 import { readFileSync, writeFileSync, existsSync, unlinkSync, mkdirSync } from "node:fs";
-import { parseFileRef, blame, getCommitBody, getCommitSubject, getCommitDate, getCommitTimestamp, extractSessionId, findSnapshotInCommit, commandExists, shortSha, getGitRoot, } from "../lib/git.js";
+import { parseFileRef, blame, getCommitBody, getCommitSubject, getCommitDate, getCommitTimestamp, extractSessionId, extractTranscriptPath, findSnapshotInCommit, commandExists, shortSha, getGitRoot, } from "../lib/git.js";
 const USAGE = `Usage: trunk-sync seance <file:line> [--inspect]
        trunk-sync seance --list
 
@@ -181,6 +181,14 @@ function inspectOrLaunch(fileRef, inspect) {
         const snapshotAbsPath = join(root, snapshotRelPath);
         if (existsSync(snapshotAbsPath)) {
             transcriptSource = snapshotAbsPath;
+        }
+    }
+    if (!transcriptSource) {
+        const fromBody = extractTranscriptPath(body);
+        if (fromBody) {
+            const expanded = fromBody.replace(/^~/, process.env.HOME || "~");
+            if (existsSync(expanded))
+                transcriptSource = expanded;
         }
     }
     if (!transcriptSource) {

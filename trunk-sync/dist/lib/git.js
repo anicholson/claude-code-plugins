@@ -46,6 +46,10 @@ export function extractSessionId(body) {
     const match = body.match(/^Session:\s*(.+)/m);
     return match ? match[1].trim() : null;
 }
+export function extractTranscriptPath(body) {
+    const match = body.match(/^TranscriptPath:\s*(.+)/m);
+    return match ? match[1].trim() : null;
+}
 export function getCommitTimestamp(sha, cwd) {
     return execSync(`git log -1 --format=%cI "${sha}"`, { encoding: "utf-8", cwd }).trim();
 }

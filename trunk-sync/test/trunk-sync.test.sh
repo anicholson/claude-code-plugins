@@ -812,7 +812,7 @@ cd "$WT_A"
 run_hook "$(make_apply_patch_input "codex01a-aaaa-aaaa-aaaa-aaaaaaaaaaaa" "*** Begin Patch\n*** Update File: seed.txt\n@@\n-seed\n+v2 from codex apply_patch\n*** End Patch\n")"
 assert_exit 0 "codex apply_patch: hook exits 0"
 AFTER=$(commit_count "$WT_A")
-assert_eq "$AFTER" "$((BEFORE + 1))" "codex apply_patch: one new commit"
+assert_equals "$AFTER" "$((BEFORE + 1))" "codex apply_patch: one new commit"
 HEAD_FILES=$(git -C "$WT_A" diff-tree --no-commit-id --name-only -r HEAD)
 assert_contains "$HEAD_FILES" "seed.txt" "codex apply_patch: modified file is in the commit"
 
@@ -824,7 +824,7 @@ cd "$WT_A"
 run_hook "$(make_apply_patch_input "codex02d-bbbb-bbbb-bbbb-bbbbbbbbbbbb" "*** Begin Patch\n*** Delete File: seed.txt\n*** End Patch\n")"
 assert_exit 0 "codex apply_patch delete: hook exits 0"
 AFTER=$(commit_count "$WT_A")
-assert_eq "$AFTER" "$((BEFORE + 1))" "codex apply_patch delete: one new commit"
+assert_equals "$AFTER" "$((BEFORE + 1))" "codex apply_patch delete: one new commit"
 LAST_SUBJECT=$(last_subject "$WT_A")
 assert_contains "$LAST_SUBJECT" "delete seed.txt" "codex apply_patch delete: subject describes deletion"
 
@@ -836,7 +836,7 @@ cd "$WT_A"
 run_hook "$(make_local_shell_post_input "codex03s-cccc-cccc-cccc-cccccccccccc" '["sed","-i","","s/seed/v2 from codex local_shell/","seed.txt"]')"
 assert_exit 0 "codex local_shell: hook exits 0"
 AFTER=$(commit_count "$WT_A")
-assert_eq "$AFTER" "$((BEFORE + 1))" "codex local_shell: one new commit"
+assert_equals "$AFTER" "$((BEFORE + 1))" "codex local_shell: one new commit"
 HEAD_FILES=$(git -C "$WT_A" diff-tree --no-commit-id --name-only -r HEAD)
 assert_contains "$HEAD_FILES" "seed.txt" "codex local_shell: modified file is in the commit"
 
@@ -852,7 +852,7 @@ cd "$WT_A"
 run_hook "$(make_apply_patch_input "codex05n-dddd-dddd-dddd-dddddddddddd" "*** Begin Patch\n*** End Patch\n")"
 assert_exit 0 "codex apply_patch no-op: hook exits 0"
 AFTER=$(commit_count "$WT_A")
-assert_eq "$AFTER" "$BEFORE" "codex apply_patch no-op: no commit when nothing changed"
+assert_equals "$AFTER" "$BEFORE" "codex apply_patch no-op: no commit when nothing changed"
 
 # --- Transcript snapshots ---
 

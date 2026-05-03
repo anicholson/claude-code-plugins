@@ -99,6 +99,8 @@ export function buildCommitPlanWithTask(input, state, task) {
     let body = `File: ${relPath}`;
     if (input.session_id)
         body += `\nSession: ${input.session_id}`;
+    if (input.transcript_path)
+        body += `\nTranscriptPath: ${input.transcript_path}`;
     return { ...base, subject, body: body || null };
 }
 export function buildSessionPrefix(sessionId) {
@@ -109,7 +111,10 @@ export function buildSessionPrefix(sessionId) {
 export function buildCommitBody(input, _relPath) {
     if (!input.session_id)
         return null;
-    return `Session: ${input.session_id}`;
+    let body = `Session: ${input.session_id}`;
+    if (input.transcript_path)
+        body += `\nTranscriptPath: ${input.transcript_path}`;
+    return body;
 }
 /**
  * Extract the first user message from a JSONL transcript.
