@@ -57,16 +57,10 @@ run_hook_with_last_text() {
 
 # --- Mental-model nudge: primary criteria ---
 
-@test "mental-model nudge names the 'not recoverable from code and tests' criterion" {
+@test "mental-model nudge asks whether the task revealed knowledge not already in documentation, tests, and code" {
   run_hook '{}'
-  [[ "$output" == *"recover"* ]]
-  [[ "$output" == *"code and tests"* ]]
-}
-
-@test "mental-model nudge names the 'removal would cause a mistake a competent human would not make' criterion" {
-  run_hook '{}'
-  [[ "$output" == *"removal"* ]]
-  [[ "$output" == *"competent human"* ]]
+  [[ "$output" == *"knowledge"* ]]
+  [[ "$output" == *"documentation, tests, and code"* ]]
 }
 
 @test "mental-model nudge defaults to no change" {
