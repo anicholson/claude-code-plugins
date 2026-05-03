@@ -143,7 +143,7 @@ interface CodexMarketplace {
   plugins: CodexMarketplaceEntry[];
 }
 
-export function upsertCodexMarketplace(marketplacePath: string): void {
+function upsertCodexMarketplace(marketplacePath: string): void {
   let marketplace: CodexMarketplace;
   if (existsSync(marketplacePath)) {
     marketplace = JSON.parse(readFileSync(marketplacePath, "utf-8")) as CodexMarketplace;
