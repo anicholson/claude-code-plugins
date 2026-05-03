@@ -119,7 +119,7 @@ post-task-hook (src: hooks/stop-drift-check.sh; unit: test/post-task-hook.bats; 
 ## post-update-hook
 
 ```
-post-update-hook (src: hooks/post-update-check.sh; unit: test/post-update-hook.bats)
+post-update-hook (src: hooks/post-update-check.sh; unit: test/post-update-hook.bats; functional: test/functional/docker-entrypoint.sh)
   when MENTAL_MODEL.md is edited via a tool call
     then the validator runs against the post-edit content
     and its findings are surfaced to Claude's next response via additional context
