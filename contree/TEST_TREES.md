@@ -333,6 +333,21 @@ self-care-20-20-20 (src: hooks/self-care-20-20-20.sh; unit: test/self-care.bats)
       then the hook exits silently
 ```
 
+## dual-harness-compatibility
+
+```
+dual-harness-compatibility (src: .claude-plugin/plugin.json, .codex-plugin/plugin.json, hooks/hooks.json; unit: test/dual-harness-compatibility.bats; functional: none)
+  when contree is installed under either Claude Code or Codex
+    then a manifest exists at .claude-plugin/plugin.json
+    and a manifest exists at .codex-plugin/plugin.json declaring skills as ./skills/ and hooks as ./hooks/hooks.json
+    and both manifests carry the same name and version
+    and one hooks/hooks.json is shared by both harnesses
+  when a bundled hook script runs
+    then it resolves its files via $CLAUDE_PLUGIN_ROOT alone
+  when an Edit, Write, MultiEdit, or apply_patch tool call completes
+    then the PostToolUse matcher fires
+```
+
 ## Cross-Functional Requirements
 
 - Supported languages: JS/TS (Node, Bun, React, React Native), Elixir (Phoenix, Jido), Go. Setup refuses other languages and names the supported set.
