@@ -283,7 +283,7 @@ skill-discoverability (src: hooks/session-start.sh; unit: test/skill-discoverabi
 ## composable-testing
 
 ```
-composable-testing (src: skills/setup/SKILL.md; unit: test/composable-testing.bats)
+composable-testing (src: skills/setup/SKILL.md; unit: test/composable-testing.bats; functional: test/functional/docker-entrypoint.sh)
   when a project uses contree
     then Domain tests are colocated with source (*.domain.test.*)
     and Use-case tests are colocated with the use-case (*.use-case.test.*)
