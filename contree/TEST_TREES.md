@@ -269,7 +269,7 @@ workflow-runs-end-to-end (src: skills/workflow/SKILL.md; unit: test/workflow-run
 ## skill-discoverability
 
 ```
-skill-discoverability (src: hooks/session-start.sh; unit: test/skill-discoverability.bats; functional: none)
+skill-discoverability (src: hooks/session-start.sh; unit: test/skill-discoverability.bats; functional: test/functional/docker-entrypoint.sh)
   when a user describes a behaviour change without naming a skill
     then the change skill is triggered
   when a user asks about drift between code and requirements without naming a skill
