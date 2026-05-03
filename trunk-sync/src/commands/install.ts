@@ -129,7 +129,10 @@ Codex will load the plugin from ${REPO} on its next session.`);
 
 interface CodexMarketplaceEntry {
   name: string;
-  source: { source: string; path?: string; url?: string };
+  source:
+    | { source: "local"; path: string }
+    | { source: "url"; url: string; path?: string; ref?: string }
+    | { source: "git-subdir"; url: string; path: string; ref?: string };
   policy: { installation: string; authentication: string };
   category: string;
 }
