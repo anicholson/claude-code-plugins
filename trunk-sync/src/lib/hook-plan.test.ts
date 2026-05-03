@@ -234,6 +234,53 @@ describe("planHook normal commit", () => {
     if (plan.action !== "commit-and-sync") return;
     assert.equal(plan.commit.body, null);
   });
+
+  it("Codex apply_patch with no file_path stages dirty tracked files", () => {
+    const input = makeInput({
+      tool_name: "apply_patch",
+      tool_input: { input: "*** Begin Patch\n*** Update File: foo.ts\n*** End Patch\n" } as unknown as { file_path?: string },
+    });
+    const state = makeState({ modifiedFiles: ["foo.ts"], relPath: null });
+    const plan = planHook(input, state);
+    assert.equal(plan.action, "commit-and-sync");
+    if (plan.action !== "commit-and-sync") return;
+    assert.deepEqual(plan.commit.filesToStage, ["foo.ts"]);
+    assert.match(plan.commit.subject, /update foo\.ts/);
+  });
+
+  it("Codex local_shell with no file_path stages dirty tracked files", () => {
+    const input = makeInput({
+      tool_name: "local_shell",
+      tool_input: { command: ["sed", "-i", "s/x/y/", "foo.ts"] } as unknown as { file_path?: string },
+    });
+    const state = makeState({ modifiedFiles: ["foo.ts"], relPath: null });
+    const plan = planHook(input, state);
+    assert.equal(plan.action, "commit-and-sync");
+    if (plan.action !== "commit-and-sync") return;
+    assert.deepEqual(plan.commit.filesToStage, ["foo.ts"]);
+  });
+
+  it("includes TranscriptPath in body when transcript_path is in payload", () => {
+    const input = makeInput({
+      tool_name: "apply_patch",
+      tool_input: {} as { file_path?: string },
+      session_id: "abc12345-6789-0abc-def0-123456789abc",
+      transcript_path: "/codex/sessions/abc12345.jsonl",
+    });
+    const state = makeState({ modifiedFiles: ["foo.ts"], relPath: null });
+    const plan = planHook(input, state);
+    if (plan.action !== "commit-and-sync") return;
+    assert.match(plan.commit.body ?? "", /Session: abc12345-6789-0abc-def0-123456789abc/);
+    assert.match(plan.commit.body ?? "", /TranscriptPath: \/codex\/sessions\/abc12345\.jsonl/);
+  });
+
+  it("omits TranscriptPath when transcript_path is absent", () => {
+    const input = makeInput({ transcript_path: null });
+    const state = makeState();
+    const plan = planHook(input, state);
+    if (plan.action !== "commit-and-sync") return;
+    assert.doesNotMatch(plan.commit.body ?? "", /TranscriptPath:/);
+  });
 });
 
 // ── buildCommitPlanWithTask ──────────────────────────────────────────
