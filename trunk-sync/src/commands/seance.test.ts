@@ -453,7 +453,7 @@ for arg in "$@"; do
     *-*-*-*-*) RESUME_ID="$arg"; break ;;
   esac
 done
-FOUND=$(find "$HOME/.codex/sessions" -name "*${RESUME_ID}.jsonl" 2>/dev/null | head -1)
+FOUND=$(find "$HOME/.codex/sessions" -name "*$RESUME_ID.jsonl" 2>/dev/null | head -1)
 if [ -n "$FOUND" ]; then
   cp "$FOUND" "${captureFile}"
 fi
