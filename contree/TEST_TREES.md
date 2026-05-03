@@ -96,7 +96,7 @@ pre-task-hook (src: hooks/session-start.sh; unit: test/pre-task-hook.bats; funct
 ## post-task-hook
 
 ```
-post-task-hook (src: hooks/stop-drift-check.sh; unit: test/post-task-hook.bats)
+post-task-hook (src: hooks/stop-drift-check.sh; unit: test/post-task-hook.bats; functional: test/functional/docker-entrypoint.sh)
   when Claude stops after a response that does not end with a question
     then a mental-model nudge prompts consideration of whether the task revealed any knowledge not already described in documentation, tests, and code, defaulting to no change
       when a change is warranted
