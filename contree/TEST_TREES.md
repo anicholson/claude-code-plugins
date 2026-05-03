@@ -37,7 +37,7 @@ setup-scaffolds-mental-model (src: skills/setup/SKILL.md; unit: test/setup-scaff
 ## outside-in-tdd
 
 ```
-outside-in-tdd (src: skills/tdd/SKILL.md; unit: test/outside-in-tdd.bats; functional: none)
+outside-in-tdd (src: skills/tdd/SKILL.md; unit: test/outside-in-tdd.bats; functional: test/functional/docker-entrypoint.sh)
   when implementing a tree
     then each when/then path becomes one failing test, written one at a time in tree order
     and the test is written at the tree's layer (Domain / Use-case / Adapter / System)
