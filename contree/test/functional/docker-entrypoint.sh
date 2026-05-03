@@ -69,6 +69,8 @@ prime_codex_plugin() {
 
   mkdir -p "$HOME/.codex"
   cat > "$HOME/.codex/config.toml" <<'CONFIG'
+model_reasoning_effort = "low"
+
 [features]
 plugin_hooks = true
 
