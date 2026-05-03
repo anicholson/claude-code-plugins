@@ -120,6 +120,10 @@ describe("seance", () => {
     assert.match(output, /No trunk-sync sessions/);
   });
 
+  });
+
+  describe("seance default mode", () => {
+
   it("default mode without transcript exits with error", () => {
     const binDir = mkdtempSync(join(tmpdir(), "seance-bin-"));
     writeFileSync(
