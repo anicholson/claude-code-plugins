@@ -4,13 +4,13 @@ set -euo pipefail
 # Run contree functional tests in Docker.
 #
 # Usage:
-#   ./docker-run.sh full-workflow    # run the scenario
-#   ./docker-run.sh all              # run every scenario in ALL_TESTS in parallel
+#   ./docker-run.sh layered-workflow                  # default harness: claude
+#   ./docker-run.sh layered-workflow codex            # explicit harness
+#   ./docker-run.sh all                               # every (test, harness) pair in MATRIX
 #
-# Each scenario writes one appended transcript at <name>-transcript.jsonl and
-# one verify file at <name>-verify.txt. The verify file names the trees to
-# evaluate the transcript against — the trees in contree/CLAUDE.md ## Test Trees
-# are the checklist.
+# Each (test, harness) pair writes <test>-<harness>-transcript.jsonl and
+# <test>-<harness>-verify.txt. The verify file names the trees to evaluate the
+# transcript against — the trees in contree/CLAUDE.md ## Test Trees are the checklist.
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/../../.." && pwd)"
@@ -20,7 +20,15 @@ for env_file in "$SCRIPT_DIR/.env" "$REPO_ROOT/.env"; do
   [ -f "$env_file" ] && set -a && . "$env_file" && set +a
 done
 
-ALL_TESTS=(full-workflow layered-workflow mental-model-validator-smoke describe-it-drift)
+# (test-name, harness) pairs run by `all`. layered-workflow is the only
+# end-to-end journey and runs under both harnesses; the narrow cases run
+# under claude only.
+MATRIX=(
+  "layered-workflow:claude"
+  "layered-workflow:codex"
+  "mental-model-validator-smoke:claude"
+  "describe-it-drift:claude"
+)
 
 TEST_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 
@@ -32,44 +40,50 @@ if ! docker image inspect "$BASE_IMAGE" >/dev/null 2>&1; then
 fi
 docker build -q --pull=never -t "$IMAGE_NAME" -f "$SCRIPT_DIR/Dockerfile" "$TEST_DIR"
 
-run_test() {
+run_pair() {
   local name="$1"
-  echo "=== Starting: $name ==="
+  local harness="$2"
+  echo "=== Starting: $name ($harness) ==="
   docker run --rm \
-    --name "contree-test-${name}-$$" \
+    --name "contree-test-${name}-${harness}-$$" \
     -e ANTHROPIC_API_KEY \
+    -e OPENAI_API_KEY \
     -v "$REPO_ROOT:/repo:ro" \
     -v "$SCRIPT_DIR:/output" \
     "$IMAGE_NAME" \
-    bash -c "cp -r /repo/contree /work/contree && chmod +x /work/contree/test/functional/*.sh && /work/contree/test/functional/docker-entrypoint.sh $name" \
-    && echo "=== Done: $name ===" \
-    || echo "=== Failed: $name ==="
+    bash -c "cp -r /repo/contree /work/contree && chmod +x /work/contree/test/functional/*.sh && /work/contree/test/functional/docker-entrypoint.sh $name $harness" \
+    && echo "=== Done: $name ($harness) ===" \
+    || echo "=== Failed: $name ($harness) ==="
 }
 
-TEST_NAME="${1:?Usage: ./docker-run.sh <test-name|all>}"
+ARG="${1:?Usage: ./docker-run.sh <test-name|all> [claude|codex]}"
 
-if [ "$TEST_NAME" = "all" ]; then
+if [ "$ARG" = "all" ]; then
   pids=()
-  for t in "${ALL_TESTS[@]}"; do
-    run_test "$t" &
+  for pair in "${MATRIX[@]}"; do
+    run_pair "${pair%%:*}" "${pair##*:}" &
     pids+=($!)
   done
   for pid in "${pids[@]}"; do wait "$pid" || true; done
 else
-  run_test "$TEST_NAME"
+  HARNESS="${2:-claude}"
+  run_pair "$ARG" "$HARNESS"
 fi
 
 echo ""
 echo "Done. Read each transcript and evaluate against its verify file:"
-if [ "$TEST_NAME" = "all" ]; then
-  for t in "${ALL_TESTS[@]}"; do
-    if [ -f "$SCRIPT_DIR/${t}-transcript.jsonl" ]; then
-      echo "  $SCRIPT_DIR/${t}-transcript.jsonl"
-      echo "  $SCRIPT_DIR/${t}-verify.txt"
+if [ "$ARG" = "all" ]; then
+  for pair in "${MATRIX[@]}"; do
+    t="${pair%%:*}"
+    h="${pair##*:}"
+    if [ -f "$SCRIPT_DIR/${t}-${h}-transcript.jsonl" ]; then
+      echo "  $SCRIPT_DIR/${t}-${h}-transcript.jsonl"
+      echo "  $SCRIPT_DIR/${t}-${h}-verify.txt"
       echo ""
     fi
   done
 else
-  echo "  $SCRIPT_DIR/${TEST_NAME}-transcript.jsonl"
-  echo "  $SCRIPT_DIR/${TEST_NAME}-verify.txt"
+  HARNESS="${2:-claude}"
+  echo "  $SCRIPT_DIR/${ARG}-${HARNESS}-transcript.jsonl"
+  echo "  $SCRIPT_DIR/${ARG}-${HARNESS}-verify.txt"
 fi
