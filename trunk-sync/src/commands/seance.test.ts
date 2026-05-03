@@ -24,7 +24,7 @@ function runSeance(dir: string, args: string, extraPath?: string): string {
   }
 }
 
-describe("seance integration", () => {
+describe("seance", () => {
   let dir: string;
 
   beforeEach(() => {
@@ -37,6 +37,8 @@ describe("seance integration", () => {
   afterEach(() => {
     rmSync(dir, { recursive: true, force: true });
   });
+
+  describe("seance --inspect", () => {
 
   it("--inspect shows session info for trunk-sync commit", () => {
     const file = join(dir, "code.ts");
