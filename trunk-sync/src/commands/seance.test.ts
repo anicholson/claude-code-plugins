@@ -443,7 +443,8 @@ exit 0
     writeFileSync(
       join(binDir, "codex"),
       `#!/bin/sh
-printf "cwd=%s\\n" "$(pwd)" > "${logFile}"
+printf "HOME=%s\\n" "$HOME" > "${logFile}"
+printf "cwd=%s\\n" "$(pwd)" >> "${logFile}"
 printf "args=" >> "${logFile}"
 printf "%s " "$@" >> "${logFile}"
 printf "\\n" >> "${logFile}"
@@ -453,6 +454,9 @@ for arg in "$@"; do
     *-*-*-*-*) RESUME_ID="$arg"; break ;;
   esac
 done
+printf "RESUME_ID=%s\\n" "$RESUME_ID" >> "${logFile}"
+printf "find_results=\\n" >> "${logFile}"
+find "$HOME/.codex/sessions" -type f 2>/dev/null >> "${logFile}"
 FOUND=$(find "$HOME/.codex/sessions" -name "*$RESUME_ID.jsonl" 2>/dev/null | head -1)
 if [ -n "$FOUND" ]; then
   cp "$FOUND" "${captureFile}"
