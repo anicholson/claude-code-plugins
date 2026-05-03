@@ -138,7 +138,9 @@ export function buildCommitBody(
   _relPath: string | null,
 ): string | null {
   if (!input.session_id) return null;
-  return `Session: ${input.session_id}`;
+  let body = `Session: ${input.session_id}`;
+  if (input.transcript_path) body += `\nTranscriptPath: ${input.transcript_path}`;
+  return body;
 }
 
 /**
