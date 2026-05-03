@@ -293,7 +293,7 @@ describe("buildCommitPlanWithTask", () => {
     assert.equal(commit.subject, "auto(abcdef12): Fix the broken tests");
     assert.match(commit.body!, /^File: src\/main\.ts/);
     assert.match(commit.body!, /Session: abcdef12/);
-    assert.ok(!commit.body!.includes("Transcript:"));
+    assert.match(commit.body!, /TranscriptPath: ~\/\.claude\/projects\/proj\/session\.jsonl/);
   });
 
   it("falls back to default plan when task is null", () => {
