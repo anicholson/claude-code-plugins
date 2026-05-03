@@ -352,13 +352,19 @@ Migration note: trunk-sync was previously specified as a flat `## Requirements` 
     if `--client` is neither `claude` nor `codex`
       then it is rejected
 
-### Use-case: seance (src: src/commands/seance.ts; unit: src/commands/seance.test.ts; integration: src/commands/seance.test.ts; functional: none)
+### Use-case: seance (src: src/commands/seance.ts; unit: none; integration: src/commands/seance.test.ts; functional: none)
 
   seance --inspect
     when the blamed commit is a trunk-sync commit
       then the SHA, subject, and session id are printed without launching a CLI
     when the blamed line has shifted from its original position
       then the original line number from the blamed commit is reported
+
+  seance preconditions
+    if the blamed line has uncommitted changes
+      then it exits 1 with a message naming the line
+    if the blamed commit was not made by trunk-sync
+      then it exits 1 with a message identifying the commit
 
   seance --list
     when the repository contains trunk-sync commits
@@ -367,10 +373,6 @@ Migration note: trunk-sync was previously specified as a flat `## Requirements` 
       then nothing is listed
 
   seance default mode
-    if the blamed line has uncommitted changes
-      then it exits 1 with a message naming the line
-    if the blamed commit was not made by trunk-sync
-      then it exits 1 with a message identifying the commit
     if the blamed commit has no transcript snapshot and no derivable transcript
       then it exits 1 with an error
     when a stale worktree exists from a previous seance
