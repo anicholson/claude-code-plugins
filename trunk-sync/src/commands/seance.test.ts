@@ -450,6 +450,10 @@ exit 0
     try { rmSync(projectDir, { recursive: true, force: true }); } catch { /* ok */ }
   });
 
+  });
+
+  describe("seance default mode (Codex commit)", () => {
+
   it("default mode resumes a Codex commit by writing a rewritten rollout and spawning codex exec resume", () => {
     const fakeHome = realpathSync(mkdtempSync(join(tmpdir(), "seance-codex-home-")));
     const binDir = mkdtempSync(join(tmpdir(), "seance-codex-bin-"));
