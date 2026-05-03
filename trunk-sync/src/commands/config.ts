@@ -35,7 +35,7 @@ export function readConfig(): Map<string, string> {
   return map;
 }
 
-export function writeConfig(map: Map<string, string>): void {
+function writeConfig(map: Map<string, string>): void {
   const lines: string[] = [];
   for (const [key, value] of map) {
     lines.push(`${key}=${value}`);
