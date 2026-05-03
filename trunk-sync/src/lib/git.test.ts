@@ -84,6 +84,26 @@ describe("extractTranscriptPath", () => {
   });
 });
 
+describe("extractAgent", () => {
+  it("returns the name when the body contains Agent: <name>", () => {
+    assert.equal(extractAgent("Session: abc\nAgent: codex"), "codex");
+    assert.equal(extractAgent("Session: abc\nAgent: claude"), "claude");
+  });
+
+  it("returns codex when no Agent line and TranscriptPath is under ~/.codex/", () => {
+    const body = "Session: abc\nTranscriptPath: ~/.codex/sessions/2026/05/03/rollout-x.jsonl";
+    assert.equal(extractAgent(body), "codex");
+  });
+
+  it("returns claude when no Agent line and TranscriptPath is absent or under ~/.claude/", () => {
+    assert.equal(extractAgent("Session: abc"), "claude");
+    assert.equal(
+      extractAgent("Session: abc\nTranscriptPath: ~/.claude/projects/p/x.jsonl"),
+      "claude"
+    );
+  });
+});
+
 describe("blame and getCommitBody", () => {
   let dir: string;
 
