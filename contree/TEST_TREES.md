@@ -309,7 +309,7 @@ pressure-phrase-on-session-start (src: hooks/pressure-phrases.sh; unit: test/pre
 ## rules-loading
 
 ```
-rules-loading (src: hooks/session-start.sh; unit: test/rules-loading.bats)
+rules-loading (src: hooks/session-start.sh; unit: test/rules-loading.bats; functional: test/functional/docker-entrypoint.sh)
   when a session starts
     then the rules list is shown
     and not repeated on every response
