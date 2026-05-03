@@ -326,6 +326,10 @@ exit 0
     rmSync(transcriptDir, { recursive: true, force: true });
   });
 
+  });
+
+  describe("seance default mode (Claude commit)", () => {
+
   it("default mode with transcript rewinds session to commit point", () => {
     const binDir = mkdtempSync(join(tmpdir(), "seance-bin-"));
     const logFile = join(binDir, "claude.log");
