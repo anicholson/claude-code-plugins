@@ -336,7 +336,7 @@ self-care-20-20-20 (src: hooks/self-care-20-20-20.sh; unit: test/self-care.bats;
 ## dual-harness-compatibility
 
 ```
-dual-harness-compatibility (src: .claude-plugin/plugin.json, .codex-plugin/plugin.json, hooks/hooks.json; unit: test/dual-harness-compatibility.bats; functional: none)
+dual-harness-compatibility (src: .claude-plugin/plugin.json, .codex-plugin/plugin.json, hooks/hooks.json; unit: test/dual-harness-compatibility.bats; functional: test/functional/docker-entrypoint.sh)
   when contree is installed under either Claude Code or Codex
     then a manifest exists at .claude-plugin/plugin.json
     and a manifest exists at .codex-plugin/plugin.json declaring skills as ./skills/ and hooks as ./hooks/hooks.json
