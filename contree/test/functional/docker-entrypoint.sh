@@ -55,40 +55,26 @@ seed_project() {
 CODEX_PRIMED=0
 
 prime_codex_plugin() {
-  # Codex loads plugins via marketplace.json + an enable flag in config.toml.
-  # A personal marketplace at ~/.agents/plugins/marketplace.json is cwd-independent.
-  # Pre-seeding the install cache avoids any first-run install prompt.
+  # Codex reads cached plugins from ~/.codex/plugins/cache/<marketplace>/<plugin>/<version>/
+  # plus a config.toml entry that enables the plugin and the under-development
+  # plugin_hooks feature (without it, hook scripts in hooks.json are ignored).
+  # See codex-rs/core/src/plugins/manager_tests.rs::plugins_for_config_reloads_when_plugin_hooks_enablement_changes.
   [ "$CODEX_PRIMED" -eq 1 ] && return 0
   CODEX_PRIMED=1
 
-  mkdir -p "$HOME/.agents/plugins"
-  ln -sfn "$CONTREE_ROOT" "$HOME/.agents/plugins/contree"
-  cat > "$HOME/.agents/plugins/marketplace.json" <<'MARKETPLACE'
-{
-  "name": "local-marketplace",
-  "interface": { "displayName": "Contree dev marketplace" },
-  "plugins": [
-    {
-      "name": "contree",
-      "source": { "source": "local", "path": "./contree" },
-      "policy": { "installation": "AVAILABLE", "authentication": "ON_INSTALL" },
-      "category": "Productivity"
-    }
-  ]
-}
-MARKETPLACE
-
-  mkdir -p "$HOME/.codex/plugins/cache/local-marketplace/contree"
-  ln -sfn "$CONTREE_ROOT" "$HOME/.codex/plugins/cache/local-marketplace/contree/local"
+  local cache_dir="$HOME/.codex/plugins/cache/local-marketplace/contree/local"
+  rm -rf "$cache_dir"
+  mkdir -p "$(dirname "$cache_dir")"
+  cp -r "$CONTREE_ROOT" "$cache_dir"
 
   mkdir -p "$HOME/.codex"
-  if ! grep -q 'contree@local-marketplace' "$HOME/.codex/config.toml" 2>/dev/null; then
-    {
-      echo ''
-      echo '[plugins."contree@local-marketplace"]'
-      echo 'enabled = true'
-    } >> "$HOME/.codex/config.toml"
-  fi
+  cat > "$HOME/.codex/config.toml" <<'CONFIG'
+[features]
+plugin_hooks = true
+
+[plugins."contree@local-marketplace"]
+enabled = true
+CONFIG
 
   : "${OPENAI_API_KEY:?OPENAI_API_KEY required for codex harness}"
   printenv OPENAI_API_KEY | codex login --with-api-key
