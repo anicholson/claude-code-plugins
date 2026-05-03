@@ -64,11 +64,6 @@ Flow: `setup` prepares the project for test-tree-driven development → `change`
 - `test/functional/docker-entrypoint.sh` — named functional cases (`layered-workflow`, `mental-model-validator-smoke`, `describe-it-drift`) parameterised by harness (`claude` | `codex`); for codex pre-seeds `~/.agents/plugins/marketplace.json` + cache symlink + `~/.codex/config.toml` enable flag; each writes a `<test>-<harness>-transcript.jsonl` and `<test>-<harness>-verify.txt`
 - `test/fixtures/greenfield/` — empty JS project (used by `mental-model-validator-smoke`)
 - `test/fixtures/bookmarks-api/` — HTTP API fixture for `layered-workflow` (exercises all four hex layers + ports)
-- `test/fixtures/ears-project/` — media player module for EARS pattern functional test
-- `test/fixtures/seed-project/` — tiny JS counter module used as a legacy test target
-- `test/fixtures/incidental-pass/` — counter with reset() pre-implemented (for incidental-pass scenarios)
-- `test/fixtures/sync-drift/` — counter with deliberate drift (amount param without tree, decrement tree without impl)
-- `test/fixtures/tdd-ready/` — counter with vitest configured + requirements, no tests
 - `test/fixtures/describe-it-drift/` — pre-seeded tree + test file whose describe/it deliberately does not mirror the tree (for the `describe-it-drift` functional case)
 
 ## Functional Testing
