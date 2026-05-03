@@ -223,6 +223,13 @@ function inspectOrLaunch(fileRef: string, inspect: boolean): void {
     }
   }
   if (!transcriptSource) {
+    const fromBody = extractTranscriptPath(body);
+    if (fromBody) {
+      const expanded = fromBody.replace(/^~/, process.env.HOME || "~");
+      if (existsSync(expanded)) transcriptSource = expanded;
+    }
+  }
+  if (!transcriptSource) {
     const home = process.env.HOME || "~";
     const derived = join(home, ".claude", "projects", projectSlug(root), `${sessionId}.jsonl`);
     if (existsSync(derived)) {
