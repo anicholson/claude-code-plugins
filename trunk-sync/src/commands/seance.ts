@@ -143,6 +143,57 @@ function rewindTranscript(
   return { path: newPath, id: newId };
 }
 
+function runCodexSeance(args: {
+  transcriptSource: string;
+  commitTimestamp: string;
+  worktreePath: string;
+  sha: string;
+  prompt: string;
+}): void {
+  const { transcriptSource, commitTimestamp, worktreePath, sha, prompt } = args;
+  const home = process.env.HOME || "~";
+  const newId = randomUUID();
+  const rolloutLines = readFileSync(transcriptSource, "utf-8").split("\n").filter(Boolean);
+  const rewound = rewindCodexRollout({
+    rolloutLines,
+    commitTimestamp,
+    worktreePath,
+    newId,
+    homeDir: home,
+  });
+  if (!rewound) {
+    console.error(`Could not rewind Codex rollout for commit ${shortSha(sha)}.`);
+    process.exit(1);
+  }
+  mkdirSync(join(rewound.targetPath, ".."), { recursive: true });
+  writeFileSync(rewound.targetPath, rewound.lines.join("\n") + "\n");
+
+  console.log(`Rewound session to commit ${shortSha(sha)} (${commitTimestamp})`);
+  console.log(`Worktree at ${worktreePath}`);
+
+  const result = spawnSync(
+    "codex",
+    [
+      "exec",
+      "--sandbox", "read-only",
+      "--ask-for-approval", "never",
+      "--skip-git-repo-check",
+      "-C", worktreePath,
+      "resume", newId,
+      prompt,
+    ],
+    { stdio: "inherit" },
+  );
+
+  try { unlinkSync(rewound.targetPath); } catch { /* best-effort */ }
+  try {
+    execSync(`git worktree remove "${worktreePath}"`, { stdio: "pipe" });
+  } catch {
+    console.error(`Note: worktree left at ${worktreePath} — remove with: git worktree remove "${worktreePath}"`);
+  }
+  process.exit(result.status ?? 1);
+}
+
 function inspectOrLaunch(fileRef: string, inspect: boolean): void {
   const { file, line } = parseFileRef(fileRef);
 
