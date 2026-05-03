@@ -21,7 +21,7 @@ test-trees-as-requirements (unit: test/test-trees-as-requirements.bats)
 ## setup-scaffolds-mental-model
 
 ```
-setup-scaffolds-mental-model (src: skills/setup/SKILL.md; unit: test/setup-scaffolds-mental-model.bats; functional: none)
+setup-scaffolds-mental-model (src: skills/setup/SKILL.md; unit: test/setup-scaffolds-mental-model.bats; functional: test/functional/docker-entrypoint.sh)
   when setup is run and MENTAL_MODEL.md does not exist
     then MENTAL_MODEL.md is created with seven H2 sections
     and the seven sections are: Core Domain Identity, World-to-Code Mapping, Ubiquitous Language, Bounded Contexts, Invariants, Decision Rationale, Temporal View
