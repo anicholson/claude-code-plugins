@@ -73,7 +73,7 @@ Flow: `setup` prepares the project for test-tree-driven development → `change`
 
 ## Functional Testing
 
-Run functional tests with `pnpm test:functional` (all) or `bash test/functional/docker-run.sh <test-name>` (one). After the script finishes, it prints the exact transcript file paths. **Always read the transcripts and evaluate each against the VERIFY criteria in docker-entrypoint.sh.** Report PASS/FAIL per criterion with evidence.
+Run functional tests with `pnpm test:functional` (all `(test, harness)` pairs in MATRIX), `bash test/functional/docker-run.sh <test-name>` (one, default claude harness), or `bash test/functional/docker-run.sh <test-name> codex` (explicit harness). After the script finishes, it prints the exact transcript file paths. **Always read the transcripts and evaluate each against the VERIFY criteria in docker-entrypoint.sh.** Report PASS/FAIL per criterion with evidence.
 
 ## Test Trees
 
