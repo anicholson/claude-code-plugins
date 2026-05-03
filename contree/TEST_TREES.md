@@ -98,7 +98,7 @@ pre-task-hook (src: hooks/session-start.sh; unit: test/pre-task-hook.bats)
 ```
 post-task-hook (src: hooks/stop-drift-check.sh; unit: test/post-task-hook.bats)
   when Claude stops after a response that does not end with a question
-    then a mental-model nudge prompts consideration of whether the task revealed something a future agent could not recover from code and tests, and whose removal would cause a mistake a competent human would not make, defaulting to no change
+    then a mental-model nudge prompts consideration of whether the task revealed any knowledge not already described in documentation, tests, and code, defaulting to no change
       when a change is warranted
         then the edit declares which of the seven sections it belongs to
         and an edit fitting no section is not added to the mental model
