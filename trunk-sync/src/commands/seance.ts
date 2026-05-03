@@ -245,6 +245,12 @@ function inspectOrLaunch(fileRef: string, inspect: boolean): void {
     process.exit(1);
   }
   const commitTimestamp = getCommitTimestamp(sha);
+
+  if (agent === "codex") {
+    runCodexSeance({ transcriptSource, commitTimestamp, worktreePath, sha, prompt });
+    return;
+  }
+
   const rewound = rewindTranscript(transcriptSource, commitTimestamp, worktreePath);
   if (!rewound) {
     console.error(`Could not rewind transcript for commit ${shortSha(sha)}.`);
