@@ -50,6 +50,15 @@ export function extractTranscriptPath(body) {
     const match = body.match(/^TranscriptPath:\s*(.+)/m);
     return match ? match[1].trim() : null;
 }
+export function extractAgent(body) {
+    const match = body.match(/^Agent:\s*(claude|codex)/m);
+    if (match)
+        return match[1];
+    const transcriptPath = extractTranscriptPath(body);
+    if (transcriptPath && transcriptPath.startsWith("~/.codex/"))
+        return "codex";
+    return "claude";
+}
 export function getCommitTimestamp(sha, cwd) {
     return execSync(`git log -1 --format=%cI "${sha}"`, { encoding: "utf-8", cwd }).trim();
 }

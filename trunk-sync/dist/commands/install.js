@@ -103,7 +103,7 @@ In Codex, run:
 
 Codex will load the plugin from ${REPO} on its next session.`);
 }
-export function upsertCodexMarketplace(marketplacePath) {
+function upsertCodexMarketplace(marketplacePath) {
     let marketplace;
     if (existsSync(marketplacePath)) {
         marketplace = JSON.parse(readFileSync(marketplacePath, "utf-8"));

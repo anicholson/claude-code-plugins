@@ -10,7 +10,7 @@ const USAGE = `Usage: trunk-sync config                   Show all config
        trunk-sync config --unset <key>       Remove a key
 
 Config file: ~/.trunk-sync (key=value format)`;
-export function configPath() {
+function configPath() {
     return join(homedir(), ".trunk-sync");
 }
 export function readConfig() {
@@ -33,7 +33,7 @@ export function readConfig() {
     }
     return map;
 }
-export function writeConfig(map) {
+function writeConfig(map) {
     const lines = [];
     for (const [key, value] of map) {
         lines.push(`${key}=${value}`);

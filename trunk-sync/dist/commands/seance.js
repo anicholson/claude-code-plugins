@@ -2,17 +2,18 @@ import { execSync, spawnSync } from "node:child_process";
 import { randomUUID } from "node:crypto";
 import { join, relative, resolve } from "node:path";
 import { readFileSync, writeFileSync, existsSync, unlinkSync, mkdirSync } from "node:fs";
-import { parseFileRef, blame, getCommitBody, getCommitSubject, getCommitDate, getCommitTimestamp, extractSessionId, extractTranscriptPath, findSnapshotInCommit, commandExists, shortSha, getGitRoot, } from "../lib/git.js";
+import { parseFileRef, blame, getCommitBody, getCommitSubject, getCommitDate, getCommitTimestamp, extractAgent, extractSessionId, extractTranscriptPath, findSnapshotInCommit, commandExists, shortSha, getGitRoot, } from "../lib/git.js";
+import { rewindCodexRollout } from "./seance-codex.js";
 const USAGE = `Usage: trunk-sync seance <file:line> [--inspect]
        trunk-sync seance --list
 
-Find which Claude session wrote a line of code and fork that session.
+Find which Claude or Codex session wrote a line of code and fork that session.
 
 Arguments:
   <file:line>   File path and line number, e.g. src/main.ts:42
 
 Options:
-  --inspect     Show commit and session info without launching Claude
+  --inspect     Show commit and session info without launching the CLI
   --list        List all trunk-sync sessions found in git history
   -h, --help    Show this help message`;
 function listSessions() {
@@ -114,6 +115,47 @@ function rewindTranscript(transcriptPath, commitTimestamp, worktreePath) {
     writeFileSync(newPath, rewritten.join("\n") + "\n");
     return { path: newPath, id: newId };
 }
+function runCodexSeance(args) {
+    const { transcriptSource, commitTimestamp, worktreePath, sha, prompt } = args;
+    const home = process.env.HOME || "~";
+    const newId = randomUUID();
+    const rolloutLines = readFileSync(transcriptSource, "utf-8").split("\n").filter(Boolean);
+    const rewound = rewindCodexRollout({
+        rolloutLines,
+        commitTimestamp,
+        worktreePath,
+        newId,
+        homeDir: home,
+    });
+    if (!rewound) {
+        console.error(`Could not rewind Codex rollout for commit ${shortSha(sha)}.`);
+        process.exit(1);
+    }
+    mkdirSync(join(rewound.targetPath, ".."), { recursive: true });
+    writeFileSync(rewound.targetPath, rewound.lines.join("\n") + "\n");
+    console.log(`Rewound session to commit ${shortSha(sha)} (${commitTimestamp})`);
+    console.log(`Worktree at ${worktreePath}`);
+    const result = spawnSync("codex", [
+        "exec",
+        "--sandbox", "read-only",
+        "--ask-for-approval", "never",
+        "--skip-git-repo-check",
+        "-C", worktreePath,
+        "resume", newId,
+        prompt,
+    ], { stdio: "inherit" });
+    try {
+        unlinkSync(rewound.targetPath);
+    }
+    catch { /* best-effort */ }
+    try {
+        execSync(`git worktree remove "${worktreePath}"`, { stdio: "pipe" });
+    }
+    catch {
+        console.error(`Note: worktree left at ${worktreePath} — remove with: git worktree remove "${worktreePath}"`);
+    }
+    process.exit(result.status ?? 1);
+}
 function inspectOrLaunch(fileRef, inspect) {
     const { file, line } = parseFileRef(fileRef);
     const blameResult = blame(file, line);
@@ -136,8 +178,10 @@ function inspectOrLaunch(fileRef, inspect) {
         console.log(`Session:  ${sessionId}`);
         return;
     }
-    if (!commandExists("claude")) {
-        console.error("Claude Code CLI not found.");
+    const agent = extractAgent(body);
+    const cliName = agent === "codex" ? "codex" : "claude";
+    if (!commandExists(cliName)) {
+        console.error(`${cliName} CLI not found.`);
         process.exit(1);
     }
     const root = getGitRoot();
@@ -203,6 +247,10 @@ function inspectOrLaunch(fileRef, inspect) {
         process.exit(1);
     }
     const commitTimestamp = getCommitTimestamp(sha);
+    if (agent === "codex") {
+        runCodexSeance({ transcriptSource, commitTimestamp, worktreePath, sha, prompt });
+        return;
+    }
     const rewound = rewindTranscript(transcriptSource, commitTimestamp, worktreePath);
     if (!rewound) {
         console.error(`Could not rewind transcript for commit ${shortSha(sha)}.`);

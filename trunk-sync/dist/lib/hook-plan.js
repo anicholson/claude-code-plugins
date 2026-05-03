@@ -112,9 +112,15 @@ export function buildCommitBody(input, _relPath) {
     if (!input.session_id)
         return null;
     let body = `Session: ${input.session_id}`;
+    body += `\nAgent: ${agentForTool(input.tool_name)}`;
     if (input.transcript_path)
         body += `\nTranscriptPath: ${input.transcript_path}`;
     return body;
+}
+function agentForTool(toolName) {
+    if (toolName === "apply_patch" || toolName === "local_shell")
+        return "codex";
+    return "claude";
 }
 /**
  * Extract the first user message from a JSONL transcript.
