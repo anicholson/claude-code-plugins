@@ -58,6 +58,7 @@ Flow: `setup` prepares the project for test-tree-driven development → `change`
 - `test/pressure-phrases.bats` — pool tests: minimum size, randomness, register coverage, source-vs-run behaviour
 - `test/self-care.bats` — self-care hook tests: heartbeat pruning, 20-minute continuity, reminder throttling, silent failure
 - `test/validate-skill-frontmatter.bats` — frontmatter validator tests
+- `test/dual-harness-compatibility.bats` — dual-harness contract: both manifests, version lockstep, shared hooks.json, `$CLAUDE_PLUGIN_ROOT` invocation, PostToolUse matcher
 - `test/functional/Dockerfile` — Docker image for functional tests (node + git + jq + claude CLI, fixture deps pre-installed)
 - `test/functional/docker-run.sh` — runs functional tests in Docker (parallel), passes secrets via env vars
 - `test/functional/docker-entrypoint.sh` — named functional test cases (`full-workflow`, `layered-workflow`, `mental-model-validator-smoke`, `describe-it-drift`); each writes a transcript and a VERIFY prompt that evaluates the trees
