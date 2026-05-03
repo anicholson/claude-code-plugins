@@ -144,6 +144,9 @@ describe("install command", () => {
     assert.equal(marketplace.name, "susu-eng");
     const entry = marketplace.plugins.find((p: { name: string }) => p.name === "trunk-sync");
     assert.ok(entry, "trunk-sync entry present");
+    assert.equal(entry.source.source, "git-subdir");
+    assert.equal(entry.source.url, "https://github.com/elimydlarz/claude-code-plugins.git");
+    assert.equal(entry.source.path, "./trunk-sync");
     assert.equal(entry.policy.installation, "AVAILABLE");
     assert.equal(entry.policy.authentication, "ON_INSTALL");
   });
