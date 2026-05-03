@@ -432,4 +432,136 @@ exit 0
     try { rmSync(projectDir, { recursive: true, force: true }); } catch { /* ok */ }
   });
 
+  it("default mode resumes a Codex commit by writing a rewritten rollout and spawning codex exec resume", () => {
+    const fakeHome = realpathSync(mkdtempSync(join(tmpdir(), "seance-codex-home-")));
+    const binDir = mkdtempSync(join(tmpdir(), "seance-codex-bin-"));
+    const logFile = join(binDir, "codex.log");
+    const captureFile = join(binDir, "captured-rollout.jsonl");
+
+    // Fake `codex` binary: log args + cwd, find the rewritten rollout under
+    // $HOME/.codex/sessions/ matching the resume UUID, copy it to captureFile.
+    writeFileSync(
+      join(binDir, "codex"),
+      `#!/bin/sh
+printf "cwd=%s\\n" "$(pwd)" > "${logFile}"
+printf "args=" >> "${logFile}"
+printf "%s " "$@" >> "${logFile}"
+printf "\\n" >> "${logFile}"
+RESUME_ID=""
+for arg in "$@"; do
+  case "$arg" in
+    *-*-*-*-*) RESUME_ID="$arg"; break ;;
+  esac
+done
+FOUND=$(find "$HOME/.codex/sessions" -name "*${RESUME_ID}.jsonl" 2>/dev/null | head -1)
+if [ -n "$FOUND" ]; then
+  cp "$FOUND" "${captureFile}"
+fi
+exit 0
+`,
+    );
+    chmodSync(join(binDir, "codex"), 0o755);
+    // Also stub `claude` (commandExists check uses `command -v` — codex path won't need it,
+    // but other code paths in seance call commandExists("claude") only on Claude branch).
+
+    const originalUuid = "019c27eb-440a-7c90-b1ba-6c52f3be3b04";
+    const rolloutDir = join(fakeHome, ".codex", "sessions", "2026", "03", "01");
+    mkdirSync(rolloutDir, { recursive: true });
+    const rolloutPath = join(rolloutDir, `rollout-2026-03-01T10-00-00-${originalUuid}.jsonl`);
+    const rolloutLines = [
+      JSON.stringify({
+        timestamp: "2026-03-01T09:59:59.000Z",
+        type: "session_meta",
+        payload: { id: originalUuid, cwd: "/original/project", originator: "Codex" },
+      }),
+      JSON.stringify({
+        timestamp: "2026-03-01T10:00:00.000Z",
+        type: "event_msg",
+        payload: { kind: "user_message", text: "task" },
+      }),
+      JSON.stringify({
+        timestamp: "2026-03-01T10:00:02.000Z",
+        type: "event_msg",
+        payload: { kind: "assistant", text: "working" },
+      }),
+      JSON.stringify({
+        timestamp: "2026-03-01T10:00:05.000Z",
+        type: "event_msg",
+        payload: { kind: "assistant", text: "later" },
+      }),
+    ];
+    writeFileSync(rolloutPath, rolloutLines.join("\n") + "\n");
+
+    const file = join(dir, "code.ts");
+    writeFileSync(file, "const x = 1;\n");
+    gitIn(dir, "add code.ts");
+    const commitDate = "2026-03-01T10:00:02.500Z";
+    execSync(
+      `git commit -m 'auto(codx1234): add code' -m 'Session: ${originalUuid}\nAgent: codex\nTranscriptPath: ${rolloutPath}'`,
+      { cwd: dir, env: { ...process.env, GIT_COMMITTER_DATE: commitDate } },
+    );
+    const commitSha = gitIn(dir, "rev-parse HEAD");
+    const short = commitSha.slice(0, 8);
+
+    // Run seance with HOME pointed at the fake home so the rewritten rollout is isolated.
+    const cliPath = join(process.cwd(), "dist", "cli.js");
+    const env = { ...process.env, HOME: fakeHome, PATH: `${binDir}:${process.env.PATH}` };
+    let output = "";
+    try {
+      output = execSync(`node "${cliPath}" seance ${file}:1`, {
+        cwd: dir,
+        encoding: "utf-8",
+        env,
+      }).trim();
+    } catch (e: unknown) {
+      const err = e as { stderr?: string; stdout?: string };
+      output = (err.stderr || err.stdout || "").trim();
+    }
+
+    assert.match(output, /Rewound session to commit/);
+
+    const log = readFileSync(logFile, "utf-8");
+    assert.match(log, /\bexec\b/, "codex should be invoked via `exec`");
+    assert.match(log, /\bresume\b/);
+    assert.match(log, /--sandbox read-only/);
+    assert.match(log, /--ask-for-approval never/);
+    assert.match(log, /--skip-git-repo-check/);
+    assert.match(log, /-C \S*seance-/);
+    const uuidMatch = log.match(/resume ([0-9a-f-]{36})/);
+    assert.ok(uuidMatch, "resume should be followed by a UUID");
+    const newUuid = uuidMatch![1];
+    assert.notEqual(newUuid, originalUuid, "new UUID should differ from original");
+
+    assert.ok(existsSync(captureFile), "fake codex should have captured the rewritten rollout");
+    const capturedLines = readFileSync(captureFile, "utf-8").split("\n").filter(Boolean);
+    assert.equal(capturedLines.length, 3, "should drop the line after the commit timestamp");
+    const sessionMeta = JSON.parse(capturedLines[0]);
+    assert.equal(sessionMeta.payload.id, newUuid);
+    const worktreePath = join(realpathSync(dir), ".claude", "worktrees", `seance-${short}`);
+    assert.equal(sessionMeta.payload.cwd, worktreePath);
+
+    // Original rollout untouched.
+    assert.equal(
+      readFileSync(rolloutPath, "utf-8").split("\n").filter(Boolean).length,
+      4,
+    );
+
+    // Worktree cleaned up.
+    const worktrees = gitIn(dir, "worktree list");
+    assert.ok(!worktrees.includes(`seance-${short}`));
+
+    // Rewritten rollout cleaned up.
+    const rewrittenPath = join(fakeHome, ".codex", "sessions", "2026", "03", "01");
+    const remaining = existsSync(rewrittenPath)
+      ? execSync(`ls "${rewrittenPath}"`, { encoding: "utf-8" }).trim().split("\n").filter(Boolean)
+      : [];
+    assert.ok(
+      !remaining.some((f) => f.includes(newUuid)),
+      "rewritten rollout should be deleted after codex exits",
+    );
+
+    rmSync(binDir, { recursive: true, force: true });
+    rmSync(fakeHome, { recursive: true, force: true });
+  });
+
 });
