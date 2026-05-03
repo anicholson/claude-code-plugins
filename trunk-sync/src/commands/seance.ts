@@ -10,6 +10,7 @@ import {
   getCommitDate,
   getCommitTimestamp,
   extractSessionId,
+  extractTranscriptPath,
   findSnapshotInCommit,
   commandExists,
   shortSha,
