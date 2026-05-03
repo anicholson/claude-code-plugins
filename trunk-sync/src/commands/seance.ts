@@ -170,8 +170,10 @@ function inspectOrLaunch(fileRef: string, inspect: boolean): void {
     return;
   }
 
-  if (!commandExists("claude")) {
-    console.error("Claude Code CLI not found.");
+  const agent = extractAgent(body);
+  const cliName = agent === "codex" ? "codex" : "claude";
+  if (!commandExists(cliName)) {
+    console.error(`${cliName} CLI not found.`);
     process.exit(1);
   }
 
