@@ -77,7 +77,7 @@ outside-in-tdd (src: skills/tdd/SKILL.md; unit: test/outside-in-tdd.bats; functi
 ## pre-task-hook
 
 ```
-pre-task-hook (src: hooks/session-start.sh; unit: test/pre-task-hook.bats)
+pre-task-hook (src: hooks/session-start.sh; unit: test/pre-task-hook.bats; functional: test/functional/docker-entrypoint.sh)
   when a session starts
     then MENTAL_MODEL.md contents are displayed
     and TEST_TREES.md contents are displayed
