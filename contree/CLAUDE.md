@@ -59,10 +59,10 @@ Flow: `setup` prepares the project for test-tree-driven development → `change`
 - `test/self-care.bats` — self-care hook tests: heartbeat pruning, 20-minute continuity, reminder throttling, silent failure
 - `test/validate-skill-frontmatter.bats` — frontmatter validator tests
 - `test/dual-harness-compatibility.bats` — dual-harness contract: both manifests, version lockstep, shared hooks.json, `$CLAUDE_PLUGIN_ROOT` invocation, PostToolUse matcher
-- `test/functional/Dockerfile` — Docker image for functional tests (node + git + jq + claude CLI, fixture deps pre-installed)
-- `test/functional/docker-run.sh` — runs functional tests in Docker (parallel), passes secrets via env vars
-- `test/functional/docker-entrypoint.sh` — named functional test cases (`full-workflow`, `layered-workflow`, `mental-model-validator-smoke`, `describe-it-drift`); each writes a transcript and a VERIFY prompt that evaluates the trees
-- `test/fixtures/greenfield/` — empty JS project used as the starting state for `full-workflow`
+- `test/functional/Dockerfile` — Docker image for functional tests (node + git + jq + claude CLI + codex CLI, fixture deps pre-installed)
+- `test/functional/docker-run.sh` — runs `(test, harness)` pairs from MATRIX in Docker (parallel), passes ANTHROPIC_API_KEY + OPENAI_API_KEY via env
+- `test/functional/docker-entrypoint.sh` — named functional cases (`layered-workflow`, `mental-model-validator-smoke`, `describe-it-drift`) parameterised by harness (`claude` | `codex`); for codex pre-seeds `~/.agents/plugins/marketplace.json` + cache symlink + `~/.codex/config.toml` enable flag; each writes a `<test>-<harness>-transcript.jsonl` and `<test>-<harness>-verify.txt`
+- `test/fixtures/greenfield/` — empty JS project (used by `mental-model-validator-smoke`)
 - `test/fixtures/bookmarks-api/` — HTTP API fixture for `layered-workflow` (exercises all four hex layers + ports)
 - `test/fixtures/ears-project/` — media player module for EARS pattern functional test
 - `test/fixtures/seed-project/` — tiny JS counter module used as a legacy test target
