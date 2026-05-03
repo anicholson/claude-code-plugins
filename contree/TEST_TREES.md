@@ -174,7 +174,7 @@ setup-generates-trees (src: skills/setup/SKILL.md; unit: test/setup-generates-tr
 ## setup-installs-architectural-linter
 
 ```
-setup-installs-architectural-linter (src: skills/setup/SKILL.md; unit: test/setup-installs-architectural-linter.bats; functional: none)
+setup-installs-architectural-linter (src: skills/setup/SKILL.md; unit: test/setup-installs-architectural-linter.bats; functional: test/functional/docker-entrypoint.sh)
   when setup is run
     then a hex-boundary linter is installed and configured
 ```
