@@ -13,7 +13,7 @@ const USAGE = `Usage: trunk-sync config                   Show all config
 
 Config file: ~/.trunk-sync (key=value format)`;
 
-export function configPath(): string {
+function configPath(): string {
   return join(homedir(), ".trunk-sync");
 }
 
