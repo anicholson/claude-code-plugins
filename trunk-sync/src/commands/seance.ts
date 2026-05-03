@@ -22,13 +22,13 @@ import { rewindCodexRollout } from "./seance-codex.js";
 const USAGE = `Usage: trunk-sync seance <file:line> [--inspect]
        trunk-sync seance --list
 
-Find which Claude session wrote a line of code and fork that session.
+Find which Claude or Codex session wrote a line of code and fork that session.
 
 Arguments:
   <file:line>   File path and line number, e.g. src/main.ts:42
 
 Options:
-  --inspect     Show commit and session info without launching Claude
+  --inspect     Show commit and session info without launching the CLI
   --list        List all trunk-sync sessions found in git history
   -h, --help    Show this help message`;
 
