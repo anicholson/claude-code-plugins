@@ -47,7 +47,7 @@ run_pair() {
   docker run --rm \
     --name "contree-test-${name}-${harness}-$$" \
     -e ANTHROPIC_API_KEY \
-    -e OPENAI_API_KEY \
+    -e "CODEX_API_KEY=${OPENAI_API_KEY:-}" \
     -v "$REPO_ROOT:/repo:ro" \
     -v "$SCRIPT_DIR:/output" \
     "$IMAGE_NAME" \
