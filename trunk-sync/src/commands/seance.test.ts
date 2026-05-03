@@ -91,6 +91,10 @@ describe("seance", () => {
     assert.match(output, /not created by trunk-sync/);
   });
 
+  });
+
+  describe("seance --list", () => {
+
   it("--list shows sessions", () => {
     const file = join(dir, "code.ts");
     writeFileSync(file, "v1\n");
