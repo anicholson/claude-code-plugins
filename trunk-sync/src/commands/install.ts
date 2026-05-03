@@ -159,7 +159,11 @@ export function upsertCodexMarketplace(marketplacePath: string): void {
 
   const entry: CodexMarketplaceEntry = {
     name: "trunk-sync",
-    source: { source: "github", url: `https://github.com/${REPO}` },
+    source: {
+      source: "git-subdir",
+      url: `https://github.com/${REPO}.git`,
+      path: "./trunk-sync",
+    },
     policy: { installation: "AVAILABLE", authentication: "ON_INSTALL" },
     category: "Productivity",
   };
