@@ -6,6 +6,11 @@ if [[ ! "$BUMP" =~ ^(patch|minor|major)$ ]]; then
   echo "Usage: publish-trunk-sync.sh <patch|minor|major>" >&2
   exit 1
 fi
+
+if [ -z "${SUSU_ENG_NPM_TOKEN:-}" ]; then
+  echo "SUSU_ENG_NPM_TOKEN is not set — export it before publishing" >&2
+  exit 1
+fi
 REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 
 cd "$REPO_ROOT/trunk-sync"
