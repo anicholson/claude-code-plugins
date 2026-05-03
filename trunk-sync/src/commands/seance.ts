@@ -9,6 +9,7 @@ import {
   getCommitSubject,
   getCommitDate,
   getCommitTimestamp,
+  extractAgent,
   extractSessionId,
   extractTranscriptPath,
   findSnapshotInCommit,
@@ -16,6 +17,7 @@ import {
   shortSha,
   getGitRoot,
 } from "../lib/git.js";
+import { rewindCodexRollout } from "./seance-codex.js";
 
 const USAGE = `Usage: trunk-sync seance <file:line> [--inspect]
        trunk-sync seance --list
