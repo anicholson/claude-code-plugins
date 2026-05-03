@@ -593,4 +593,6 @@ exit 0
     rmSync(fakeHome, { recursive: true, force: true });
   });
 
+  });
+
 });
