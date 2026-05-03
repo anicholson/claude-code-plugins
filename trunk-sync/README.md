@@ -4,24 +4,22 @@ A distributed file system for multi-agent software engineering, built on Git.
 
 Many Claude Code agents can work in the same repo at once — on worktrees, across remote machines, on [OpenClaw](https://openclaw.com), any mix. Everything stays in sync, agents work around each other, nothing gets left behind, and there's nothing manual to do. If you're confused about some code an agent wrote, you can summon its author with Seance.
 
-Two pieces: a **Claude Code hook** that turns Git into continuous integration for agents, and a **CLI** with install, config, and seance commands.
+Two pieces: a **Claude Code / Codex CLI hook** that turns Git into continuous integration for agents, and a **CLI** with install, config, and seance commands.
 
 ## Install
 
 ```bash
 npm install -g trunk-sync
-trunk-sync install
+trunk-sync install                  # Claude Code, project scope
+trunk-sync install --scope user     # Claude Code, all repos
+trunk-sync install --client codex   # OpenAI Codex CLI
 ```
 
 That's it. Every file edit is now committed and pushed automatically.
 
-Project scope by default (config committed to git, so collaborators get it too). For user scope (all repos):
+The Codex install writes an entry to `~/.agents/plugins/marketplace.json`; finish in Codex with `/plugins install trunk-sync`.
 
-```bash
-trunk-sync install --scope user
-```
-
-**Prerequisites:** [Claude Code](https://docs.anthropic.com/en/docs/claude-code) CLI, `jq`, a git repo with a remote (`origin`).
+**Prerequisites:** [Claude Code](https://docs.anthropic.com/en/docs/claude-code) or [Codex CLI](https://developers.openai.com/codex), `jq`, a git repo with a remote (`origin`).
 
 ## How it works
 
