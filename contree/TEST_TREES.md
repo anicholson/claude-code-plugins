@@ -298,7 +298,7 @@ composable-testing (src: skills/setup/SKILL.md; unit: test/composable-testing.ba
 ## pressure-phrase-on-session-start
 
 ```
-pressure-phrase-on-session-start (src: hooks/pressure-phrases.sh; unit: test/pressure-phrases.bats)
+pressure-phrase-on-session-start (src: hooks/pressure-phrases.sh; unit: test/pressure-phrases.bats; functional: test/functional/docker-entrypoint.sh)
   when a session starts
     then one pressure phrase is appended to the rules output
     and the phrase is randomly drawn from the pressure-phrase pool in hooks/pressure-phrases.sh
