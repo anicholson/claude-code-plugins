@@ -8,6 +8,7 @@ import {
   parseFileRef,
   extractSessionId,
   extractTranscriptPath,
+  extractAgent,
   blame,
   getCommitBody,
   getCommitTimestamp,
