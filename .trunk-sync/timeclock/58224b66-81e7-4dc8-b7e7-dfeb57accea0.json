@@ -1,9 +1,0 @@
-{
-  "sessionId": "58224b66-81e7-4dc8-b7e7-dfeb57accea0",
-  "pid": 76377,
-  "hostname": "Eli Mydlarz",
-  "clockedInAt": "2026-05-03T10:15:41.221Z",
-  "lastActiveAt": "2026-05-03T10:16:50.235Z",
-  "branch": "main",
-  "task": "modify the turnk sync npm publish process to use SUSU_ENG_NPM_TOKEN env "
-}
