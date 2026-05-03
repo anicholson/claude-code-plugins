@@ -532,7 +532,10 @@ exit 0
     const newUuid = uuidMatch![1];
     assert.notEqual(newUuid, originalUuid, "new UUID should differ from original");
 
-    assert.ok(existsSync(captureFile), "fake codex should have captured the rewritten rollout");
+    assert.ok(
+      existsSync(captureFile),
+      `fake codex should have captured the rewritten rollout. log=${existsSync(logFile) ? readFileSync(logFile, "utf-8") : "(no log)"} sessions=${execSync(`find "${fakeHome}/.codex" -type f 2>/dev/null || true`, { encoding: "utf-8" })}`,
+    );
     const capturedLines = readFileSync(captureFile, "utf-8").split("\n").filter(Boolean);
     assert.equal(capturedLines.length, 3, "should drop the line after the commit timestamp");
     const sessionMeta = JSON.parse(capturedLines[0]);
