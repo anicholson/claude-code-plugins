@@ -734,6 +734,49 @@ assert_exit 2 "git-block: git stash pop is blocked"
 run_git_block "$(make_bash_input "ls -la")"
 assert_exit 0 "git-block: non-git command passes through"
 
+# --- Codex local_shell git-block ---
+
+# Extract the local_shell PreToolUse command (second PreToolUse entry in hooks.json)
+LOCAL_SHELL_BLOCK_CMD=$(jq -r '.hooks.PreToolUse[1].hooks[0].command' "$HOOKS_JSON")
+
+run_local_shell_block() {
+  local input="$1"
+  HOOK_EXIT=0
+  HOOK_STDERR=""
+  local stderr_file="$TMPDIR_BASE/stderr-localshell"
+  printf '%s' "$input" | bash -c "$LOCAL_SHELL_BLOCK_CMD" >/dev/null 2>"$stderr_file" || HOOK_EXIT=$?
+  HOOK_STDERR=$(cat "$stderr_file")
+}
+
+make_local_shell_input_array() {
+  jq -n --argjson c "$1" '{tool_input:{command:$c}}'
+}
+
+make_local_shell_input_string() {
+  jq -n --arg c "$1" '{tool_input:{command:$c}}'
+}
+
+# Codex 1: array-form git push is blocked
+run_local_shell_block "$(make_local_shell_input_array '["git","push","origin","main"]')"
+assert_exit 2 "local_shell git-block: array git push blocked"
+assert_contains "$HOOK_STDERR" "TRUNK-SYNC" "local_shell git-block: array git push gets feedback"
+
+# Codex 2: array-form git diff is allowed
+run_local_shell_block "$(make_local_shell_input_array '["git","diff","--stat"]')"
+assert_exit 0 "local_shell git-block: array git diff allowed"
+
+# Codex 3: array-form git log is allowed
+run_local_shell_block "$(make_local_shell_input_array '["git","log","--oneline"]')"
+assert_exit 0 "local_shell git-block: array git log allowed"
+
+# Codex 4: string-form git commit is blocked
+run_local_shell_block "$(make_local_shell_input_string "git commit -m foo")"
+assert_exit 2 "local_shell git-block: string git commit blocked"
+
+# Codex 5: array-form non-git command passes through
+run_local_shell_block "$(make_local_shell_input_array '["ls","-la"]')"
+assert_exit 0 "local_shell git-block: array non-git command passes through"
+
 # --- Transcript snapshots ---
 
 # 28. Default: no .transcripts/ created
