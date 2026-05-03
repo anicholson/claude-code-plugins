@@ -62,14 +62,15 @@ prime_codex_plugin() {
   CODEX_PRIMED=1
 
   mkdir -p "$HOME/.agents/plugins"
-  cat > "$HOME/.agents/plugins/marketplace.json" <<MARKETPLACE
+  ln -sfn "$CONTREE_ROOT" "$HOME/.agents/plugins/contree"
+  cat > "$HOME/.agents/plugins/marketplace.json" <<'MARKETPLACE'
 {
   "name": "local-marketplace",
   "interface": { "displayName": "Contree dev marketplace" },
   "plugins": [
     {
       "name": "contree",
-      "source": { "source": "local", "path": "$CONTREE_ROOT" },
+      "source": { "source": "local", "path": "./contree" },
       "policy": { "installation": "AVAILABLE", "authentication": "ON_INSTALL" },
       "category": "Productivity"
     }
