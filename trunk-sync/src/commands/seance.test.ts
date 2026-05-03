@@ -449,10 +449,13 @@ printf "args=" >> "${logFile}"
 printf "%s " "$@" >> "${logFile}"
 printf "\\n" >> "${logFile}"
 RESUME_ID=""
+prev=""
 for arg in "$@"; do
-  case "$arg" in
-    *-*-*-*-*) RESUME_ID="$arg"; break ;;
-  esac
+  if [ "$prev" = "resume" ]; then
+    RESUME_ID="$arg"
+    break
+  fi
+  prev="$arg"
 done
 printf "RESUME_ID=%s\\n" "$RESUME_ID" >> "${logFile}"
 printf "find_results=\\n" >> "${logFile}"
