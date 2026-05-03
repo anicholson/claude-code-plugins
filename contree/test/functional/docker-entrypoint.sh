@@ -89,6 +89,9 @@ MARKETPLACE
       echo 'enabled = true'
     } >> "$HOME/.codex/config.toml"
   fi
+
+  : "${OPENAI_API_KEY:?OPENAI_API_KEY required for codex harness}"
+  printenv OPENAI_API_KEY | codex login --with-api-key
 }
 
 AGENT_CALL_COUNT=0
