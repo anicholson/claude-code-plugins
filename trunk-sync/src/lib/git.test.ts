@@ -72,6 +72,17 @@ describe("extractSessionId", () => {
   });
 });
 
+describe("extractTranscriptPath", () => {
+  it("extracts transcript path from body", () => {
+    const body = "Session: abc-123\nTranscriptPath: /codex/sessions/abc.jsonl";
+    assert.equal(extractTranscriptPath(body), "/codex/sessions/abc.jsonl");
+  });
+
+  it("returns null when no TranscriptPath line", () => {
+    assert.equal(extractTranscriptPath("Session: abc-123"), null);
+  });
+});
+
 describe("blame and getCommitBody", () => {
   let dir: string;
 
