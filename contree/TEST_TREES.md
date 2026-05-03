@@ -342,8 +342,8 @@ dual-harness-compatibility (src: .claude-plugin/plugin.json, .codex-plugin/plugi
     and a manifest exists at .codex-plugin/plugin.json declaring skills as ./skills/ and hooks as ./hooks/hooks.json
     and both manifests carry the same name and version
     and one hooks/hooks.json is shared by both harnesses
-  when a bundled hook script runs
-    then it resolves its files via $CLAUDE_PLUGIN_ROOT alone
+  when a hook fires
+    then hooks.json invokes its script via $CLAUDE_PLUGIN_ROOT — the env var both harnesses set
   when an Edit, Write, MultiEdit, or apply_patch tool call completes
     then the PostToolUse matcher fires
 ```
