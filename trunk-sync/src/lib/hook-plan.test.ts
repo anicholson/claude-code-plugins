@@ -319,8 +319,17 @@ describe("buildSessionPrefix", () => {
 // ── buildCommitBody ──────────────────────────────────────────────────
 
 describe("buildCommitBody", () => {
-  it("includes session only", () => {
+  it("includes session and transcript path", () => {
     const input = makeInput();
+    const body = buildCommitBody(input, "src/main.ts");
+    assert.equal(
+      body,
+      "Session: abcdef12-3456-7890-abcd-ef1234567890\nTranscriptPath: ~/.claude/projects/proj/session.jsonl",
+    );
+  });
+
+  it("includes session only when transcript_path is absent", () => {
+    const input = makeInput({ transcript_path: null });
     const body = buildCommitBody(input, "src/main.ts");
     assert.equal(body, "Session: abcdef12-3456-7890-abcd-ef1234567890");
   });
