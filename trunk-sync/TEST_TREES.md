@@ -80,6 +80,10 @@ Migration note: trunk-sync was previously specified as a flat `## Requirements` 
       then the body includes Session only
     when no session id is present
       then the body is null
+    when the input tool is Claude's Edit/Write/Bash
+      then the body includes `Agent: claude`
+    when the input tool is Codex's apply_patch/local_shell
+      then the body includes `Agent: codex`
 
   extractTaskFromTranscript
     when the transcript starts with a user message
