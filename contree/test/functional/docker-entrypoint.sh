@@ -1,17 +1,19 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Runs the contree functional test.
+# Runs a contree functional case against a coding-agent harness.
 # Works both inside Docker (called by docker-run.sh) and directly on the host.
 #
 # Expects:
-#   - ANTHROPIC_API_KEY in environment or in .env file
-#   - $1 is the test name (currently just "full-workflow")
+#   - For claude: ANTHROPIC_API_KEY in environment or in .env
+#   - For codex:  OPENAI_API_KEY in environment or in .env
+#   - $1 is the test name (layered-workflow | mental-model-validator-smoke | describe-it-drift)
+#   - $2 is the harness  (claude | codex), default claude
 
-TEST_NAME="${1:?Usage: docker-entrypoint.sh <test-name>}"
+TEST_NAME="${1:?Usage: docker-entrypoint.sh <test-name> [claude|codex]}"
+HARNESS="${2:-claude}"
+case "$HARNESS" in claude|codex) ;; *) echo "Unknown harness: $HARNESS (use claude or codex)" >&2; exit 1;; esac
 
-# When running inside Docker, contree is at /work/contree.
-# When running locally, derive from script location.
 if [ -d "/work/contree" ]; then
   CONTREE_ROOT="/work/contree"
 else
@@ -19,7 +21,6 @@ else
   CONTREE_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 fi
 
-# Load .env if present (for local runs — API key for functional tests only)
 ENV_FILE="$CONTREE_ROOT/test/functional/.env"
 if [ -f "$ENV_FILE" ]; then
   set -a
@@ -29,15 +30,13 @@ if [ -f "$ENV_FILE" ]; then
 fi
 FIXTURES="$CONTREE_ROOT/test/fixtures"
 PROJECT_DIR="/tmp/contree-test-project"
-# Transcripts go next to this script (host) or /output (Docker)
 OUTPUT_DIR="$CONTREE_ROOT/test/functional"
 if [ -d "/output" ]; then
   OUTPUT_DIR="/output"
 fi
-TRANSCRIPT_FILE="$OUTPUT_DIR/${TEST_NAME}-transcript.jsonl"
-VERIFY_FILE="$OUTPUT_DIR/${TEST_NAME}-verify.txt"
+TRANSCRIPT_FILE="$OUTPUT_DIR/${TEST_NAME}-${HARNESS}-transcript.jsonl"
+VERIFY_FILE="$OUTPUT_DIR/${TEST_NAME}-${HARNESS}-verify.txt"
 
-# Clean transcript so phases append to a fresh file.
 rm -f "$TRANSCRIPT_FILE"
 
 # --- Helpers ---
@@ -53,29 +52,83 @@ seed_project() {
   (cd "$PROJECT_DIR" && git init -q && git config user.email "test@test" && git config user.name "test" && git add -A && git commit -q -m "seed")
 }
 
-# Tracks whether we've started a Claude session in this run — subsequent calls
-# pass `-c` to continue the same session so Claude has memory across phases.
-CLAUDE_CALL_COUNT=0
+CODEX_PRIMED=0
 
-run_claude() {
-  local prompt="$1"
-  shift
-  local continue_flag=()
-  if [ "$CLAUDE_CALL_COUNT" -gt 0 ]; then
-    continue_flag=(-c)
+prime_codex_plugin() {
+  # Codex loads plugins via marketplace.json + an enable flag in config.toml.
+  # A personal marketplace at ~/.agents/plugins/marketplace.json is cwd-independent.
+  # Pre-seeding the install cache avoids any first-run install prompt.
+  [ "$CODEX_PRIMED" -eq 1 ] && return 0
+  CODEX_PRIMED=1
+
+  mkdir -p "$HOME/.agents/plugins"
+  cat > "$HOME/.agents/plugins/marketplace.json" <<MARKETPLACE
+{
+  "name": "local-marketplace",
+  "interface": { "displayName": "Contree dev marketplace" },
+  "plugins": [
+    {
+      "name": "contree",
+      "source": { "source": "local", "path": "$CONTREE_ROOT" },
+      "policy": { "installation": "AVAILABLE", "authentication": "ON_INSTALL" },
+      "category": "Productivity"
+    }
+  ]
+}
+MARKETPLACE
+
+  mkdir -p "$HOME/.codex/plugins/cache/local-marketplace/contree"
+  ln -sfn "$CONTREE_ROOT" "$HOME/.codex/plugins/cache/local-marketplace/contree/local"
+
+  mkdir -p "$HOME/.codex"
+  if ! grep -q 'contree@local-marketplace' "$HOME/.codex/config.toml" 2>/dev/null; then
+    {
+      echo ''
+      echo '[plugins."contree@local-marketplace"]'
+      echo 'enabled = true'
+    } >> "$HOME/.codex/config.toml"
   fi
-  CLAUDE_CALL_COUNT=$((CLAUDE_CALL_COUNT + 1))
+}
 
-  # Don't abort on claude failure — we still need to emit the VERIFY file
-  (cd "$PROJECT_DIR" && claude -p "$prompt" \
-    "${continue_flag[@]}" \
-    --plugin-dir "$CONTREE_ROOT" \
-    --dangerously-skip-permissions \
-    --model sonnet \
-    --max-budget-usd 2.00 \
-    --output-format stream-json \
-    --verbose \
-    "$@" 2>&1) | tee -a "$TRANSCRIPT_FILE" || true
+AGENT_CALL_COUNT=0
+
+run_agent() {
+  local prompt="$1"
+  AGENT_CALL_COUNT=$((AGENT_CALL_COUNT + 1))
+
+  if [ "$HARNESS" = "claude" ]; then
+    local continue_flag=()
+    [ "$AGENT_CALL_COUNT" -gt 1 ] && continue_flag=(-c)
+    (cd "$PROJECT_DIR" && claude -p "$prompt" \
+      "${continue_flag[@]}" \
+      --plugin-dir "$CONTREE_ROOT" \
+      --dangerously-skip-permissions \
+      --model sonnet \
+      --max-budget-usd 2.00 \
+      --output-format stream-json \
+      --verbose \
+      2>&1) | tee -a "$TRANSCRIPT_FILE" || true
+    return
+  fi
+
+  prime_codex_plugin
+  if [ "$AGENT_CALL_COUNT" -eq 1 ]; then
+    (cd "$PROJECT_DIR" && codex exec \
+      --dangerously-bypass-approvals-and-sandbox \
+      --skip-git-repo-check \
+      --json \
+      -m gpt-5.4-mini \
+      -C "$PROJECT_DIR" \
+      "$prompt" 2>&1) | tee -a "$TRANSCRIPT_FILE" || true
+  else
+    (cd "$PROJECT_DIR" && codex exec resume --last \
+      --dangerously-bypass-approvals-and-sandbox \
+      --skip-git-repo-check \
+      --json \
+      -m gpt-5.4-mini \
+      -C "$PROJECT_DIR" \
+      "$prompt" 2>&1) | tee -a "$TRANSCRIPT_FILE" || true
+  fi
 }
 
 write_verify() {
@@ -84,17 +137,12 @@ write_verify() {
   cat "$VERIFY_FILE"
 }
 
-# --- Test ---
+# --- Test cases ---
 
 case "$TEST_NAME" in
   mental-model-validator-smoke)
-    # Verifies that the PostToolUse hook fires on a MENTAL_MODEL.md edit and
-    # the mental-model validator's findings reach Claude's next response via
-    # additionalContext JSON (visible in the transcript as a hook event).
     seed_project "greenfield"
 
-    # Seed MENTAL_MODEL.md deliberately malformed: missing the Temporal View
-    # section, plus a rogue H2. Hook fires after Claude edits it.
     cat > "$PROJECT_DIR/MENTAL_MODEL.md" <<'MM'
 ## Core Domain Identity
 
@@ -126,7 +174,7 @@ case "$TEST_NAME" in
 MM
     (cd "$PROJECT_DIR" && git add -A && git commit -q -m "seed: malformed MENTAL_MODEL.md")
 
-    run_claude \
+    run_agent \
       "Read MENTAL_MODEL.md and add one placeholder bullet to the Invariants section. Save the file. Do nothing else."
 
     write_verify << 'VERIFY'
@@ -134,7 +182,7 @@ Evaluate the transcript against the `post-update-hook` and `mental-model-validat
 
 The scenario: MENTAL_MODEL.md was seeded malformed (missing the Temporal View
 section; contains an extra "Rogue Extra Section" heading that is not one of
-the seven named sections). Claude then edits the file. The PostToolUse hook
+the seven named sections). The agent then edits the file. The PostToolUse hook
 must fire, invoke the validator, and surface its findings via additionalContext
 JSON, visible in the transcript as a hook event.
 
@@ -143,95 +191,31 @@ Expected signals in the transcript:
   - a hook-event entry whose hookEventName is "PostToolUse"
   - additionalContext naming the missing "Temporal View" section
   - additionalContext naming the rogue "Rogue Extra Section" heading
-  - Claude acknowledges the findings in its next response
+  - the agent acknowledges the findings in its next response
 
 For each `when/then` path in `post-update-hook` and `mental-model-validator`,
 return PASS / FAIL / N/A with quoted evidence. Report counts at the end.
 VERIFY
     ;;
 
-  full-workflow)
-    # One scenario, three phases in one session, covers every tree in
-    # contree/CLAUDE.md ## Test Trees.
-    seed_project "greenfield"
-
-    echo ""
-    echo "=== Phase 1: setup ==="
-    run_claude \
-      "This project has no code yet — read CLAUDE.md for the Mental Model, then run /contree:setup to configure the test framework and generate test trees."
-
-    echo ""
-    echo "=== Phase 2: workflow (change → sync → tdd) ==="
-    run_claude \
-      "Now implement the project. Use /contree:workflow to set expected behaviour in trees and drive the implementation outside-in."
-
-    echo ""
-    echo "=== Phase 3: drift injection + sync ==="
-    # Inject drift: add an undocumented capability to the source without updating the trees.
-    DRIFT_TARGET=""
-    for candidate in \
-      "$PROJECT_DIR/src/codes.ts" "$PROJECT_DIR/src/codes.js" \
-      "$PROJECT_DIR/src/index.ts" "$PROJECT_DIR/src/index.js"; do
-      if [ -f "$candidate" ]; then
-        DRIFT_TARGET="$candidate"
-        break
-      fi
-    done
-    if [ -z "$DRIFT_TARGET" ]; then
-      DRIFT_TARGET="$(find "$PROJECT_DIR/src" -maxdepth 2 \( -name '*.ts' -o -name '*.js' \) -not -name '*.test.*' -not -name '*.spec.*' | head -n 1)"
-    fi
-    if [ -n "$DRIFT_TARGET" ] && [ -f "$DRIFT_TARGET" ]; then
-      cat >> "$DRIFT_TARGET" <<'DRIFT'
-
-// Drift injected by the functional harness — this capability is NOT in the trees.
-export function generateBatch(n) {
-  const out = []
-  for (let i = 0; i < n; i++) out.push(generate())
-  return out
-}
-DRIFT
-      (cd "$PROJECT_DIR" && git add -A && git commit -q -m "inject drift: generateBatch")
-      echo "[harness] Injected drift into $DRIFT_TARGET (added generateBatch)."
-    else
-      echo "[harness] WARNING: could not find a source file to drift. Phase 3 may PASS/FAIL on sync without seeing drift."
-    fi
-
-    run_claude \
-      "Something feels off in this project — please audit for drift between the trees and the implementation, then propose fixes."
-
-    write_verify << 'VERIFY'
-Evaluate the transcript against every tree in the plugin's
-`contree/CLAUDE.md` `## Test Trees` section.
-
-For each `when/then` (or `if/then`) path in each tree, return one of:
-
-  PASS — transcript demonstrates the assertion (quote evidence)
-  FAIL — transcript contradicts the assertion (quote evidence)
-  N/A  — the scenario did not exercise this assertion
-
-The trees ARE the checklist. Report results grouped by tree, then a final summary
-of PASS / FAIL / N/A counts across all trees.
-VERIFY
-    ;;
-
   layered-workflow)
-    # Exercises the Use-case / Adapter / port-contract / in-memory-adapter paths
-    # that full-workflow (pure utility) leaves as N/A.
+    # The single end-to-end journey: setup → workflow → drift+sync against an
+    # HTTP API fixture that exercises Domain, Use-case, Adapter (driving + driven),
+    # System, ports, and in-memory adapters. Run under both harnesses.
     seed_project "bookmarks-api"
 
     echo ""
     echo "=== Phase 1: setup ==="
-    run_claude \
+    run_agent \
       "This project has no code yet — read CLAUDE.md for the Mental Model, then run /contree:setup to configure the test framework and generate test trees. This project has HTTP endpoints and a persistence port, so expect trees at multiple layers."
 
     echo ""
     echo "=== Phase 2: workflow (change → sync → tdd) ==="
-    run_claude \
+    run_agent \
       "Now implement the project. Use /contree:workflow to set expected behaviour in trees and drive the implementation outside-in. The project has a BookmarkRepository port — remember to build an in-memory adapter and a shared port contract suite alongside the file-based production adapter."
 
     echo ""
     echo "=== Phase 3: drift injection + sync ==="
-    # Inject drift: add an undocumented DELETE endpoint without updating trees.
     HANDLER_FILE="$(find "$PROJECT_DIR/src" -maxdepth 3 \( -name '*.ts' -o -name '*.js' \) -not -name '*.test.*' -not -name '*.spec.*' -print0 | xargs -0 grep -l 'router\|app\.\(get\|post\|delete\|put\)' 2>/dev/null | head -n 1)"
     if [ -n "$HANDLER_FILE" ] && [ -f "$HANDLER_FILE" ]; then
       cat >> "$HANDLER_FILE" <<'DRIFT'
@@ -247,25 +231,28 @@ DRIFT
       echo "[harness] WARNING: could not find a route handler to drift. Phase 3 may not see drift."
     fi
 
-    run_claude \
+    run_agent \
       "Something feels off in this project — please audit for drift between the trees and the implementation, then propose fixes."
 
-    write_verify << 'VERIFY'
+    write_verify << VERIFY
 Evaluate the transcript against every tree in the plugin's
-`contree/CLAUDE.md` `## Test Trees` section.
+\`contree/CLAUDE.md\` \`## Test Trees\` section.
 
-Focus especially on the trees that exercise hex layering:
+Harness under test: **$HARNESS**.
+
+Focus areas:
   - change-decomposes-across-layers (port decomposition, in-memory + real adapters, shared contract)
-  - change-writes-trees (Domain/Use-case/Port-contract trees must be code-shaped: top-level describes name the unit's exported functions/methods/port operations, and each path corresponds to an observable branch; Adapter and System trees use consumer vocabulary and describe principles, not enumerated cases)
-  - outside-in-tdd (Use-case wiring with in-memory adapters, Adapter with shared contract, System through driving adapter; every test file's describe/it hierarchy mirrors its tree verbatim)
-  - composable-testing (four file naming conventions, port contract suite)
+  - change-writes-trees (Domain/Use-case/Port-contract trees code-shaped; Adapter/System trees use consumer vocabulary)
+  - outside-in-tdd (Use-case wired with in-memory adapters; Adapter runs shared contract; describe/it mirrors trees verbatim)
+  - composable-testing (file naming conventions, port contract suite)
+  - dual-harness-compatibility (when run under codex: SessionStart rules visible in transcript; PostToolUse hook fires after edits)
 
-Specific layer-shape checks for generated trees/tests:
-  - Inspect TEST_TREES.md — at least one Domain, Use-case, or Port-contract tree has top-level nodes named after the unit's functions/methods/operations (not as `when X is called` patterns at the root).
-  - Inspect the corresponding test file for at least one such tree — its describe/it hierarchy mirrors the tree verbatim (top-level `describe` names the unit, second-level `describe` names a function/method/operation, inner `describe`/`it` names the when/then path).
-  - Any Adapter or System tree uses consumer vocabulary, not implementation internals, and describes principles rather than enumerated concrete values.
+Specific layer-shape checks:
+  - Inspect TEST_TREES.md — at least one Domain/Use-case/Port-contract tree has top-level nodes named after the unit's functions/methods/operations.
+  - Inspect the corresponding test file — describe/it mirrors the tree verbatim.
+  - Adapter/System trees use consumer vocabulary, describe principles not enumerated cases.
 
-For each `when/then` (or `if/then`) path in each tree, return one of:
+For each \`when/then\` path in each tree, return one of:
 
   PASS — transcript demonstrates the assertion (quote evidence)
   FAIL — transcript contradicts the assertion (quote evidence)
@@ -277,13 +264,9 @@ VERIFY
     ;;
 
   describe-it-drift)
-    # One-shot: pre-seeded fixture where the test file's describe/it hierarchy
-    # deliberately does NOT match the tree, but the code and tree agree.
-    # Verifies sync flags describe/it drift and asks the user which side is
-    # authoritative, without picking.
     seed_project "describe-it-drift"
 
-    run_claude \
+    run_agent \
       "Check this project for drift between the test trees and the test files."
 
     write_verify << 'VERIFY'
@@ -300,12 +283,12 @@ The code and the tree agree — only the test file's structure has drifted.
 
 Expected signals in the transcript:
 
-  - Claude invokes /contree:sync or follows the sync process
-  - Claude identifies describe/it drift — the test file's describe/it hierarchy
+  - the agent invokes /contree:sync or follows the sync process
+  - the agent identifies describe/it drift — the test file's describe/it hierarchy
     does not mirror the tree verbatim
-  - Claude presents BOTH the tree paths AND the test file's describe/it structure
+  - the agent presents BOTH the tree paths AND the test file's describe/it structure
     to the user
-  - Claude asks the user which side is authoritative — does NOT silently pick
+  - the agent asks the user which side is authoritative — does NOT silently pick
 
 For each expected signal, return PASS / FAIL / N/A with quoted evidence.
 Report counts at the end.
@@ -316,10 +299,11 @@ VERIFY
     echo "Unknown test: $TEST_NAME" >&2
     echo ""
     echo "Available tests:"
-    echo "  full-workflow                  — pure utility: setup → workflow → drift → sync (Domain-weighted)"
-    echo "  layered-workflow               — HTTP API: setup → workflow → drift → sync (exercises all four layers + ports + in-memory adapters)"
-    echo "  mental-model-validator-smoke   — one-shot: malformed MM + Claude edit → verifies PostToolUse hook emits validator findings"
-    echo "  describe-it-drift              — one-shot: pre-seeded tree + test file with deliberate describe/it mismatch → verifies sync flags it and asks user which is authoritative"
+    echo "  layered-workflow              — HTTP API: setup → workflow → drift → sync (every tree, every layer)"
+    echo "  mental-model-validator-smoke  — one-shot: malformed MM + agent edit → verifies PostToolUse hook + validator"
+    echo "  describe-it-drift             — one-shot: pre-seeded describe/it mismatch → verifies sync flags it"
+    echo ""
+    echo "Harness (2nd arg): claude | codex (default claude)"
     exit 1
     ;;
 esac
