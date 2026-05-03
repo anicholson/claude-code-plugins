@@ -150,7 +150,7 @@ describe("planHook normal commit", () => {
     assert.equal(plan.commit.subject, "auto(abcdef12): write src/main.ts");
     assert.equal(
       plan.commit.body,
-      "Session: abcdef12-3456-7890-abcd-ef1234567890\nTranscriptPath: ~/.claude/projects/proj/session.jsonl",
+      "Session: abcdef12-3456-7890-abcd-ef1234567890\nAgent: claude\nTranscriptPath: ~/.claude/projects/proj/session.jsonl",
     );
   });
 
