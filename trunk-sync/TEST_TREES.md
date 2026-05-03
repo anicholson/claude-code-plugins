@@ -226,7 +226,7 @@ Migration note: trunk-sync was previously specified as a flat `## Requirements` 
     when the commit contains no `.transcripts/` file
       then null is returned
 
-### Use-case: hook-execute (src: src/lib/hook-execute.ts; unit: src/lib/hook-execute.test.ts; integration: src/lib/hook-execute.test.ts; functional: test/trunk-sync.test.sh)
+### Use-case: hook-execute (src: src/lib/hook-execute.ts; unit: none; integration: src/lib/hook-execute.test.ts; functional: test/trunk-sync.test.sh)
 
   gatherRepoState
     when called outside a git repo
