@@ -1247,4 +1247,45 @@ describe("executePlan with clock-in", () => {
     // Own timecard should exist
     assert.ok(existsSync(join(timeclockDir, "my-session.json")));
   });
+
+  it("hook still exits 0 when clock-in fails (.trunk-sync unwritable)", () => {
+    // Block timeclock dir creation by making .trunk-sync a regular file —
+    // mkdirSync(".trunk-sync/timeclock", { recursive: true }) will throw ENOTDIR
+    writeFileSync(join(dir, ".trunk-sync"), "not a directory\n");
+
+    const filePath = join(dir, "code.txt");
+    writeFileSync(filePath, "code\n");
+    const clockInPlan: ClockInPlan = {
+      timecardPath: ".trunk-sync/timeclock/my-session.json",
+      timecard: {
+        sessionId: "my-session",
+        pid: process.pid,
+        hostname: "test-host",
+        clockedInAt: new Date().toISOString(),
+        lastActiveAt: new Date().toISOString(),
+        branch: "main",
+        task: null,
+      },
+    };
+    const plan: HookPlan = {
+      action: "commit-and-sync",
+      commit: {
+        filesToStage: [filePath],
+        filesToRemove: [],
+        subject: "auto: write code.txt",
+        body: null,
+      },
+      sync: null,
+      clockIn: clockInPlan,
+    };
+    const input = makeInput({ tool_input: { file_path: filePath } });
+    const state = makeState(dir);
+
+    const result = executePlan(plan, input, state);
+    assert.equal(result.exitCode, 0, `clock-in failure must not fail the hook; got ${result.exitCode} stderr=${result.stderr}`);
+
+    // Code change still committed
+    const subject = execSync("git log -1 --format=%s", { cwd: dir, encoding: "utf-8" }).trim();
+    assert.equal(subject, "auto: write code.txt");
+  });
 });
