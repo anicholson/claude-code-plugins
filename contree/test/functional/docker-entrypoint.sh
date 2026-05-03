@@ -76,8 +76,7 @@ plugin_hooks = true
 enabled = true
 CONFIG
 
-  : "${OPENAI_API_KEY:?OPENAI_API_KEY required for codex harness}"
-  printenv OPENAI_API_KEY | codex login --with-api-key
+  : "${CODEX_API_KEY:?CODEX_API_KEY required for codex harness (set from OPENAI_API_KEY in docker-run.sh)}"
 }
 
 AGENT_CALL_COUNT=0
