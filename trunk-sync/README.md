@@ -49,20 +49,20 @@ Agents with dead processes are automatically clocked out. Remote agents that go 
 
 ## Seance — summon the author of any line of code
 
-Point at any line, and seance rewinds the codebase and the Claude session back to the exact moment that line was written. Ask the agent what it was thinking, why it made that choice, what it considered and rejected.
+Point at any line, and seance rewinds the codebase and the agent's session back to the exact moment that line was written. Ask the agent what it was thinking, why it made that choice, what it considered and rejected. Works for both Claude and Codex commits — seance reads the commit body's `Agent:` field and forks the matching CLI.
 
 ```bash
 # Rewind and resume the session that wrote line 42
 trunk-sync seance src/main.ts:42
 
-# Just show which session wrote it, without launching Claude
+# Just show which session wrote it, without launching the CLI
 trunk-sync seance src/main.ts:42 --inspect
 
 # List all trunk-sync sessions in the repo
 trunk-sync seance --list
 ```
 
-Under the hood: `git blame` → commit → session ID → transcript rewind → checkout at that commit → resume Claude with the same context it had. The resumed agent is read-only — it explains and explores but cannot edit.
+Under the hood: `git blame` → commit → session ID + agent → transcript rewind → checkout at that commit → resume the original CLI with the same context it had. Read-only: Claude is launched with `--allowedTools Read` + plan mode; Codex is launched with `--sandbox read-only --ask-for-approval never`. The resumed agent explains and explores but cannot edit.
 
 ### Transcript commits
 
