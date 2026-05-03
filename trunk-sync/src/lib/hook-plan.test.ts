@@ -324,19 +324,33 @@ describe("buildCommitBody", () => {
     const body = buildCommitBody(input, "src/main.ts");
     assert.equal(
       body,
-      "Session: abcdef12-3456-7890-abcd-ef1234567890\nTranscriptPath: ~/.claude/projects/proj/session.jsonl",
+      "Session: abcdef12-3456-7890-abcd-ef1234567890\nAgent: claude\nTranscriptPath: ~/.claude/projects/proj/session.jsonl",
     );
   });
 
   it("includes session only when transcript_path is absent", () => {
     const input = makeInput({ transcript_path: null });
     const body = buildCommitBody(input, "src/main.ts");
-    assert.equal(body, "Session: abcdef12-3456-7890-abcd-ef1234567890");
+    assert.equal(body, "Session: abcdef12-3456-7890-abcd-ef1234567890\nAgent: claude");
   });
 
   it("returns null when no session", () => {
     const input = makeInput({ session_id: null });
     assert.equal(buildCommitBody(input, "src/main.ts"), null);
+  });
+
+  it("includes Agent: claude when tool is Claude's Edit/Write/Bash", () => {
+    for (const tool_name of ["Edit", "Write", "Bash"]) {
+      const body = buildCommitBody(makeInput({ tool_name }), "src/main.ts");
+      assert.match(body ?? "", /^Agent: claude$/m, `tool ${tool_name}`);
+    }
+  });
+
+  it("includes Agent: codex when tool is Codex's apply_patch/local_shell", () => {
+    for (const tool_name of ["apply_patch", "local_shell"]) {
+      const body = buildCommitBody(makeInput({ tool_name }), "src/main.ts");
+      assert.match(body ?? "", /^Agent: codex$/m, `tool ${tool_name}`);
+    }
   });
 });
 
