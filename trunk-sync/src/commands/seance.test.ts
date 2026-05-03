@@ -66,6 +66,10 @@ describe("seance", () => {
     assert.match(output, /Session:\s+shift-test-session/);
   });
 
+  });
+
+  describe("seance preconditions", () => {
+
   it("errors on uncommitted line", () => {
     const file = join(dir, "code.ts");
     writeFileSync(file, "committed\n");
