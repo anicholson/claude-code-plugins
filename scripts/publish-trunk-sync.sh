@@ -52,8 +52,10 @@ git -C "$REPO_ROOT" tag "v$VERSION"
 
 # Publish to npm — auth via SUSU_ENG_NPM_TOKEN, no OTP
 echo "==> Publish to npm"
-npm_config_//registry.npmjs.org/:_authToken="$SUSU_ENG_NPM_TOKEN" \
-  pnpm publish --no-git-checks
+NPMRC="$REPO_ROOT/trunk-sync/.npmrc"
+trap 'rm -f "$NPMRC"' EXIT
+printf '//registry.npmjs.org/:_authToken=%s\n' "$SUSU_ENG_NPM_TOKEN" > "$NPMRC"
+pnpm publish --no-git-checks
 
 # Push commits + tag to GitHub
 echo "==> Push to GitHub"
