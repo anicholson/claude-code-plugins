@@ -318,7 +318,7 @@ rules-loading (src: hooks/session-start.sh; unit: test/rules-loading.bats; funct
 ## self-care-20-20-20
 
 ```
-self-care-20-20-20 (src: hooks/self-care-20-20-20.sh; unit: test/self-care.bats)
+self-care-20-20-20 (src: hooks/self-care-20-20-20.sh; unit: test/self-care.bats; functional: test/functional/docker-entrypoint.sh)
   when the UserPromptSubmit hook fires in any session
     when the heartbeat is recorded
       then heartbeats older than one hour are pruned
