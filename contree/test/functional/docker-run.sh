@@ -38,7 +38,7 @@ if ! docker image inspect "$BASE_IMAGE" >/dev/null 2>&1; then
   echo "[harness] Base image $BASE_IMAGE not present locally — pulling..."
   docker pull "$BASE_IMAGE"
 fi
-docker build -q --pull=never -t "$IMAGE_NAME" -f "$SCRIPT_DIR/Dockerfile" "$TEST_DIR"
+docker build -q -t "$IMAGE_NAME" -f "$SCRIPT_DIR/Dockerfile" "$TEST_DIR"
 
 run_pair() {
   local name="$1"
