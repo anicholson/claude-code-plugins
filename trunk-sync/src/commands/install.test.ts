@@ -124,4 +124,78 @@ describe("install command", () => {
     const logged = readFileSync(logFile, "utf-8");
     assert.match(logged, /--scope user/);
   });
+
+  it("--client codex writes a marketplace entry into HOME/.agents/plugins/marketplace.json", () => {
+    const fakeHome = realpathSync(mkdtempSync(join(tmpdir(), "codex-home-")));
+    cleanupDirs.push(fakeHome);
+    makeFakeBin(fakeBinDir, "jq");
+
+    const { stdout, exitCode } = runInstall(
+      "--client codex",
+      { PATH: fakeBinDir, HOME: fakeHome },
+      gitDir,
+    );
+
+    assert.equal(exitCode, 0);
+    assert.match(stdout, /\/plugins install trunk-sync/);
+
+    const marketplacePath = join(fakeHome, ".agents", "plugins", "marketplace.json");
+    const marketplace = JSON.parse(readFileSync(marketplacePath, "utf-8"));
+    assert.equal(marketplace.name, "susu-eng");
+    const entry = marketplace.plugins.find((p: { name: string }) => p.name === "trunk-sync");
+    assert.ok(entry, "trunk-sync entry present");
+    assert.equal(entry.policy.installation, "AVAILABLE");
+    assert.equal(entry.policy.authentication, "ON_INSTALL");
+  });
+
+  it("--client codex is idempotent and does not duplicate the entry", () => {
+    const fakeHome = realpathSync(mkdtempSync(join(tmpdir(), "codex-home-")));
+    cleanupDirs.push(fakeHome);
+    makeFakeBin(fakeBinDir, "jq");
+
+    runInstall("--client codex", { PATH: fakeBinDir, HOME: fakeHome }, gitDir);
+    runInstall("--client codex", { PATH: fakeBinDir, HOME: fakeHome }, gitDir);
+
+    const marketplacePath = join(fakeHome, ".agents", "plugins", "marketplace.json");
+    const marketplace = JSON.parse(readFileSync(marketplacePath, "utf-8"));
+    const entries = marketplace.plugins.filter((p: { name: string }) => p.name === "trunk-sync");
+    assert.equal(entries.length, 1);
+  });
+
+  it("--client codex preserves unrelated existing plugins in marketplace.json", () => {
+    const fakeHome = realpathSync(mkdtempSync(join(tmpdir(), "codex-home-")));
+    cleanupDirs.push(fakeHome);
+    makeFakeBin(fakeBinDir, "jq");
+
+    const marketplacePath = join(fakeHome, ".agents", "plugins", "marketplace.json");
+    const dir = join(fakeHome, ".agents", "plugins");
+    execSync(`mkdir -p "${dir}"`);
+    writeFileSync(
+      marketplacePath,
+      JSON.stringify({
+        name: "susu-eng",
+        plugins: [
+          {
+            name: "other-plugin",
+            source: { source: "local", path: "./other" },
+            policy: { installation: "AVAILABLE", authentication: "ON_INSTALL" },
+            category: "Productivity",
+          },
+        ],
+      }) + "\n",
+    );
+
+    runInstall("--client codex", { PATH: fakeBinDir, HOME: fakeHome }, gitDir);
+
+    const marketplace = JSON.parse(readFileSync(marketplacePath, "utf-8"));
+    assert.equal(marketplace.plugins.length, 2);
+    assert.ok(marketplace.plugins.find((p: { name: string }) => p.name === "other-plugin"));
+    assert.ok(marketplace.plugins.find((p: { name: string }) => p.name === "trunk-sync"));
+  });
+
+  it("rejects invalid --client value", () => {
+    const { stderr, exitCode } = runInstall("--client gemini");
+    assert.equal(exitCode, 1);
+    assert.match(stderr, /[Cc]lient/);
+  });
 });
