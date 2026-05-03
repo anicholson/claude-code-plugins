@@ -124,6 +124,7 @@ export function buildCommitPlanWithTask(
   // When task is present, include File: line in body
   let body = `File: ${relPath}`;
   if (input.session_id) body += `\nSession: ${input.session_id}`;
+  if (input.transcript_path) body += `\nTranscriptPath: ${input.transcript_path}`;
 
   return { ...base, subject, body: body || null };
 }
