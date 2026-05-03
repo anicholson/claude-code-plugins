@@ -130,7 +130,6 @@ run_agent() {
       --skip-git-repo-check \
       --json \
       -m gpt-5.4-mini \
-      -C "$PROJECT_DIR" \
       "$prompt" 2>&1) | tee -a "$TRANSCRIPT_FILE" || true
   fi
 }
