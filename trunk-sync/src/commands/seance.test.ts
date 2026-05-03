@@ -242,6 +242,17 @@ exit 0
     const capturedLines = readFileSync(captureFile, "utf-8").split("\n").filter(Boolean);
     assert.equal(capturedLines.length, 3, "should have all 3 lines (timestamps <= commit time)");
 
+    // seance-read-only: claude is launched with restrictive flags
+    const loggedArgs = readFileSync(logFile, "utf-8");
+    assert.match(loggedArgs, /--allowedTools Read,Bash\(git log:\*\),Bash\(git show:\*\),Bash\(git diff:\*\)/);
+    assert.match(loggedArgs, /--permission-mode plan/);
+    assert.match(loggedArgs, /--append-system-prompt/);
+
+    // seance-context-purity: system prompt forbids tool calls in the first response
+    assert.match(loggedArgs, /SEANCE MODE/);
+    assert.match(loggedArgs, /MUST NOT edit, write, or create any files/);
+    assert.match(loggedArgs, /first response must be a direct explanation with ZERO tool calls/);
+
     rmSync(binDir, { recursive: true, force: true });
   });
 
