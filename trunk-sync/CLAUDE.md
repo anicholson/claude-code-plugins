@@ -89,6 +89,11 @@ test/local-cleanup.sh         — manual test teardown
 - **clock-in-throttle**: messages are throttled to once per 5 minutes per session via a timestamp file in `$TMPDIR`
 - **clock-in-best-effort**: clocking in never fails the hook — all errors are caught and silently ignored
 - **doc-alignment**: user-facing docs (README, rules, CLI output) must stay consistent with requirements — worktree mode is optional (for multi-agent), not required for single-agent use
+- **apply-patch-sync**: when PostToolUse fires with `tool_name: "apply_patch"` (Codex's file-edit tool), the hook stages dirty tracked files and commits — the patch envelope in `tool_input.input` is not parsed; discovery happens via `git status` (mirrors `modification-sync`)
+- **local-shell-sync**: when PostToolUse fires with `tool_name: "local_shell"` (Codex's shell tool), the hook treats it equivalently to `Bash` — stages and commits any tracked file changes the command produced
+- **git-block-local-shell**: PreToolUse on `local_shell` rejects (exit 2, same `TRUNK-SYNC` feedback) when `tool_input.command` starts with `git`, except for the same allowlist as `Bash` (`clone`, `diff`, `log`, `show`, and `-C` variants); array-form `command` (e.g. `["git","push"]`) is space-joined before matching
+- **install-codex**: `trunk-sync install --client codex` writes/updates `~/.agents/plugins/marketplace.json` with a `susu-eng` entry pointing at the GitHub repo, and prints next-step guidance ("run `/plugins install trunk-sync` in Codex"); does NOT shell out to a codex install command (none exists). Default `--client` remains `claude`
+- **seance-transcript-from-payload**: when the hook payload includes a `transcript_path` field (Codex provides this directly), the commit body records that path verbatim alongside `Session: <uuid>`; falls back to derivation via `~/.claude/projects/<slug>/<sessionId>.jsonl` when the field is absent (Claude Code path stays unchanged)
 
 ## Development
 
