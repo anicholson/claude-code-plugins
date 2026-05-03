@@ -52,48 +52,15 @@ test/local-setup.sh           — manual test setup
 test/local-cleanup.sh         — manual test teardown
 ```
 
-## Requirements
+## Behaviour Contract
 
-- **auto-commit**: every Edit/Write fires the hook, which stages and commits the changed file (works on any branch, not just main)
-- **auto-sync**: after commit, pull from origin's default branch (--no-rebase) then push HEAD to it; silently skipped when no remote is configured
-- **git-block**: PreToolUse hook on Bash rejects any `git` command before execution, with feedback directing the agent to use Edit instead — `git clone`, `git diff`, `git log`, and `git show` are allowed through (read-only commands agents need for inspecting changes), including `git -C <path>` variants of those commands
-- **conflict-feedback**: merge conflicts exit 2 with self-contained instructions for the agent
-- **conflict-resolve**: if MERGE_HEAD exists, the hook completes the merge (agent already edited)
-- **push-retry**: one automatic pull+push retry on push failure
-- **deletion-sync**: deleted tracked files are staged and committed when the hook fires with no file_path
-- **modification-sync**: modified tracked files (including permission-only changes) are staged and committed when the hook fires with no file_path — covers chmod and other Bash-caused changes to tracked files
-- **session-trace**: commit body includes `Session: <uuid>` for seance lookback
-- **transcript-enrich**: commit subject extracted from session transcript's first user message
-- **install-preconditions**: CLI hard-checks jq and claude; warns if no git repo (project scope only — user scope suppresses since cwd is irrelevant); silently accepts missing remote
-- **graceful-no-git**: hook exits 0 (no-op) when not inside a git repo
-- **graceful-no-remote**: hook commits locally and silently skips pull/push when no remote is configured
-- **install-marketplace**: CLI adds the GitHub repo as marketplace `susu-eng` (not `trunk-sync`, to avoid cache path collision with the plugin name), updates the marketplace to avoid stale cache, then installs `trunk-sync@susu-eng`
-- **install-scope**: default project scope (`.claude/plugins.json`), `--scope user` for all repos (`~/.claude/plugins.json`)
-- **seance-inspect**: `--inspect` prints commit SHA, subject, session ID without launching claude
-- **seance-list**: `--list` deduplicates sessions from `git log --grep` and prints a table
-- **seance-origline**: `blame()` returns the original line number in the blamed commit (from porcelain output); the seance prompt uses this original line number and includes the actual code content from the current file, so the agent can identify the correct line even if line numbers shift between the blamed commit and HEAD
-- **seance-rewind**: default mode truncates the session transcript to the blamed commit's timestamp, writes it as a new session file in the worktree's project directory (`~/.claude/projects/<worktree-slug>/`), rewrites `sessionId` and `cwd` fields inside the JSONL entries to match the new session ID and worktree path, and resumes from that point — so the forked Claude has the same context it had when it wrote the code. The file must be in the worktree's project directory (not the original project's) because Claude resolves `--resume` relative to the cwd's project slug, and the internal `sessionId` must match the filename.
-- **seance-rewind-cleanup**: the temporary rewound transcript file is deleted after Claude exits
-- **seance-read-only**: resumed agent is restricted to minimal tools (`Read` and narrow git commands only — no `Grep`, `Glob`, `Agent`, `WebSearch`, `WebFetch`), forced into plan permission mode (`--permission-mode plan`) as a fallback, and given a system prompt (`--append-system-prompt`) enforcing seance mode — it cannot edit, write, or create files
-- **seance-context-purity**: the resumed agent must answer from its restored conversation context first, with zero tool calls in its initial response — the system prompt and user prompt both explicitly forbid research before answering, because the whole point of transcript rewind is that the agent already has the context it had when it wrote the code
-- **config-file**: `~/.trunk-sync` stores user config as key=value; managed via `trunk-sync config`
-- **config-get**: `trunk-sync config <key>` prints the value of a single key, falling back to a built-in default (e.g. `commit-transcripts` defaults to `false`); exits 1 with "Unknown key" for unrecognized keys
-- **transcript-snapshot**: when `commit-transcripts=true`, hook copies transcript to `.transcripts/` and amends the code commit to include it
-- **snapshot-lookup**: seance finds snapshot via `git diff-tree` on the code commit, falls back to derived transcript path (`~/.claude/projects/<slug>/<sessionId>.jsonl`)
+Behavioural requirements live as test trees in [`TEST_TREES.md`](./TEST_TREES.md). Each tree reifies one test file; each path corresponds to one `describe`/`it`. Trees are the contract — modify trees before code, then drive code from failing tests.
+
+## Conventions (non-behavioural)
+
 - **version-sync**: `npm version` automatically updates `.claude-plugin/plugin.json` to match `package.json` via the `version` lifecycle script
 - **dist-tracked**: `dist/` is committed to git (excluding tests and `.d.ts`) so marketplace plugin installs have the compiled hook entry point
-- **clock-in**: on every commit, the hook writes a timecard to `.trunk-sync/timeclock/<session-id>.json` with pid, hostname, branch, clockedInAt, lastActiveAt, and task (extracted from transcript) — preserving clockedInAt across updates
-- **clock-in-message**: after clocking in, the hook reads all timecards, classifies them (own session excluded), and surfaces a throttled message (exit 2, prefixed `TRUNK-SYNC CLOCK-IN:`) when other agents are clocked in — includes each agent's task; message explicitly tells the agent no action is required and to continue its work
-- **clock-out-local**: agents on the same hostname with a dead PID (checked via `process.kill(pid, 0)`) are clocked out (timecard removed and staged)
-- **clock-out-remote**: agents on a different hostname with lastActiveAt older than 30 minutes are clocked out
-- **clock-in-throttle**: messages are throttled to once per 5 minutes per session via a timestamp file in `$TMPDIR`
-- **clock-in-best-effort**: clocking in never fails the hook — all errors are caught and silently ignored
-- **doc-alignment**: user-facing docs (README, rules, CLI output) must stay consistent with requirements — worktree mode is optional (for multi-agent), not required for single-agent use
-- **apply-patch-sync**: when PostToolUse fires with `tool_name: "apply_patch"` (Codex's file-edit tool), the hook stages dirty tracked files and commits — the patch envelope in `tool_input.input` is not parsed; discovery happens via `git status` (mirrors `modification-sync`)
-- **local-shell-sync**: when PostToolUse fires with `tool_name: "local_shell"` (Codex's shell tool), the hook treats it equivalently to `Bash` — stages and commits any tracked file changes the command produced
-- **git-block-local-shell**: PreToolUse on `local_shell` rejects (exit 2, same `TRUNK-SYNC` feedback) when `tool_input.command` starts with `git`, except for the same allowlist as `Bash` (`clone`, `diff`, `log`, `show`, and `-C` variants); array-form `command` (e.g. `["git","push"]`) is space-joined before matching
-- **install-codex**: `trunk-sync install --client codex` writes/updates `~/.agents/plugins/marketplace.json` with a `susu-eng` entry pointing at the GitHub repo, and prints next-step guidance ("run `/plugins install trunk-sync` in Codex"); does NOT shell out to a codex install command (none exists). Default `--client` remains `claude`
-- **seance-transcript-from-payload**: when the hook payload includes a `transcript_path` field (Codex provides this directly), the commit body records that path verbatim alongside `Session: <uuid>`; falls back to derivation via `~/.claude/projects/<slug>/<sessionId>.jsonl` when the field is absent (Claude Code path stays unchanged)
+- **doc-alignment**: user-facing docs (README, rules, CLI output) must stay consistent with the trees — worktree mode is optional (for multi-agent), not required for single-agent use
 
 ## Development
 
