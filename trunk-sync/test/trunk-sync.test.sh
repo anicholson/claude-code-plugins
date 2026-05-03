@@ -777,6 +777,83 @@ assert_exit 2 "local_shell git-block: string git commit blocked"
 run_local_shell_block "$(make_local_shell_input_array '["ls","-la"]')"
 assert_exit 0 "local_shell git-block: array non-git command passes through"
 
+# --- Codex PostToolUse: apply_patch and local_shell ---
+#
+# Intent: when Codex fires PostToolUse with its native tool names, the hook
+# treats the change like a file-edit even though the payload carries no
+# `file_path` field — discovery happens via `git status` (mirrors the
+# Edit/Write-with-no-file_path code path that already powers modification-sync
+# and deletion-sync). The patch envelope and local_shell command body are
+# never parsed; the hook trusts git to surface what actually changed on disk.
+
+make_apply_patch_input() {
+  local session_id="${1:-}"
+  local patch_envelope="${2:-*** Begin Patch\n*** End Patch\n}"
+  jq -n \
+    --arg sid "$session_id" \
+    --arg patch "$patch_envelope" \
+    '{tool_input:{input:$patch}, session_id:$sid, tool_name:"apply_patch", transcript_path:""}'
+}
+
+make_local_shell_post_input() {
+  local session_id="${1:-}"
+  local cmd_json="${2:-[\"true\"]}"
+  jq -n \
+    --arg sid "$session_id" \
+    --argjson c "$cmd_json" \
+    '{tool_input:{command:$c}, session_id:$sid, tool_name:"local_shell", transcript_path:""}'
+}
+
+# Codex P1. apply_patch: hook commits a modified tracked file even with no file_path
+setup_repos
+echo "v2 from codex apply_patch" > "$WT_A/seed.txt"
+BEFORE=$(commit_count "$WT_A")
+cd "$WT_A"
+run_hook "$(make_apply_patch_input "codex01a-aaaa-aaaa-aaaa-aaaaaaaaaaaa" "*** Begin Patch\n*** Update File: seed.txt\n@@\n-seed\n+v2 from codex apply_patch\n*** End Patch\n")"
+assert_exit 0 "codex apply_patch: hook exits 0"
+AFTER=$(commit_count "$WT_A")
+assert_eq "$AFTER" "$((BEFORE + 1))" "codex apply_patch: one new commit"
+HEAD_FILES=$(git -C "$WT_A" diff-tree --no-commit-id --name-only -r HEAD)
+assert_contains "$HEAD_FILES" "seed.txt" "codex apply_patch: modified file is in the commit"
+
+# Codex P2. apply_patch: hook commits a deleted tracked file even with no file_path
+setup_repos
+rm "$WT_A/seed.txt"
+BEFORE=$(commit_count "$WT_A")
+cd "$WT_A"
+run_hook "$(make_apply_patch_input "codex02d-bbbb-bbbb-bbbb-bbbbbbbbbbbb" "*** Begin Patch\n*** Delete File: seed.txt\n*** End Patch\n")"
+assert_exit 0 "codex apply_patch delete: hook exits 0"
+AFTER=$(commit_count "$WT_A")
+assert_eq "$AFTER" "$((BEFORE + 1))" "codex apply_patch delete: one new commit"
+LAST_SUBJECT=$(last_subject "$WT_A")
+assert_contains "$LAST_SUBJECT" "delete seed.txt" "codex apply_patch delete: subject describes deletion"
+
+# Codex P3. local_shell: hook commits a tracked file changed by a shell command
+setup_repos
+echo "v2 from codex local_shell" > "$WT_A/seed.txt"
+BEFORE=$(commit_count "$WT_A")
+cd "$WT_A"
+run_hook "$(make_local_shell_post_input "codex03s-cccc-cccc-cccc-cccccccccccc" '["sed","-i","","s/seed/v2 from codex local_shell/","seed.txt"]')"
+assert_exit 0 "codex local_shell: hook exits 0"
+AFTER=$(commit_count "$WT_A")
+assert_eq "$AFTER" "$((BEFORE + 1))" "codex local_shell: one new commit"
+HEAD_FILES=$(git -C "$WT_A" diff-tree --no-commit-id --name-only -r HEAD)
+assert_contains "$HEAD_FILES" "seed.txt" "codex local_shell: modified file is in the commit"
+
+# Codex P4. apply_patch: commit body carries Session: <uuid> for seance
+LAST_BODY=$(last_body "$WT_A")
+# The previous commit was from codex03s; assert P3's session id is in its body
+assert_contains "$LAST_BODY" "codex03s-cccc-cccc-cccc-cccccccccccc" "codex local_shell: Session: trailer in body"
+
+# Codex P5. apply_patch with a no-op patch (no actual file change) is a no-op
+setup_repos
+BEFORE=$(commit_count "$WT_A")
+cd "$WT_A"
+run_hook "$(make_apply_patch_input "codex05n-dddd-dddd-dddd-dddddddddddd" "*** Begin Patch\n*** End Patch\n")"
+assert_exit 0 "codex apply_patch no-op: hook exits 0"
+AFTER=$(commit_count "$WT_A")
+assert_eq "$AFTER" "$BEFORE" "codex apply_patch no-op: no commit when nothing changed"
+
 # --- Transcript snapshots ---
 
 # 28. Default: no .transcripts/ created
