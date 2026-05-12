@@ -40,14 +40,23 @@ claude plugin install contree@susu-eng --scope project
 Trees in `TEST_TREES.md` look like this:
 
 ```markdown
-### UserRegistration
+### CreateBookmark
 
-UserRegistration (src: src/features/user/domain/user-registration.ts; unit: src/features/user/domain/user-registration.domain.test.ts; integration: none; functional: none)
-  when a new user registers with valid details
-    then the user account is created
-    and a welcome email is sent
-  when the email is already registered
-    then registration is rejected
+CreateBookmark (src: src/features/bookmarks/system/create-bookmark.ts; unit: none; integration: none; functional: test/system/create-bookmark.system.test.ts)
+  when an authenticated user submits a bookmark with a valid URL
+    then the bookmark is persisted against their library
+    and the canonicalised URL is returned to the caller
+    when the same URL is submitted again by the same user
+      then the existing bookmark is returned unchanged
+      and no duplicate is created
+  while the bookmark store is unreachable
+    then the request fails fast with a retryable error
+  if the URL is malformed
+    then the request is rejected with a validation error
+  if the caller is not authenticated
+    then the request is rejected before the store is touched
+  where tag suggestions are enabled
+    then suggested tags accompany the response
 ```
 
 Each behavioural unit gets its own tree — slice (System), use-case, port contract, adapter, domain object. Every tree names its coverage in parenthesised semicolon-separated labelled pairs on the tree-name line. The categories are `src`, `unit`, `integration`, `functional`. Gaps are declared explicitly: `none` for a category that is expected but uncovered (so readers and `sync` spot it); categories that are genuinely not applicable are omitted. At Domain, Use-case, and Port-contract, trees are code-shaped: top-level describes are the unit's functions/methods and every path is an observable branch. At Adapter and System, trees describe observable behaviour at the seam using consumer vocabulary — principles, not enumerated cases. Every test file's describe/it hierarchy mirrors its tree verbatim.
