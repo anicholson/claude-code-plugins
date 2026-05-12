@@ -39,25 +39,47 @@ claude plugin install contree@susu-eng --scope project
 
 Trees in `TEST_TREES.md` look like this:
 
-```markdown
-### CreateBookmark
+A slice is described by a few small trees, one per hexagonal seam. For a bookmarks feature:
 
-CreateBookmark (src: src/features/bookmarks/system/create-bookmark.ts; unit: none; integration: none; functional: test/system/create-bookmark.system.test.ts)
+```markdown
+### canonicaliseUrl (Domain)
+
+canonicaliseUrl (src: src/features/bookmarks/domain/canonicalise-url.ts; unit: src/features/bookmarks/domain/canonicalise-url.domain.test.ts)
+  canonicaliseUrl
+    when the host contains mixed case
+      then the host is lower-cased
+    when the path has a trailing slash
+      then the trailing slash is stripped
+    when the URL uses the scheme's default port
+      then the port is removed
+    if the input cannot be parsed as a URL
+      then a ParseError is thrown
+
+### createBookmark (Use-case)
+
+createBookmark (src: src/features/bookmarks/use-cases/create-bookmark.ts; unit: src/features/bookmarks/use-cases/create-bookmark.usecase.test.ts)
+  createBookmark
+    when called with a valid URL for an authenticated user
+      then the URL is canonicalised via the Domain
+      and the bookmark is saved through the BookmarkStore port
+      and the saved bookmark is returned
+      when a bookmark with the same canonical URL already exists for the user
+        then the existing bookmark is returned
+        and the store is not written to
+    if canonicalisation fails
+      then a ValidationError is raised before the store is touched
+
+### CreateBookmark (System)
+
+CreateBookmark (src: src/features/bookmarks/system/create-bookmark.ts; functional: test/system/create-bookmark.system.test.ts)
   when an authenticated user submits a bookmark with a valid URL
     then the bookmark is persisted against their library
     and the canonicalised URL is returned to the caller
-    when the same URL is submitted again by the same user
-      then the existing bookmark is returned unchanged
-      and no duplicate is created
-  while the bookmark store is unreachable
-    then the request fails fast with a retryable error
-  if the URL is malformed
-    then the request is rejected with a validation error
   if the caller is not authenticated
     then the request is rejected before the store is touched
-  where tag suggestions are enabled
-    then suggested tags accompany the response
 ```
+
+Domain and Use-case trees are code-shaped — the top-level describe is the function itself, and every path is an observable branch. System trees describe the slice at its outer seam in consumer vocabulary. Causal nesting (the duplicate-URL case under successful persistence) keeps dependent behaviour attached to the outcome it depends on.
 
 Each behavioural unit gets its own tree — slice (System), use-case, port contract, adapter, domain object. Every tree names its coverage in parenthesised semicolon-separated labelled pairs on the tree-name line. The categories are `src`, `unit`, `integration`, `functional`. Gaps are declared explicitly: `none` for a category that is expected but uncovered (so readers and `sync` spot it); categories that are genuinely not applicable are omitted. At Domain, Use-case, and Port-contract, trees are code-shaped: top-level describes are the unit's functions/methods and every path is an observable branch. At Adapter and System, trees describe observable behaviour at the seam using consumer vocabulary — principles, not enumerated cases. Every test file's describe/it hierarchy mirrors its tree verbatim.
 
