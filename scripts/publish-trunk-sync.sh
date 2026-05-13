@@ -10,7 +10,7 @@ fi
 REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 
 if [ ! -f "$REPO_ROOT/.env" ]; then
-  echo ".env not found at repo root — create it with SUSU_LABS_NPM_TOKEN=..." >&2
+  echo ".env not found at repo root — create it with TRUNK_SYNC_PUBLISHER=..." >&2
   exit 1
 fi
 set -a
@@ -18,8 +18,8 @@ set -a
 source "$REPO_ROOT/.env"
 set +a
 
-if [ -z "${SUSU_LABS_NPM_TOKEN:-}" ]; then
-  echo "SUSU_LABS_NPM_TOKEN is not set in $REPO_ROOT/.env" >&2
+if [ -z "${TRUNK_SYNC_PUBLISHER:-}" ]; then
+  echo "TRUNK_SYNC_PUBLISHER is not set in $REPO_ROOT/.env" >&2
   exit 1
 fi
 
