@@ -7,11 +7,21 @@ if [[ ! "$BUMP" =~ ^(patch|minor|major)$ ]]; then
   exit 1
 fi
 
-if [ -z "${SUSU_ENG_NPM_TOKEN:-}" ]; then
-  echo "SUSU_ENG_NPM_TOKEN is not set — export it before publishing" >&2
+REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+
+if [ ! -f "$REPO_ROOT/.env" ]; then
+  echo ".env not found at repo root — create it with SUSU_LABS_NPM_TOKEN=..." >&2
   exit 1
 fi
-REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+set -a
+# shellcheck disable=SC1091
+source "$REPO_ROOT/.env"
+set +a
+
+if [ -z "${SUSU_LABS_NPM_TOKEN:-}" ]; then
+  echo "SUSU_LABS_NPM_TOKEN is not set in $REPO_ROOT/.env" >&2
+  exit 1
+fi
 
 cd "$REPO_ROOT/trunk-sync"
 
