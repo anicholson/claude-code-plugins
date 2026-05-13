@@ -42,7 +42,7 @@ export function gatherRepoState(input) {
     let hasRemote = false;
     let targetBranch = "";
     try {
-        const ref = execSync("git symbolic-ref refs/remotes/origin/HEAD", { encoding: "utf-8" }).trim();
+        const ref = execSync("git symbolic-ref --quiet refs/remotes/origin/HEAD", { encoding: "utf-8" }).trim();
         hasRemote = true;
         targetBranch = ref.replace("refs/remotes/origin/", "");
     }
