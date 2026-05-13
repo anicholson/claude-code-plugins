@@ -60,11 +60,11 @@ git -C "$REPO_ROOT" add trunk-sync/package.json trunk-sync/.claude-plugin/plugin
 git -C "$REPO_ROOT" commit -m "v$VERSION"
 git -C "$REPO_ROOT" tag "v$VERSION"
 
-# Publish to npm — auth via SUSU_ENG_NPM_TOKEN, no OTP
+# Publish to npm — auth via SUSU_LABS_NPM_TOKEN, no OTP
 echo "==> Publish to npm"
 NPMRC="$REPO_ROOT/trunk-sync/.npmrc"
 trap 'rm -f "$NPMRC"' EXIT
-printf '//registry.npmjs.org/:_authToken=%s\n' "$SUSU_ENG_NPM_TOKEN" > "$NPMRC"
+printf '//registry.npmjs.org/:_authToken=%s\n' "$SUSU_LABS_NPM_TOKEN" > "$NPMRC"
 pnpm publish --no-git-checks
 
 # Push commits + tag to GitHub
