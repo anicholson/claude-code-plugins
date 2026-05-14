@@ -25,10 +25,11 @@ Then install what you need:
 ### trunk-sync
 
 ```bash
-./scripts/publish-trunk-sync.sh patch   # or minor, major
+git log v3.8.3..HEAD -- trunk-sync/ ':!trunk-sync/dist/'   # review and draft notes
+./scripts/publish-trunk-sync.sh patch --notes-file notes.md   # or minor, major
 ```
 
-Single command: builds, tests (unit + e2e), bumps version, publishes to npm, pushes to GitHub, and cuts a GitHub release with filtered notes (auto-commit dupes collapsed; version-bump / build / trunk-sync-noise commits dropped). Both distribution channels (npm package + marketplace plugin) updated together.
+Builds, tests (unit + e2e), bumps version, publishes to npm, pushes to GitHub, and cuts a GitHub release from the supplied notes file. Both distribution channels (npm package + marketplace plugin) updated together. The `--notes-file` is required; running without it prints the exact `git log` command for the previous tag.
 
 ## License
 
