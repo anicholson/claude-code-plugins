@@ -27,6 +27,11 @@ git -C "$REPO_ROOT" tag "climber-v$VERSION"
 echo "==> Push to GitHub"
 git -C "$REPO_ROOT" push origin main --follow-tags
 
+echo "==> Create GitHub release"
+NOTES=$("$REPO_ROOT/scripts/release-notes.sh" climber "$VERSION")
+[ -z "$NOTES" ] && NOTES="_No notable changes._"
+gh release create "climber-v$VERSION" --title "climber v$VERSION" --notes "$NOTES"
+
 echo ""
 echo "published climber v$VERSION"
 echo "  git: https://github.com/elimydlarz/claude-code-plugins"
