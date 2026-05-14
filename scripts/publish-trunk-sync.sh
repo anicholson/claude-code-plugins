@@ -71,6 +71,11 @@ pnpm publish --no-git-checks
 echo "==> Push to GitHub"
 git -C "$REPO_ROOT" push origin main --follow-tags
 
+echo "==> Create GitHub release"
+NOTES=$("$REPO_ROOT/scripts/release-notes.sh" trunk-sync "$VERSION")
+[ -z "$NOTES" ] && NOTES="_No notable changes._"
+gh release create "v$VERSION" --title "trunk-sync v$VERSION" --notes "$NOTES"
+
 echo ""
 echo "published @susu-eng/trunk-sync v$VERSION"
 echo "  npm: https://www.npmjs.com/package/@susu-eng/trunk-sync"
