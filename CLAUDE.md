@@ -32,8 +32,6 @@ treecon/                        — LSP context injection plugin, pre-implementa
 
 Each subdirectory has its own `CLAUDE.md` with project-specific mental model, requirements, and development guidance.
 
-Repo-root infrastructure (publish scripts, marketplace plumbing) is contracted by [`TEST_TREES.md`](TEST_TREES.md) at the root and verified by bats tests under `test/` (`pnpm test`).
-
 ## Publishing
 
 All projects publish via pnpm scripts from the repo root. Release notes are required — review commits since the last tag of the plugin's series, draft notes to a file, then pass it in:
