@@ -31,7 +31,7 @@ else
   RANGE_ARGS=("${PREV_TAG}..HEAD")
 fi
 
-declare -A seen=()
+SEEN_SIDS=" "
 
 while IFS=$'\t' read -r _hash msg; do
   [[ -z "$msg" ]] && continue
@@ -43,8 +43,8 @@ while IFS=$'\t' read -r _hash msg; do
   if [[ "$msg" =~ ^auto\(([^)]+)\):[[:space:]]*(.*)$ ]]; then
     sid="${BASH_REMATCH[1]}"
     msg="${BASH_REMATCH[2]}"
-    [[ -n "${seen[$sid]:-}" ]] && continue
-    seen[$sid]=1
+    case "$SEEN_SIDS" in *" $sid "*) continue ;; esac
+    SEEN_SIDS="$SEEN_SIDS$sid "
   fi
 
   msg=$(printf '%s' "$msg" | sed -E 's/[[:space:]:]+$//')
