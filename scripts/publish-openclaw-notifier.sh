@@ -30,6 +30,11 @@ git -C "$REPO_ROOT" tag "openclaw-notifier-v$VERSION"
 echo "==> Push to GitHub"
 git -C "$REPO_ROOT" push origin main --follow-tags
 
+echo "==> Create GitHub release"
+NOTES=$("$REPO_ROOT/scripts/release-notes.sh" openclaw-notifier "$VERSION")
+[ -z "$NOTES" ] && NOTES="_No notable changes._"
+gh release create "openclaw-notifier-v$VERSION" --title "openclaw-notifier v$VERSION" --notes "$NOTES"
+
 echo ""
 echo "published openclaw-notifier v$VERSION"
 echo "  git: https://github.com/elimydlarz/claude-code-plugins"
