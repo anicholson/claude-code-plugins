@@ -1,12 +1,34 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-BUMP="${1:-}"
+BUMP=""
+NOTES_FILE=""
+while [ $# -gt 0 ]; do
+  case "$1" in
+    patch|minor|major) BUMP="$1"; shift ;;
+    --notes-file) NOTES_FILE="${2:-}"; shift 2 ;;
+    *) echo "unknown arg: $1" >&2; exit 1 ;;
+  esac
+done
+
 if [[ ! "$BUMP" =~ ^(patch|minor|major)$ ]]; then
-  echo "Usage: publish-openclaw-notifier.sh <patch|minor|major>" >&2
+  echo "Usage: publish-openclaw-notifier.sh <patch|minor|major> --notes-file <path>" >&2
   exit 1
 fi
+
 REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+
+if [ -z "$NOTES_FILE" ]; then
+  PREV=$(git -C "$REPO_ROOT" tag --list --sort=-v:refname 'openclaw-notifier-v*' | head -n1)
+  echo "Release notes required. Pass --notes-file <path>." >&2
+  echo "Review commits with: git log ${PREV:+$PREV..}HEAD -- openclaw-notifier/" >&2
+  exit 1
+fi
+
+if [ ! -f "$NOTES_FILE" ]; then
+  echo "Notes file not found: $NOTES_FILE" >&2
+  exit 1
+fi
 
 cd "$REPO_ROOT/openclaw-notifier"
 
@@ -31,9 +53,7 @@ echo "==> Push to GitHub"
 git -C "$REPO_ROOT" push origin main --follow-tags
 
 echo "==> Create GitHub release"
-NOTES=$("$REPO_ROOT/scripts/release-notes.sh" openclaw-notifier "$VERSION")
-[ -z "$NOTES" ] && NOTES="_No notable changes._"
-gh release create "openclaw-notifier-v$VERSION" --title "openclaw-notifier v$VERSION" --notes "$NOTES"
+gh release create "openclaw-notifier-v$VERSION" --title "openclaw-notifier v$VERSION" --notes-file "$NOTES_FILE"
 
 echo ""
 echo "published openclaw-notifier v$VERSION"
