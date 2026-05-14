@@ -31,6 +31,11 @@ git -C "$REPO_ROOT" tag "contree-v$VERSION"
 echo "==> Push to GitHub"
 git -C "$REPO_ROOT" push origin main --follow-tags
 
+echo "==> Create GitHub release"
+NOTES=$("$REPO_ROOT/scripts/release-notes.sh" contree "$VERSION")
+[ -z "$NOTES" ] && NOTES="_No notable changes._"
+gh release create "contree-v$VERSION" --title "contree v$VERSION" --notes "$NOTES"
+
 echo ""
 echo "published contree v$VERSION"
 echo "  git: https://github.com/elimydlarz/claude-code-plugins"
