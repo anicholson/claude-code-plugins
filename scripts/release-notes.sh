@@ -32,15 +32,18 @@ else
 fi
 
 SEEN_SIDS=" "
+VERSION_RE='^v[0-9]+\.[0-9]+\.[0-9]+$'
+PLUGIN_VERSION_RE='^[a-z0-9_-]+ v[0-9]+\.[0-9]+\.[0-9]+$'
+AUTO_RE='^auto\(([^)]+)\):[[:space:]]*(.*)$'
 
 while IFS=$'\t' read -r _hash msg; do
   [[ -z "$msg" ]] && continue
-  [[ "$msg" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]] && continue
-  [[ "$msg" =~ ^[a-z0-9_-]+\ v[0-9]+\.[0-9]+\.[0-9]+$ ]] && continue
+  [[ "$msg" =~ $VERSION_RE ]] && continue
+  [[ "$msg" =~ $PLUGIN_VERSION_RE ]] && continue
   [[ "$msg" =~ ^build: ]] && continue
   [[ "$msg" == "trunk sync noise" ]] && continue
 
-  if [[ "$msg" =~ ^auto\(([^)]+)\):[[:space:]]*(.*)$ ]]; then
+  if [[ "$msg" =~ $AUTO_RE ]]; then
     sid="${BASH_REMATCH[1]}"
     msg="${BASH_REMATCH[2]}"
     case "$SEEN_SIDS" in *" $sid "*) continue ;; esac
