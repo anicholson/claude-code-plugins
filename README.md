@@ -28,7 +28,7 @@ Then install what you need:
 ./scripts/publish-trunk-sync.sh patch   # or minor, major
 ```
 
-Single command: builds, tests (unit + e2e), bumps version, publishes to npm, pushes to GitHub. Both distribution channels (npm package + marketplace plugin) updated together.
+Single command: builds, tests (unit + e2e), bumps version, publishes to npm, pushes to GitHub, and cuts a GitHub release with filtered notes (auto-commit dupes collapsed; version-bump / build / trunk-sync-noise commits dropped). Both distribution channels (npm package + marketplace plugin) updated together.
 
 ## License
 
