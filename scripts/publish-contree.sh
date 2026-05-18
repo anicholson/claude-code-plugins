@@ -47,7 +47,7 @@ node "$REPO_ROOT/scripts/bump-plugin-version.js" .codex-plugin/plugin.json "$BUM
 
 git -C "$REPO_ROOT" add contree/.claude-plugin/plugin.json contree/.codex-plugin/plugin.json
 git -C "$REPO_ROOT" commit -m "contree v$VERSION"
-git -C "$REPO_ROOT" tag "contree-v$VERSION"
+git -C "$REPO_ROOT" tag -a "contree-v$VERSION" -m "contree v$VERSION"
 
 # Push commits + tag to GitHub
 echo "==> Push to GitHub"
