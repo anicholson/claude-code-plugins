@@ -115,6 +115,8 @@ post-task-hook (src: hooks/stop-drift-check.sh; unit: test/post-task-hook.bats; 
     then the hook exits silently to prevent infinite loops
   when no nudge reports anything
     then Claude replies with 0
+  if MENTAL_MODEL.md is missing at the project root
+    then the mental-model nudge instead directs creation of MENTAL_MODEL.md with the seven named H2 sections in order
 ```
 
 ## post-update-hook
