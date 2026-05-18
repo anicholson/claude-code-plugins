@@ -67,6 +67,9 @@ Check the reverse — does the implementation do things no test tree describes? 
 **Failing tests** (test exists for a tree path but does not pass):
 - This is drift between trees and implementation — the tree promises behaviour the code does not deliver (or no longer delivers). Treat fixing it as part of sync, not someone else's problem. Diagnose: is the implementation wrong (fix the code, via `tdd` if the gap is large), or is the tree wrong (present to the user and ask before changing the contract)? Default assumption is the implementation is wrong unless evidence says otherwise. Sync is not complete while any test is red.
 
+**Missing System tree** (a slice has inner trees — Use-case, Domain, Adapter, Port — but no System tree above them):
+- This is outside-in drift: the inner pieces were specified without a user-visible contract pulling them into being. Present to the user. Either the slice needs a System tree written (the usual answer — outside-in failure recoverable by adding the outer contract), or the inner pieces are genuinely a pure library with no slice (rare — confirm and document the omission per the pure-library rule in `change`). Do not invent a System tree silently.
+
 **Stale trees** (test tree for capabilities that no longer exist):
 - Present to the user before removing. Ask whether the capability should come back (write/restore it) or the tree is truly obsolete (remove it).
 
