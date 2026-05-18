@@ -46,7 +46,7 @@ VERSION=$(node "$REPO_ROOT/scripts/bump-plugin-version.js" .claude-plugin/plugin
 
 git -C "$REPO_ROOT" add openclaw-notifier/.claude-plugin/plugin.json
 git -C "$REPO_ROOT" commit -m "openclaw-notifier v$VERSION"
-git -C "$REPO_ROOT" tag "openclaw-notifier-v$VERSION"
+git -C "$REPO_ROOT" tag -a "openclaw-notifier-v$VERSION" -m "openclaw-notifier v$VERSION"
 
 # Push commits + tag to GitHub
 echo "==> Push to GitHub"
