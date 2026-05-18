@@ -102,6 +102,21 @@ run_hook_with_last_text() {
   [[ "$output" == *"displace"* || "$output" == *"merg"* ]]
 }
 
+# --- Mental-model nudge: missing-file branch ---
+
+@test "mental-model nudge directs creation of MENTAL_MODEL.md with the seven sections in order when the file is missing" {
+  rm -f "$BATS_TEST_TMPDIR/MENTAL_MODEL.md"
+  run_hook '{}'
+  [[ "$output" == *"MENTAL_MODEL.md is missing"* ]]
+  [[ "$output" == *"Core Domain Identity"* ]]
+  [[ "$output" == *"World-to-Code Mapping"* ]]
+  [[ "$output" == *"Ubiquitous Language"* ]]
+  [[ "$output" == *"Bounded Contexts"* ]]
+  [[ "$output" == *"Invariants"* ]]
+  [[ "$output" == *"Decision Rationale"* ]]
+  [[ "$output" == *"Temporal View"* ]]
+}
+
 # --- Test-trees nudge ---
 
 @test "test-trees nudge prompts detection of drift between trees and implementation" {
