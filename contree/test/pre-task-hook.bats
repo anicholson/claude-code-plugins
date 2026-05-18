@@ -59,6 +59,12 @@ run_hook_in() {
   [[ "$output" == *"behaviour contract"* ]]
 }
 
+@test "session start directs the agent to describe each level's observable behaviour at its interface, not the implementation inside it" {
+  run_hook_in "$BATS_TEST_TMPDIR"
+  [[ "$output" == *"Behaviour, not internals"* ]]
+  [[ "$output" == *"observable at the seam"* ]]
+}
+
 # --- Skill directions ---
 
 @test "session start directs the agent to eagerly use the listed skills to fulfil operator requests where applicable" {
