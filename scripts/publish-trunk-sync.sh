@@ -79,7 +79,7 @@ node scripts/sync-plugin-version.js
 VERSION=$(node -p "require('./package.json').version")
 git -C "$REPO_ROOT" add trunk-sync/package.json trunk-sync/.claude-plugin/plugin.json
 git -C "$REPO_ROOT" commit -m "v$VERSION"
-git -C "$REPO_ROOT" tag "v$VERSION"
+git -C "$REPO_ROOT" tag -a "v$VERSION" -m "trunk-sync v$VERSION"
 
 # Publish to npm — auth via TRUNK_SYNC_PUBLISHER, no OTP
 echo "==> Publish to npm"
