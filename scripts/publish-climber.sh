@@ -44,7 +44,7 @@ VERSION=$(node "$REPO_ROOT/scripts/bump-plugin-version.js" .claude-plugin/plugin
 
 git -C "$REPO_ROOT" add climber/.claude-plugin/plugin.json
 git -C "$REPO_ROOT" commit -m "climber v$VERSION"
-git -C "$REPO_ROOT" tag "climber-v$VERSION"
+git -C "$REPO_ROOT" tag -a "climber-v$VERSION" -m "climber v$VERSION"
 
 echo "==> Push to GitHub"
 git -C "$REPO_ROOT" push origin main --follow-tags
