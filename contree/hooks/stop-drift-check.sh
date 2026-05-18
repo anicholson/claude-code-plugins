@@ -17,11 +17,21 @@ if [ -n "$TRANSCRIPT" ] && [ -f "$TRANSCRIPT" ]; then
   fi
 fi
 
-cat >&2 <<'EOF'
+if [ ! -f MENTAL_MODEL.md ]; then
+  cat >&2 <<'EOF'
+MENTAL MODEL: MENTAL_MODEL.md is missing at the project root. Create it with these seven H2 sections in order: Core Domain Identity, World-to-Code Mapping, Ubiquitous Language, Bounded Contexts, Invariants, Decision Rationale, Temporal View. Each section starts with a one-line placeholder describing what belongs there until real content lands.
+TEST TREES: Have test trees and implementation drifted apart? If so, propose solutions.
+CLAUDE.md: Has CLAUDE.md content drifted from reality? If so, update it.
+README: Is the readme out of date now? If so, update it.
+If nothing needs attention, reply 0.
+EOF
+else
+  cat >&2 <<'EOF'
 MENTAL MODEL: Did this task reveal any knowledge NOT already described in documentation, tests, and code? Default is no change. If a change is warranted: name which of the seven sections it belongs to (Core Domain Identity, World-to-Code Mapping, Ubiquitous Language, Bounded Contexts, Invariants, Decision Rationale, Temporal View); if none fits, it is not part of the mental model; prefer tightening an existing line over adding a new one; state what is true, not what to avoid; when the target section is at its cap, displace or merge an existing item rather than appending.
 TEST TREES: Have test trees and implementation drifted apart? If so, propose solutions.
 CLAUDE.md: Has CLAUDE.md content drifted from reality? If so, update it.
 README: Is the readme out of date now? If so, update it.
 If nothing needs attention, reply 0.
 EOF
+fi
 exit 2
