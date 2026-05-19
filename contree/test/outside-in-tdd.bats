@@ -9,6 +9,23 @@ SKILL="$PROJECT_ROOT/skills/tdd/SKILL.md"
   [[ "$output" == *"one failing test at a time"* ]]
 }
 
+@test "tdd starts each capability from a failing System test at the highest tolerable realism" {
+  run cat "$SKILL"
+  [[ "$output" == *"highest tolerable realism"* || "$output" == *"max realism"* || "$output" == *"max-realism"* ]]
+  [[ "$output" == *"real driven adapters"* ]]
+}
+
+@test "tdd falls back to a single expansive journey at max realism when breadth is unaffordable" {
+  run cat "$SKILL"
+  [[ "$output" == *"single expansive journey"* ]]
+}
+
+@test "tdd adds inner-layer tests only when failing functional-test pressure demands them" {
+  run cat "$SKILL"
+  [[ "$output" == *"pressure"* ]]
+  [[ "$output" == *"inner"* ]]
+}
+
 @test "tdd writes tests at the tree's layer (Domain / Use-case / Adapter / System)" {
   run cat "$SKILL"
   [[ "$output" == *"Domain"* ]]
