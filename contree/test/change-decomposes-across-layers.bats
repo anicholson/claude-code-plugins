@@ -25,6 +25,12 @@ SKILL="$PROJECT_ROOT/skills/change/SKILL.md"
   [[ "$output" == *"port contract"* ]]
 }
 
+@test "change forbids designing inner-layer trees up front from speculation" {
+  run cat "$SKILL"
+  [[ "$output" == *"YAGNI failure"* || "$output" == *"speculation"* ]]
+  [[ "$output" == *"not designed ahead of time"* || "$output" == *"not designed up front"* || "$output" == *"hasn't asked"* ]]
+}
+
 @test "change enforces one tree, one test file" {
   run cat "$SKILL"
   [[ "$output" == *"One tree, one test file"* || "$output" == *"one tree reifies exactly one test file"* ]]
