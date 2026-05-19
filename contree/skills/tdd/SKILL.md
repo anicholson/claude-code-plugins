@@ -38,8 +38,9 @@ If the tree seems incomplete, note it but proceed with what's there. Don't modif
 
 Write **one** failing System test for the slice. It should map directly to a single `when/then` path in the tree.
 
-- Drive through a real driving adapter (HTTP, CLI). In-memory driven adapters — not mocks.
-- No internal mocks. No stubs.
+- Drive through a real driving adapter (HTTP, CLI). **Wire real driven adapters at the highest tolerable realism — real infrastructure, real boundaries.** This is the max-validity functional test that owns correctness for the slice.
+- No internal mocks. No stubs. No in-memory driven adapters at this layer.
+- When breadth at max realism is unaffordable for the project, the System tree shrinks to a single expansive journey at max realism — never to many in-memory-wired System tests. If you're tempted to wire in-memory at the System layer to "get faster tests", you want a Use-case test instead; write one when implementation pressure asks for it.
 - The test WILL fail — that's the point.
 - **Write exactly one test. Run it. See it fail. Then proceed.**
 - **If the test passes unexpectedly** — break the implementation intentionally (comment out the code path), observe the test failing, fix it, observe it passing, move on. A test that can't fail protects nothing.
