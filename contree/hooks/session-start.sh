@@ -36,8 +36,9 @@ Eagerly use these skills to fulfil operator requests, where applicable:
 - **Behaviour, not internals** — every tree describes what crosses its level's interface (inputs, outputs, side-effects). Never the implementation inside. Adapter/System speak the consumer's vocabulary; Domain/Use-case/Port-contract speak the unit's own functions, types, and errors — both only as observable at the seam.
 - **Debugging means a test gap** — if you're debugging, the tests weren't good enough. Before fixing, find the tree path that should have caught the bug (add it if it's missing), write the failing test, then fix the code.
 - **Hexagonal** — domain pure; I/O in adapters; dependencies point inward; each driven port ships with an in-memory twin
-- **Outside-in** — start each capability from a failing System test in the trees; it pulls inner layers into being. Each discovered piece gets its own tree, TDD'd at its native layer. Inner trees own variations; System covers the user-visible arc, not combinatorial detail.
-- **Test layers** — Domain (pure), Use-case (in-memory adapters), Adapter (driving mocks app, driven hits real infra), System (whole app, in-memory by default)
+- **Functional first** — the outermost layer is real, max-validity functional testing at the highest tolerable realism: real driven adapters, real infrastructure, real boundaries. If breadth at that realism is unaffordable, the floor is a single expansive journey at max realism — never a broad in-memory-wired System suite. Inner layers exist only because a failing functional test demands them.
+- **Outside-in** — start each capability from a failing System test at max realism; it pulls inner layers into being. Each discovered piece gets its own tree, TDD'd at its native layer. Inner trees own variations; System covers the user-visible arc, not combinatorial detail.
+- **Test layers** — Domain (pure), Use-case (in-memory adapters), Adapter (driving mocks app, driven hits real infra), System (whole app wired with real driven adapters — max-realism functional testing)
 - **Shared port contract** — one `*.contract.ts` suite per port, imported by both in-memory-adapter and real-adapter test files
 - **One tree, one test file** — each tree in `## Test Trees` reifies exactly one test file; the test file's describe/it hierarchy mirrors the tree verbatim (framework-agnostic contract)
 EOF
