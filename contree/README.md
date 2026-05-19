@@ -1,6 +1,6 @@
 # contree
 
-Test trees as living requirements. Combines test-driven development with automatic requirements synchronisation — your test trees in `TEST_TREES.md` ARE the specification, always up to date. Tests are layered by hexagonal seam — Domain, Use-case, Adapter, System — with in-memory adapters so application-level tests run at unit speed and a shared port contract suite keeping in-memory and real adapters honest.
+Test trees as living requirements. Combines test-driven development with automatic requirements synchronisation — your test trees in `TEST_TREES.md` ARE the specification, always up to date. Tests are layered by hexagonal seam — Domain, Use-case, Adapter, System. The **System layer is max-validity functional testing**: real driven adapters at the highest tolerable realism, with a single expansive journey as the floor when breadth at that realism is unaffordable. Inner layers — Domain, Use-case, Adapter — emerge only when a failing functional test demands them. In-memory adapters keep Use-case tests fast; a shared port contract suite keeps in-memory and real adapters honest.
 
 ## What it does
 
