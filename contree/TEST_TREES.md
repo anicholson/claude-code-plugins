@@ -49,8 +49,8 @@ outside-in-tdd (src: skills/tdd/SKILL.md; unit: test/outside-in-tdd.bats; functi
     and existing trees are not modified silently
   when writing a System test
     then real driven adapters are wired at the highest tolerable realism by default
-    and breadth at max realism is unaffordable
-      then System coverage falls back to a single expansive journey at max realism — not many in-memory tests
+  while breadth at max realism is unaffordable
+    then System coverage falls back to a single expansive journey at max realism — never to many in-memory-wired System tests
   when writing a Use-case test
     then the in-memory adapter for each outbound port is wired
   when writing an Adapter test for an in-memory or real driven adapter
