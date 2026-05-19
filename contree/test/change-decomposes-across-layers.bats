@@ -10,6 +10,12 @@ SKILL="$PROJECT_ROOT/skills/change/SKILL.md"
   [[ "$output" == *"consumer"* ]]
 }
 
+@test "change writes only the System tree up front; inner trees are added on failing-functional-test pressure" {
+  run cat "$SKILL"
+  [[ "$output" == *"only tree you can write up front"* || "$output" == *"only the System tree"* || "$output" == *"only tree written up front"* ]]
+  [[ "$output" == *"failing functional test"* || "$output" == *"failing System test"* ]]
+}
+
 @test "change writes one tree per behavioural unit at its layer" {
   run cat "$SKILL"
   [[ "$output" == *"behavioural unit"* ]]
