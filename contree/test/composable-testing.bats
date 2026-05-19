@@ -27,11 +27,22 @@ CHANGE="$PROJECT_ROOT/skills/change/SKILL.md"
   [[ "$output" == *"*.system.test.*"* ]]
 }
 
-@test "change pairs each outbound port with an in-memory adapter used by Use-case and System tests" {
+@test "change pairs each outbound port with an in-memory adapter used by Use-case tests" {
   run cat "$CHANGE"
   [[ "$output" == *"in-memory adapter"* ]]
-  [[ "$output" == *"Use-case"* ]]
-  [[ "$output" == *"System"* ]]
+  [[ "$output" == *"Use-case tests"* ]]
+}
+
+@test "change wires System tests with real driven adapters at the highest tolerable realism by default" {
+  run cat "$CHANGE"
+  [[ "$output" == *"real driven adapters"* ]]
+  [[ "$output" == *"highest tolerable realism"* || "$output" == *"max realism"* || "$output" == *"max-realism"* ]]
+}
+
+@test "change falls back to a single expansive journey at max realism when breadth is unaffordable" {
+  run cat "$CHANGE"
+  [[ "$output" == *"single expansive journey"* ]]
+  [[ "$output" == *"unaffordable"* || "$output" == *"unafford"* ]]
 }
 
 @test "change pairs each outbound port with a shared contract suite" {
