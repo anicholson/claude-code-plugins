@@ -159,14 +159,14 @@ Tactical cheatsheet for the RED/GREEN cycle. See `skills/change/SKILL.md` for th
 
 ### Outside-in order
 
-1. **System** — one failing test for the slice.
-2. **Driving adapter** — one failing test for protocol mapping. Mock the use-case.
-3. **Use-case** — one failing test for orchestration. In-memory driven adapters.
-4. **Domain** — one failing test for the pure rule. No collaborators.
-5. **Port contract** — write the shared suite (`*.contract.ts`). Both in-memory and real adapters must pass it.
-6. **Driven adapter** — implement the real adapter. Shared suite runs green; add adapter-specific tests.
+1. **System** — one failing test for the slice, at the highest tolerable realism. This is the only test required up front. Everything below appears only because this test cannot be satisfied without it.
+2. **Driving adapter** — one failing test for protocol mapping. Mock the use-case. (Only when the translation is non-trivial.)
+3. **Use-case** — one failing test for orchestration. In-memory driven adapters. (Only when orchestration exists and the System test alone can't drive it cheaply enough.)
+4. **Domain** — one failing test for the pure rule. No collaborators. (Only when there's a pure rule worth isolating.)
+5. **Port contract** — write the shared suite (`*.contract.ts`). Both in-memory and real adapters must pass it. (Only when a port exists.)
+6. **Driven adapter** — implement the real adapter. Shared suite runs green; add adapter-specific tests. (Reality of the driven adapter is also exercised through the System test — driven-adapter tests cover adapter-local behaviour beyond the port contract.)
 
-Every failing test sits at a named layer. If you can't name the layer, you're not decomposed enough.
+Every failing test sits at a named layer. If you can't name the layer, you're not decomposed enough. Equally: if you can't name the implementation pressure from the failing functional test that forces this inner test to exist, don't write it yet.
 
 ---
 
