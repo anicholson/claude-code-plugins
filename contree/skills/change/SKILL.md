@@ -183,23 +183,22 @@ The test file's describe/it hierarchy mirrors this verbatim.
 
 **The in-memory adapter pattern**
 
-This is the linchpin of the whole scheme. Without it, Use-case and System tests either get slow (real infra) or dishonest (mocks that don't match reality).
-
 For each outbound port, ship two adapters that both satisfy the port contract:
 
 ```
 OrderRepository (port interface)
-├── PostgresOrderRepository    ← real, used in production and in driven-adapter tests
-└── InMemoryOrderRepository    ← real, used in Use-case and System tests
+├── PostgresOrderRepository    ← real, used in production and in System and driven-adapter tests
+└── InMemoryOrderRepository    ← real, used in Use-case tests
 ```
 
 The in-memory adapter is not a mock. It's a real implementation: stores data in a map, enforces the same invariants (unique IDs, referential rules, ordering guarantees) that the real adapter does. The composition root swaps it in at test time by pointing at a different wiring.
 
 What this buys:
 
-- Use-case tests run in milliseconds against *real application behaviour*.
-- System tests run fast by default, covering the full vertical slice.
-- The real adapter's job shrinks to "adapt Postgres to the port" — everything application-level is already covered by tests running against the in-memory adapter.
+- Use-case tests run in milliseconds against *real application behaviour* — so the Use-case layer can carry combinatorial branch coverage cheaply.
+- The real adapter's job shrinks to "adapt Postgres to the port" — driven-adapter tests cover only adapter-local behaviour beyond the shared contract.
+
+System tests do NOT lean on the in-memory adapter. They wire real driven adapters and exercise real infrastructure — that's the point of the System layer. The in-memory twin exists to serve Use-case tests, not to dilute System tests into slow Use-case tests with extra ceremony.
 
 **The shared port contract suite**
 
