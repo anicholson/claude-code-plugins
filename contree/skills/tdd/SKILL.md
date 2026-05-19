@@ -153,9 +153,9 @@ Tactical cheatsheet for the RED/GREEN cycle. See `skills/change/SKILL.md` for th
 - Run the shared contract suite against the real adapter. Add adapter-specific tests for behaviour beyond the port contract (timeout, retry, schema, constraint handling).
 
 ### System (`*.system.test.*` in `test/system/`)
-- Import: the composition root (wired with in-memory driven adapters by default) plus the real driving adapter.
+- Import: the composition root **wired with real driven adapters at the highest tolerable realism** (Testcontainers, local service, sandbox account), plus the real driving adapter.
 - Drive the real driving adapter; assert on observable effects through the same adapter.
-- A separate command reruns the System suite with real driven adapters wired for pre-release verification.
+- Max-validity functional testing — this is the layer where correctness lives. When breadth at max realism is unaffordable, the System layer holds a single expansive journey at max realism rather than many in-memory-wired tests.
 
 ### Outside-in order
 
