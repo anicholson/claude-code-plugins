@@ -38,11 +38,19 @@ setup-scaffolds-mental-model (src: skills/setup/SKILL.md; unit: test/setup-scaff
 
 ```
 outside-in-tdd (src: skills/tdd/SKILL.md; unit: test/outside-in-tdd.bats; functional: test/functional/docker-entrypoint.sh)
+  when starting a new capability
+    then the first failing test is a System test at the highest tolerable realism — real driven adapters, real infrastructure, real boundaries
+    and inner-layer trees and tests are added only as implementation pressure from that failing functional test demands them
+    and inner layers are not designed up front
   when implementing a tree
     then each when/then path becomes one failing test, written one at a time in tree order
     and the test is written at the tree's layer (Domain / Use-case / Adapter / System)
     and the test file reifies the tree — describe/it hierarchy mirrors when/then verbatim
     and existing trees are not modified silently
+  when writing a System test
+    then real driven adapters are wired at the highest tolerable realism by default
+    and breadth at max realism is unaffordable
+      then System coverage falls back to a single expansive journey at max realism — not many in-memory tests
   when writing a Use-case test
     then the in-memory adapter for each outbound port is wired
   when writing an Adapter test for an in-memory or real driven adapter
