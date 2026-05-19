@@ -113,7 +113,7 @@ A System tree describes a slice's consumer-visible behaviour. Below it sits a se
 | Domain      | the pure core                    | none — no fakes, no mocks, no async                     | instant   | `*.domain.test.*`                   |
 | Use-case    | orchestration + port boundaries  | in-memory adapters (real implementations of the ports)  | fast      | `*.use-case.test.*`                 |
 | Adapter     | one adapter against its contract | driving: mocked use-case. driven: real infrastructure.  | mixed     | `*.adapter.test.*`                  |
-| System      | the whole wired app              | in-memory driven adapters by default; real on demand    | slow      | `*.system.test.*` in `test/system/` |
+| System      | the whole wired app              | **real driven adapters at the highest tolerable realism** — max-validity functional testing. If breadth at that realism is unaffordable, fall back to a single expansive journey at max realism, never to broad in-memory wiring. | slow | `*.system.test.*` in `test/system/` |
 
 Layers are named for the hex seam under test, not for infrastructure presence. Classic "unit/integration/functional" conflates pure Domain with mocked Use-case and overloads "integration" — seams give sharper targets.
 
