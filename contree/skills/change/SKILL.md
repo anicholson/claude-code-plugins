@@ -284,6 +284,8 @@ Once aligned, suggest the user runs `sync` to audit completeness and implement g
 - **Use the consumer's vocabulary** — applies at Adapter and System layers: describe what the consumer sees, not implementation internals. At Domain, Use-case, and Port-contract, speak in the unit's own vocabulary (its function names, its types, its errors).
 - **Tree ≡ describe/it hierarchy verbatim** — every path in the tree appears as a describe/it in the test file; every describe/it in the test file appears as a path in the tree. This is the framework-agnostic contract; `sync` compares these two directly.
 - **Name the layer and subject** — every tree's first line is `<Layer>: <Subject>` (e.g. `Domain: Money`, `System: save-score`). The layer disambiguates trees that share a subject across layers; the subject is what is being tested. Without both, duplication can't be spotted and the test's purpose isn't legible.
+- **Every leaf stands alone** — a `then` clause states its assertion inline. No cross-leaf references: phrases like "see above", "as before", or "the existing X branch holds" are forbidden. If two leaves would say the same thing, write both — duplication is the diagnostic signal that surfaces shared concepts; suppressing it hides design problems.
+- **"Just like X" duplicates, then maybe collapses** — when the user describes new behaviour as "just like" or "the same as" an existing tree's behaviour, duplicate that tree's paths under the new subject in full rather than cross-referencing. If the duplication reveals the two subjects are the same concept, collapse them under one tree named for the shared concept and make the implementation generic to serve both. Duplicate first; collapse only when duplication itself names the shared concept.
 
 ## Examples
 
