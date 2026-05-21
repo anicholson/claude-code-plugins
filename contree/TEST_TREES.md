@@ -73,6 +73,11 @@ outside-in-tdd (src: skills/tdd/SKILL.md; unit: test/outside-in-tdd.bats; functi
     then break the implementation intentionally
     and observe the test failing
     then fix the implementation, observe the test passing, and move on
+  when a failing higher-layer test surfaces inner behaviour that requires new code
+    then a tree for the inner unit is added at its native layer before code is written
+    and the inner unit's own failing test is written before the implementation lands
+    and the higher-layer test passing is not treated as sufficient coverage for the inner unit
+    and overlap between the inner tree's coverage and the higher-layer test is intentional, not waste
   when all inner-layer tests pass
     then the System test passes
   when all trees for a slice have passing tests
