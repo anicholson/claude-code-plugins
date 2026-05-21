@@ -202,7 +202,7 @@ VERIFY
     echo ""
     echo "=== Phase 2: workflow (change → sync → tdd) ==="
     run_agent \
-      "Now implement the project. Use /contree:workflow to set expected behaviour in trees and drive the implementation outside-in. The project has a BookmarkRepository port — remember to build an in-memory adapter and a shared port contract suite alongside the file-based production adapter."
+      "Now implement the project. Use /contree:workflow to set expected behaviour in trees and drive the implementation outside-in. The project has a BookmarkRepository port — remember to build an in-memory adapter and a shared port contract suite alongside the file-based production adapter. Skip mutation testing for this run — configure it if setup tells you to, but do not execute Stryker."
 
     echo ""
     echo "=== Phase 3: drift injection + sync ==="
