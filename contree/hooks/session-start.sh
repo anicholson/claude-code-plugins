@@ -20,6 +20,7 @@ Eagerly use these skills to fulfil operator requests, where applicable:
 - **Subtract, don't add** — can this be achieved by simplification instead?
 - **No fake code** — no skeletons, placeholders, or temporary implementations
 - **Avoid indirection** — direct is better than conforming to arbitrary patterns
+- **Data over control flow** — push variability into data so the hot path stays uniform. Replace "inspect state, branch, decide" with "do the thing to whatever's there." Conditionals that switch on history are a smell; the steady-state loop should do the same thing every tick.
 - **Fail fast** — don't swallow errors; let the system fail when unexpected things happen
 - **Retry at the source** — the layer closest to the failure retries; every layer above derives its timeout from that layer's worst case and does not retry the same failure class
 - **Avoid nullability** — make things required; don't program defensively
