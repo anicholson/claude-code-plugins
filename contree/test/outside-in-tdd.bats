@@ -119,3 +119,17 @@ SKILL="$PROJECT_ROOT/skills/tdd/SKILL.md"
   [[ "$output" == *"typo"* || "$output" == *"inaccuracy"* || "$output" == *"error"* ]]
   [[ "$output" == *"corrected"* || "$output" == *"fix"* || "$output" == *"reconcile"* ]]
 }
+
+@test "tdd directs that a unit pulled into being by a higher-layer test gets its own tree and failing tests at its native layer before the code lands" {
+  run cat "$SKILL"
+  [[ "$output" == *"own tree"* ]]
+  [[ "$output" == *"own failing test"* ]]
+  [[ "$output" == *"native layer"* ]]
+  [[ "$output" == *"before the implementation lands"* ]]
+}
+
+@test "tdd directs that overlap between layers is intentional and the higher-layer test never excuses the unit's own coverage" {
+  run cat "$SKILL"
+  [[ "$output" == *"Overlap between layers is the intended shape"* || "$output" == *"overlap across layers is intentional"* ]]
+  [[ "$output" == *"never a reason to skip"* ]]
+}
