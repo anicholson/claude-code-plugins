@@ -80,3 +80,16 @@ SKILL="$PROJECT_ROOT/skills/sync/SKILL.md"
   [[ "$output" == *"none"* ]]
   [[ "$output" == *"Declared gap"* || "$output" == *"declared gap"* || "$output" == *"explicit gap"* ]]
 }
+
+@test "sync flags coverage-by-proxy when a unit is reachable only through higher-layer tests with no native tree" {
+  run cat "$SKILL"
+  [[ "$output" == *"Coverage-by-proxy"* ]]
+  [[ "$output" == *"reachable only through higher-layer tests"* ]]
+}
+
+@test "sync proposes a native-layer tree plus its own failing tests to resolve coverage-by-proxy, never removal of the higher-layer test" {
+  run cat "$SKILL"
+  [[ "$output" == *"new tree at the unit's native layer"* ]]
+  [[ "$output" == *"own failing tests"* ]]
+  [[ "$output" == *"never removal of the higher-layer test"* ]]
+}
