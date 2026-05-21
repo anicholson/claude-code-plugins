@@ -65,6 +65,14 @@ run_hook_in() {
   [[ "$output" == *"observable at the seam"* ]]
 }
 
+@test "session start directs the agent that every layer owns complete coverage of its own behaviour" {
+  run_hook_in "$BATS_TEST_TMPDIR"
+  [[ "$output" == *"Layer completeness"* ]]
+  [[ "$output" == *"every layer owns complete coverage of its own behaviour"* ]]
+  [[ "$output" == *"green higher-layer test never excuses a missing lower-layer test"* ]]
+  [[ "$output" == *"overlap across layers is intentional"* ]]
+}
+
 # --- Skill directions ---
 
 @test "session start directs the agent to eagerly use the listed skills to fulfil operator requests where applicable" {
