@@ -213,6 +213,14 @@ change-writes-trees (src: skills/change/SKILL.md; unit: test/change-writes-trees
   when planning a change to an area that already has a tree and implementation
     then the current tree and its paths are compared against the actual tests and file locations before drafting the change
     and any pre-existing tree-code drift in that area is reconciled as part of the change so the new tree is coherent with post-change reality
+  when a tree path's then clause would reference another leaf to convey its meaning
+    then the path is rewritten to state its assertion inline
+    and phrases like "see above", "as before", or "the existing X branch holds" are not used
+  when the user describes new behaviour as "the same as" or "just like" an existing tree's behaviour
+    then the existing tree's paths are duplicated under the new subject in full rather than cross-referenced
+    if duplication reveals the two subjects share a single concept
+      then they are collapsed under one tree named for the shared concept
+      and the implementation is made generic to serve both
   when modifying existing behaviour
     then only affected paths are changed
   when removing a capability
