@@ -168,6 +168,8 @@ Tactical cheatsheet for the RED/GREEN cycle. See `skills/change/SKILL.md` for th
 
 Every failing test sits at a named layer. If you can't name the layer, you're not decomposed enough. Equally: if you can't name the implementation pressure from the failing functional test that forces this inner test to exist, don't write it yet.
 
+**When System pulls a new unit into being, that unit gets its own tree and its own failing tests at its native layer — before the implementation lands.** Do not lean on the System test as the unit's coverage; it isn't. If you find yourself thinking "the System test already exercises this so I'll skip the unit test," that is the signal to write the unit's tree and failing test, not to skip it. Overlap between layers is the intended shape — unit tests prove the unit is complete on its own terms; higher tests prove the wiring and the user-visible arc.
+
 ---
 
 ## Mutation Testing
