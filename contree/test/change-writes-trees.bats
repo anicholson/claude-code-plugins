@@ -115,3 +115,22 @@ SKILL="$PROJECT_ROOT/skills/change/SKILL.md"
   [[ "$output" == *"pre-existing"* || "$output" == *"existing drift"* || "$output" == *"tree-code drift"* ]]
   [[ "$output" == *"reconcile"* || "$output" == *"reconciled"* || "$output" == *"coherent"* ]]
 }
+
+@test "change forbids cross-leaf references so every leaf stands alone" {
+  run cat "$SKILL"
+  [[ "$output" == *"see above"* ]]
+  [[ "$output" == *"as before"* ]]
+  [[ "$output" == *"stands alone"* || "$output" == *"inline"* ]]
+}
+
+@test "change duplicates an existing tree's paths when new behaviour is described as 'just like' it" {
+  run cat "$SKILL"
+  [[ "$output" == *"just like"* || "$output" == *"the same as"* ]]
+  [[ "$output" == *"duplicate"* || "$output" == *"duplicated"* ]]
+}
+
+@test "change collapses duplicated trees into one shared-concept tree with generic implementation" {
+  run cat "$SKILL"
+  [[ "$output" == *"single concept"* || "$output" == *"shared concept"* || "$output" == *"same concept"* ]]
+  [[ "$output" == *"generic"* ]]
+}
