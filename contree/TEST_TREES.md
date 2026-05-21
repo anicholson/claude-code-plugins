@@ -268,6 +268,10 @@ sync-audits-and-resolves (src: skills/sync/SKILL.md; unit: test/sync-audits-and-
     then it is discussed with the user — may need a tree or may need removing
   when a tree exists without implementation
     then it is flagged as a gap to implement
+  when code is reachable only through higher-layer tests with no tree at its native layer
+    then it is flagged as coverage-by-proxy drift
+    and the proposed resolution is a new tree at the unit's native layer plus its own failing tests
+    and removal of the higher-layer test is never proposed as the resolution
   when a tree's named path does not exist on disk
     then it is flagged as drift
   when a test file's describe/it hierarchy disagrees with its tree
