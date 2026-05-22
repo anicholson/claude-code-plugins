@@ -122,7 +122,7 @@ post-task-hook (src: hooks/stop-drift-check.sh; unit: test/post-task-hook.bats; 
         and when the target section is at its cap, an existing item is displaced or merged rather than appended
     and a test-trees nudge prompts detection of drift between trees and implementation
     and a claude-md nudge prompts detection of drift between CLAUDE.md content and reality
-    and a readme nudge prompts detection of readme staleness
+    and a readme nudge prompts detection of readme staleness against what the project is, how consumers install it, configure it, and use it
   when Claude stops after a response that ends with a question
     then the hook yields the turn to the user without injecting the nudges
   when stop_hook_active is true
@@ -131,6 +131,8 @@ post-task-hook (src: hooks/stop-drift-check.sh; unit: test/post-task-hook.bats; 
     then Claude replies with 0
   if MENTAL_MODEL.md is missing at the project root
     then the mental-model nudge instead directs creation of MENTAL_MODEL.md with the seven named H2 sections in order
+  if README.md is missing at the project root
+    then the readme nudge instead directs creation of README.md describing what the project is, how consumers install it, configure it, and use it
 ```
 
 ## post-update-hook
