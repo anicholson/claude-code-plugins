@@ -142,6 +142,24 @@ run_hook_with_last_text() {
   [[ "$output" == *"out of date"* || "$output" == *"stale"* ]]
 }
 
+@test "readme nudge anchors staleness against what the project is, install, configure, and use" {
+  run_hook '{}'
+  [[ "$output" == *"what the project is"* ]]
+  [[ "$output" == *"install"* ]]
+  [[ "$output" == *"configure"* ]]
+  [[ "$output" == *"use"* ]]
+}
+
+@test "readme nudge directs creation of README.md describing what the project is, install, configure, and use when the file is missing" {
+  rm -f "$BATS_TEST_TMPDIR/README.md"
+  run_hook '{}'
+  [[ "$output" == *"README.md is missing"* ]]
+  [[ "$output" == *"what the project is"* ]]
+  [[ "$output" == *"install"* ]]
+  [[ "$output" == *"configure"* ]]
+  [[ "$output" == *"use"* ]]
+}
+
 # --- Yield on question ---
 
 @test "hook exits 0 silently when last assistant message ends with a question mark" {
