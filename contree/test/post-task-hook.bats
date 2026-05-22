@@ -4,6 +4,7 @@ load test_helper
 
 setup() {
   touch "$BATS_TEST_TMPDIR/MENTAL_MODEL.md"
+  touch "$BATS_TEST_TMPDIR/README.md"
 }
 
 hook_command() {
