@@ -217,9 +217,9 @@ change-writes-trees (src: skills/change/SKILL.md; unit: test/change-writes-trees
     then the change is discussed with the user before modifying trees
     and EARS patterns are chosen to match each requirement's nature
     and every then clause asserts something the when clause does not already imply
-    and System → inner-layer decomposition is planned, one tree per behavioural unit
+    and Journey → System → inner-layer decomposition is planned, one tree per behavioural unit
     and every tree's paths map verbatim to a describe/it hierarchy in one test file
-  when an Adapter or System tree is written
+  when a Journey, System, or Adapter tree is written
     then paths use the consumer's vocabulary, not implementation internals
     and paths describe principles, not enumerated cases
   when a Domain, Use-case, or Port-contract tree is written
