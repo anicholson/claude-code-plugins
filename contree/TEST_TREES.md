@@ -181,7 +181,7 @@ setup-generates-trees (src: skills/setup/SKILL.md; unit: test/setup-generates-tr
   when setup is run on an existing project
     then existing test config is detected and merged into, not overwritten
     and tree reporters are configured for both local dev and CI (dual reporters)
-    and the four test layers (Domain, Use-case, Adapter, System) are configured as separate commands
+    and the five test layers (Domain, Use-case, Adapter, System, Journey) are configured as separate commands
     and mutation testing is configured with explicit test file exclusions for every layer's suffix
     and changed-test runners are configured with known gotchas addressed
     and test trees are generated from existing code
