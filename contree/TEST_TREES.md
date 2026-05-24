@@ -137,6 +137,8 @@ post-task-hook (src: hooks/stop-drift-check.sh; unit: test/post-task-hook.bats; 
     then the mental-model nudge instead directs creation of MENTAL_MODEL.md with the seven named H2 sections in order
   if README.md is missing at the project root
     then the readme nudge instead directs creation of README.md describing what the project is, how consumers install it, configure it, and use it
+  while the change-image feature is turned off
+    then no change-image nudge is emitted
 ```
 
 ## post-update-hook
