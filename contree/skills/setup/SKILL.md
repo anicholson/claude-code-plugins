@@ -402,6 +402,15 @@ export default defineConfig({
           hookTimeout: 30_000,
         },
       },
+      {
+        extends: true,
+        test: {
+          name: 'journey',
+          include: ['test/journey/**/*.journey.test.{ts,js}'],
+          testTimeout: 60_000,  // the full arc across capabilities — slowest
+          hookTimeout: 60_000,
+        },
+      },
     ],
   },
 })
@@ -415,6 +424,7 @@ export default defineConfig({
   "test:use-case": "vitest run --project use-case",
   "test:adapter": "vitest run --project adapter",
   "test:system": "vitest run --project system",
+  "test:journey": "vitest run --project journey",
   "test:changed": "vitest run --changed",
   "test:watch": "vitest",
   "test:mutate": "stryker run"
