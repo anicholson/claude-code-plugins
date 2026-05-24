@@ -237,7 +237,8 @@ Add or update the following sections:
   - Command to run Domain tests with tree output
   - Command to run Use-case tests with tree output
   - Command to run Adapter tests with tree output (driving and driven)
-  - Command to run System tests with tree output (in-memory driven adapters by default; a separate command for real-infra runs)
+  - Command to run System tests with tree output (real driven adapters at the highest tolerable realism)
+  - Command to run Journey tests with tree output (the full multi-capability arc at max realism)
   - Command to run only changed tests at each layer
   - Command to run mutation testing (Domain + Use-case only)
   - Outside-in TDD workflow summary
