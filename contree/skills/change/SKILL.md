@@ -70,12 +70,13 @@ Remove the tree from `TEST_TREES.md`. Confirm with the user first.
 
 **Name the tree's coverage per category.**
 
-Every tree must name its coverage in parentheses at the end of the tree-name line as semicolon-separated labelled pairs. The four categories are:
+Every tree must name its coverage in parentheses at the end of the tree-name line as semicolon-separated labelled pairs. The five categories are:
 
 - `src` — implementation file (the source the tree's behaviour lives in)
 - `unit` — fast, isolated test (Domain / Use-case / in-memory Adapter in hex terms; or structural checks where the tree's "implementation" is prose)
 - `integration` — test that exercises a real seam (driven Adapter against real infra, port contract against a real implementation)
-- `functional` — whole-system end-to-end test (System layer, or an in-docker full-app test)
+- `functional` — whole-app test of a single capability (System layer, or an in-docker single-capability test)
+- `journey` — expansive end-to-end test of the multi-capability user arc (Journey layer)
 
 ```
 Domain: Money (src: src/features/money/domain/money.ts; unit: src/features/money/domain/money.domain.test.ts; integration: none; functional: none)
