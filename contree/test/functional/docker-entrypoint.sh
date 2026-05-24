@@ -276,6 +276,72 @@ of PASS / FAIL / N/A counts across all trees.
 VERIFY
     ;;
 
+  change-image-nudge)
+    seed_project "greenfield"
+
+    # Seed benign docs so the only actionable Stop-hook nudge is CHANGE IMAGE —
+    # README/MENTAL_MODEL present means those nudges ask "is it stale", not "create it".
+    touch "$PROJECT_DIR/README.md"
+    cat > "$PROJECT_DIR/MENTAL_MODEL.md" <<'MM'
+## Core Domain Identity
+
+- placeholder
+
+## World-to-Code Mapping
+
+- placeholder
+
+## Ubiquitous Language
+
+- placeholder
+
+## Bounded Contexts
+
+- placeholder
+
+## Invariants
+
+- placeholder
+
+## Decision Rationale
+
+- placeholder
+
+## Temporal View
+
+- placeholder
+MM
+    (cd "$PROJECT_DIR" && git add -A && git commit -q -m "seed: benign docs")
+
+    install_gpt2_mock
+
+    run_agent \
+      "Add a function add(a, b) that returns a + b to index.js and export it. Make just that change."
+
+    write_verify << 'VERIFY'
+Evaluate the transcript against the `post-task-hook` tree, specifically the
+change-image nudge paths.
+
+The scenario: a `gpt2` mock is on PATH; `gpt2 image ...` echoes
+"gpt2 mock: generated change-image.png" and exits 0. The agent is asked to make
+one small code change. When it stops, the Stop hook fires the CHANGE IMAGE nudge,
+which directs the agent to invoke `gpt2 image` to generate an image representing
+the change.
+
+Expected signals in the transcript:
+
+  - the Stop hook output contains the "CHANGE IMAGE:" nudge directing invocation
+    of `gpt2 image` to represent the change
+  - the agent invokes `gpt2 image ...` (a Bash tool_use), and the tool_result
+    contains "gpt2 mock: generated change-image.png"
+  - the agent's image-subject choices reflect the nature of the change, its
+    important details, and an audience (surfaced for the user to review)
+
+For each change-image path in `post-task-hook`, return PASS / FAIL / N/A with
+quoted evidence. Report counts at the end.
+VERIFY
+    ;;
+
   describe-it-drift)
     seed_project "describe-it-drift"
 
