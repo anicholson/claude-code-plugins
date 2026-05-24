@@ -150,11 +150,12 @@ Journey and System are both real functional testing — Journey spans the user a
 
 | Layer    | Subject                                  | Example                                                       |
 | -------- | ---------------------------------------- | ------------------------------------------------------------- |
-| Domain   | domain object or service                 | `Domain: Money`, `Domain: SessionToken`                       |
+| Journey  | user-visible arc across capabilities     | `Journey: checkout`, `Journey: onboarding`                    |
+| System   | capability/slice or cross-cutting policy | `System: save-score`, `System: auth-enforcement`              |
+| Adapter  | adapter being exercised                  | `Adapter: score-http-handler`, `Adapter: ScoreRepository-Postgres` |
 | Use-case | the use-case                             | `Use-case: save-score-use-case`                               |
 | Port     | port interface (shared contract)         | `Port: ScoreRepository`, `Port: AuditLog`                     |
-| Adapter  | adapter being exercised                  | `Adapter: score-http-handler`, `Adapter: ScoreRepository-Postgres` |
-| System   | capability/slice or cross-cutting policy | `System: save-score`, `System: auth-enforcement`              |
+| Domain   | domain object or service                 | `Domain: Money`, `Domain: SessionToken`                       |
 
 **Tree shape per layer** — the naming heuristic names the tree; the shape rule organises its paths.
 
