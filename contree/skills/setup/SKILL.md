@@ -11,11 +11,12 @@ Prepares the project for ongoing test-tree-driven development. Configures the te
 
 1. **Read before write.** Always read existing config files before modifying them. Never overwrite — merge surgically.
 2. **Tree output is non-negotiable.** If a framework can produce nested output, configure it. If it can only produce flat output, use it and be honest.
-3. **Four test layers, always.** Layers are named for the hex seam under test, not for infrastructure presence:
+3. **Five test layers, always.** Layers are named for the seam under test, not for infrastructure presence:
    - **Domain** — pure domain objects and services. No collaborators. Colocated with source. `*.domain.test.*`.
    - **Use-case** — application orchestration. In-memory driven adapters as collaborators (real port implementations, not mocks). Colocated. `*.use-case.test.*`.
    - **Adapter** — one adapter against its port contract. Driving: mock the use-case. Driven: real infrastructure. Colocated. `*.adapter.test.*`.
-   - **System** — whole app, real driving adapter, in-memory driven adapters by default. `test/system/`. `*.system.test.*`.
+   - **System** — the whole app for one capability, real driving and driven adapters at the highest tolerable realism. `test/system/`. `*.system.test.*`.
+   - **Journey** — the full user arc across capabilities and contexts at max realism, real everything; walks representative error paths and eventually succeeds. The outside-in entry point. `test/journey/`. `*.journey.test.*`.
 
    See `skills/tdd/SKILL.md` for the full mapping, the in-memory adapter pattern, and the shared port contract suite.
 4. **CI dual reporters.** Configure tree output for local dev AND structured output (JUnit XML) for CI. Both, not either/or.
