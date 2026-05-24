@@ -103,7 +103,7 @@ If naming a (sub)tree's paths reveals an awkward shape — the tree doesn't sit 
 
 A System tree describes a slice's consumer-visible behaviour. Below it sits a set of smaller trees — one per behavioural unit the slice produces. Each smaller tree reifies one test file at one test layer.
 
-**The four test layers map to the hex seams:**
+**The test layers, outermost-in:**
 
 ```
   [ Driving Adapter ]  ←→  [ Port ]  ←→  [ Use-case ]  ←→  [ Port ]  ←→  [ Driven Adapter ]
@@ -116,12 +116,13 @@ A System tree describes a slice's consumer-visible behaviour. Below it sits a se
 
 | Layer       | Seam under test                  | Collaborators                                           | Speed     | File convention                     |
 | ----------- | -------------------------------- | ------------------------------------------------------- | --------- | ----------------------------------- |
-| Domain      | the pure core                    | none — no fakes, no mocks, no async                     | instant   | `*.domain.test.*`                   |
-| Use-case    | orchestration + port boundaries  | in-memory adapters (real implementations of the ports)  | fast      | `*.use-case.test.*`                 |
+| Journey     | the whole app across a multi-capability user arc | **real driving + driven adapters, real infrastructure, real boundaries** — the expansive max-realism arc; spans capabilities and contexts, passes representative error paths, eventually succeeds | slowest | `*.journey.test.*` in `test/journey/` |
+| System      | the whole wired app for one capability | **real driven adapters at the highest tolerable realism** — max-validity functional testing of a single capability, interior to the journey | slow | `*.system.test.*` in `test/system/` |
 | Adapter     | one adapter against its contract | driving: mocked use-case. driven: real infrastructure.  | mixed     | `*.adapter.test.*`                  |
-| System      | the whole wired app              | **real driven adapters at the highest tolerable realism** — max-validity functional testing. If breadth at that realism is unaffordable, fall back to a single expansive journey at max realism, never to broad in-memory wiring. | slow | `*.system.test.*` in `test/system/` |
+| Use-case    | orchestration + port boundaries  | in-memory adapters (real implementations of the ports)  | fast      | `*.use-case.test.*`                 |
+| Domain      | the pure core                    | none — no fakes, no mocks, no async                     | instant   | `*.domain.test.*`                   |
 
-Layers are named for the hex seam under test, not for infrastructure presence. Classic "unit/integration/functional" conflates pure Domain with mocked Use-case and overloads "integration" — seams give sharper targets.
+Journey and System are both real functional testing — Journey spans the user arc across capabilities, System pins one capability. When breadth at max realism is unaffordable, lean on the journey and push combinatorial detail down to inner layers — never a broad in-memory-wired System suite. The hex layers below are named for the seam under test, not infrastructure presence. Classic "unit/integration/functional" conflates pure Domain with mocked Use-case and overloads "integration" — seams give sharper targets.
 
 **Hex positions** — the locations in the codebase where code sits:
 
