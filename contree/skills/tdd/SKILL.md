@@ -75,9 +75,9 @@ Confirm the inner test passes.
 
 Continue inward — **one failing test at a time**. Write one, run it, see it fail, implement, see it pass. Then the next. Never batch.
 
-### 7. GREEN (System)
+### 7. GREEN (outermost)
 
-The System test should now pass. If it doesn't, a layer is missing coverage — write another inner test to close the gap, implement, re-run System.
+The System test, then the Journey test, should now pass. If a higher-layer test still fails, a layer beneath is missing coverage — write another inner failing test to close the gap, implement, then re-run upward.
 
 ### 8. REFACTOR
 
