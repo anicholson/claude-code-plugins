@@ -254,12 +254,12 @@ change-writes-trees (src: skills/change/SKILL.md; unit: test/change-writes-trees
 ```
 change-decomposes-across-layers (src: skills/change/SKILL.md; unit: test/change-decomposes-across-layers.bats; functional: test/functional/docker-entrypoint.sh)
   when a behaviour change is planned
-    then the slice is captured as a System tree named for the consumer capability
-    and the System tree is the only tree written up front — inner-layer trees are added only as a failing functional test reveals the need for them
+    then the outermost tree is captured — a Journey tree for a new user arc, or a System tree for a capability under an existing journey
+    and that outermost tree is the only tree written up front — System and inner-layer trees are added only as a failing journey/functional test reveals the need for them
     and trees are named for the subject with observable behaviour at their layer
     and every tree reifies exactly one test file
   when an inner-layer tree is added
-    then it exists because the failing System test at max realism cannot be satisfied without it
+    then it exists because the failing journey/functional test at max realism cannot be satisfied without it
     and inner-layer trees are never designed up front from speculation about decomposition
   when a side effect is identified
     then it becomes an outbound port named for capability, not technology
