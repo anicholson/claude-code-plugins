@@ -154,23 +154,30 @@ Tactical cheatsheet for the RED/GREEN cycle. See `skills/change/SKILL.md` for th
 - Import: the real adapter, the shared contract suite (`*.contract.ts`), plus any real-infra test helpers (Testcontainers, local service, etc.).
 - Run the shared contract suite against the real adapter. Add adapter-specific tests for behaviour beyond the port contract (timeout, retry, schema, constraint handling).
 
+### Journey (`*.journey.test.*` in `test/journey/`)
+- Import: the composition root **wired with real driving and driven adapters, real infrastructure, real boundaries** — the highest realism the project can run.
+- Drive the full user arc across capabilities through the real driving adapter; assert on observable effects through that adapter at each step.
+- Walk one **representative** error path (e.g. an invalid input), let the arc recover, and **eventually succeed** — do not enumerate every error here; those live at the layers below.
+- The outside-in entry point. Everything below appears only because this test cannot be satisfied without it.
+
 ### System (`*.system.test.*` in `test/system/`)
-- Import: the composition root **wired with real driven adapters at the highest tolerable realism** (Testcontainers, local service, sandbox account), plus the real driving adapter.
+- Import: the composition root **wired with real driven adapters at the highest tolerable realism** (Testcontainers, local service, sandbox account), plus the real driving adapter — scoped to a single capability.
 - Drive the real driving adapter; assert on observable effects through the same adapter.
-- Max-validity functional testing — this is the layer where correctness lives. When breadth at max realism is unaffordable, the System layer holds a single expansive journey at max realism rather than many in-memory-wired tests.
+- Max-validity functional testing of one capability, interior to the journey. When breadth at max realism is unaffordable, lean on the journey rather than wiring many in-memory System tests.
 
 ### Outside-in order
 
-1. **System** — one failing test for the slice, at the highest tolerable realism. This is the only test required up front. Everything below appears only because this test cannot be satisfied without it.
-2. **Driving adapter** — one failing test for protocol mapping. Mock the use-case. (Only when the translation is non-trivial.)
-3. **Use-case** — one failing test for orchestration. In-memory driven adapters. (Only when orchestration exists and the System test alone can't drive it cheaply enough.)
-4. **Domain** — one failing test for the pure rule. No collaborators. (Only when there's a pure rule worth isolating.)
-5. **Port contract** — write the shared suite (`*.contract.ts`). Both in-memory and real adapters must pass it. (Only when a port exists.)
-6. **Driven adapter** — implement the real adapter. Shared suite runs green; add adapter-specific tests. (Reality of the driven adapter is also exercised through the System test — driven-adapter tests cover adapter-local behaviour beyond the port contract.)
+1. **Journey** — one failing test for the user arc, at max realism. The outside-in entry point and the only test required up front. Everything below appears only because this test cannot be satisfied without it.
+2. **System** — one failing test per capability the journey traverses, the whole app wired with real driven adapters. Interior to the journey.
+3. **Driving adapter** — one failing test for protocol mapping. Mock the use-case. (Only when the translation is non-trivial.)
+4. **Use-case** — one failing test for orchestration. In-memory driven adapters. (Only when orchestration exists and the System test alone can't drive it cheaply enough.)
+5. **Domain** — one failing test for the pure rule. No collaborators. (Only when there's a pure rule worth isolating.)
+6. **Port contract** — write the shared suite (`*.contract.ts`). Both in-memory and real adapters must pass it. (Only when a port exists.)
+7. **Driven adapter** — implement the real adapter. Shared suite runs green; add adapter-specific tests. (Reality of the driven adapter is also exercised through the System test — driven-adapter tests cover adapter-local behaviour beyond the port contract.)
 
-Every failing test sits at a named layer. If you can't name the layer, you're not decomposed enough. Equally: if you can't name the implementation pressure from the failing functional test that forces this inner test to exist, don't write it yet.
+Every failing test sits at a named layer. If you can't name the layer, you're not decomposed enough. Equally: if you can't name the implementation pressure from the failing journey/functional test that forces this inner test to exist, don't write it yet.
 
-**When System pulls a new unit into being, that unit gets its own tree and its own failing tests at its native layer — before the implementation lands.** Do not lean on the System test as the unit's coverage; it isn't. If you find yourself thinking "the System test already exercises this so I'll skip the unit test," that is the signal to write the unit's tree and failing test, not to skip it. Overlap between layers is the intended shape — unit tests prove the unit is complete on its own terms; higher tests prove the wiring and the user-visible arc.
+**When the Journey or a System test pulls a new unit into being, that unit gets its own tree and its own failing test at its native ground layer — before any implementation lands.** Journey and functional coverage is not coverage of the unit beneath. Do not lean on a higher-layer test as the unit's coverage; it isn't. If you find yourself thinking "the journey/System test already exercises this so I'll skip the unit test," that is the signal to write the unit's tree and failing test, not to skip it — and never to implement off the higher failure alone. Overlap between layers is the intended shape — unit tests prove the unit is complete on its own terms; higher tests prove the wiring and the user-visible arc.
 
 ---
 
