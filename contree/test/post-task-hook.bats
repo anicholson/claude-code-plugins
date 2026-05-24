@@ -160,6 +160,14 @@ run_hook_with_last_text() {
   [[ "$output" == *"use"* ]]
 }
 
+# --- Change-image nudge ---
+
+@test "change-image nudge directs invoking gpt2 image to generate an image representing the change" {
+  run_hook '{}'
+  [[ "$output" == *"gpt2 image"* ]]
+  [[ "$output" == *"image representing the change"* ]]
+}
+
 # --- Yield on question ---
 
 @test "hook exits 0 silently when last assistant message ends with a question mark" {
