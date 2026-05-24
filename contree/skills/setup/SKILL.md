@@ -100,19 +100,18 @@ Configure the Domain, Use-case, and Adapter layers as separate projects/configur
 
 If the config already has a `reporters` or `verbose` key, check whether changing it would break CI (e.g., removing a JUnit XML reporter). Present the conflict to the user rather than silently overwriting.
 
-### 6. CONFIGURE SYSTEM TEST RUNNER
+### 6. CONFIGURE SYSTEM AND JOURNEY TEST RUNNERS
 
-Separate command/config for the System layer:
+Two functional layers, each its own command/config:
 
-- `test/system/` at project root
-- `*.system.test.*` naming
-- Tree-style output
-- Runnable independently from the inner layers
-- Same framework where possible
-- Higher timeouts — System tests assemble the whole app
-- Two modes: default uses in-memory driven adapters (fast, runs in CI); a separate command wires real driven adapters when needed (pre-release, not per-push)
+- **System** — `test/system/`, `*.system.test.*` — whole app for a single capability
+- **Journey** — `test/journey/`, `*.journey.test.*` — the multi-capability user arc, the outside-in entry point
+- Both wire **real driven adapters** at the highest tolerable realism — never in-memory at these layers. Speed for combinatorial breadth comes from the Use-case layer, not from diluting these into in-memory tests.
+- Tree-style output; runnable independently from the inner layers and from each other
+- Higher timeouts — they assemble the whole app; the Journey is the slowest
+- Where real infrastructure is heavy, gate the heaviest runs behind a separate command (pre-release, not per-push) — but keep them real; do not substitute in-memory wiring to make them cheap
 
-**Determine whether a Docker harness is needed** for the real-infra modes. See the Docker Harness Reference below. Key question: do Adapter (driven) or System (real-infra mode) tests need external processes — databases, queues, HTTP servers? If yes, set up a Docker Compose harness. If the software is pure in-process, Docker is unnecessary.
+**Determine whether a Docker harness is needed.** See the Docker Harness Reference below. Key question: do Adapter (driven), System, or Journey tests need external processes — databases, queues, HTTP servers? If yes, set up a Docker Compose harness. If the software is pure in-process, Docker is unnecessary.
 
 When configuring Docker:
 - `docker-compose.yml` lives at project root (or `test/functional/docker-compose.yml` if the project root is already crowded)
