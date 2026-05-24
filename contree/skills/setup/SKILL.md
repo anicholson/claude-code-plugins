@@ -75,6 +75,7 @@ Confirm how conventions apply to this project:
 - Use-case tests: colocated with source, `*.use-case.test.*`
 - Adapter tests: colocated with the adapter (driving or driven), `*.adapter.test.*`
 - System tests: `test/system/` at project root, `*.system.test.*`
+- Journey tests: `test/journey/` at project root, `*.journey.test.*`
 - Shared port contract suites: colocated with the port interface, `*.contract.ts` (not a test file — a suite imported by both the in-memory and real adapter tests)
 - Tree-style output at every layer
 
