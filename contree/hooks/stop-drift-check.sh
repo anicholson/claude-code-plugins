@@ -32,7 +32,7 @@ else
   echo "README: Is the README out of date now? It should tell consumers what the project is, how to install it, how to configure it, and how to use it. If anything is stale or wrong, update it." >&2
 fi
 
-echo "CHANGE IMAGE: Did this task change the project? If so, invoke gpt2 image to generate an image representing the change the task made. Choose what the image depicts from the nature of the change, its important details, and its intended audience." >&2
+echo "CHANGE IMAGE: Did this task change the project? If so, invoke gpt2 image to generate an image representing the change the task made. Choose what the image depicts from the nature of the change, its important details, and its intended audience, and surface those choices for the user to review." >&2
 
 echo "If nothing needs attention, reply 0." >&2
 exit 2
