@@ -195,7 +195,7 @@ setup-generates-trees (src: skills/setup/SKILL.md; unit: test/setup-generates-tr
     and the limitation is communicated honestly
   when tests are colocated with source
     then mutation testing mutate globs explicitly exclude test file patterns
-  when the project needs external services for Adapter or System tests
+  when the project needs external services for Adapter, System, or Journey tests
     then those layers run in Docker
     and test artefacts are torn down afterwards
     and secrets are passed via environment variables
