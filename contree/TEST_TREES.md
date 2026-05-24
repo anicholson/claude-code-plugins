@@ -226,7 +226,7 @@ change-writes-trees (src: skills/change/SKILL.md; unit: test/change-writes-trees
     then top-level nodes name the unit's exported functions, methods, or port operations
     and each path corresponds to an observable branch in the unit
   when a tree is written
-    then its coverage is named in parenthesised semicolon-separated pairs at the end of the tree-name line, labelled src / unit / integration / functional
+    then its coverage is named in parenthesised semicolon-separated pairs at the end of the tree-name line, labelled src / unit / integration / functional / journey
     and gaps are declared explicitly — "none" for expected-but-uncovered categories, omission for not-applicable ones
     and if naming a (sub)tree's paths reveals an awkward shape, the tree or implementation is reshaped rather than the paths being stripped
   when planning a change to an area that already has a tree and implementation
