@@ -34,23 +34,25 @@ Identify which tree in `## Test Trees` covers this behaviour. State it explicitl
 
 If the tree seems incomplete, note it but proceed with what's there. Don't modify existing trees — you can add newly discovered cases as you go.
 
-### 2. RED (System)
+### 2. RED (Journey)
 
-Write **one** failing System test for the slice. It should map directly to a single `when/then` path in the tree.
+Write **one** failing test at the outermost layer the slice needs. For a new user-visible flow that is a **Journey** test — the expansive arc across capabilities; for a capability under a journey that already exists, it is the **System** test for that capability. It should map directly to a path in the tree.
 
-- Drive through a real driving adapter (HTTP, CLI). **Wire real driven adapters at the highest tolerable realism — real infrastructure, real boundaries.** This is the max-validity functional test that owns correctness for the slice.
+- Drive through a real driving adapter (HTTP, CLI). **Wire real driven adapters at the highest tolerable realism — real infrastructure, real boundaries.** This is the max-validity functional test that owns the user-visible arc (Journey) or the single capability (System).
 - No internal mocks. No stubs. No in-memory driven adapters at this layer.
-- When breadth at max realism is unaffordable for the project, the System tree shrinks to a single expansive journey at max realism — never to many in-memory-wired System tests. If you're tempted to wire in-memory at the System layer to "get faster tests", you want a Use-case test instead; write one when implementation pressure asks for it.
+- A Journey walks **representative** error paths (e.g. an invalid input) and **eventually succeeds** — it does not enumerate every error; those belong to the layers below.
+- When breadth at max realism is unaffordable, lean on the journey and push combinatorial detail down to inner layers — never wire many in-memory System tests. If you're tempted to wire in-memory at the System layer to "get faster tests", you want a Use-case test instead; write one when implementation pressure asks for it.
 - The test WILL fail — that's the point.
 - **Write exactly one test. Run it. See it fail. Then proceed.**
 - **If the test passes unexpectedly** — break the implementation intentionally (comment out the code path), observe the test failing, fix it, observe it passing, move on. A test that can't fail protects nothing.
 
 ### 3. IDENTIFY LAYER, THEN RED (inner)
 
-Before writing the next test, decompose the failing path into the hex seams it touches. Pick the **outermost untested layer** and write one failing test there.
+Before writing the next test, decompose the failing path into the layers it touches. Pick the **outermost untested layer** and write one failing test there. **Descend like this until you reach the behaviour's own ground layer — and do not write any implementation until a failing test exists at that ground layer, sitting *under* the journey/functional failure.** Journey and functional coverage is not coverage of the layers beneath: a Journey or System test, red or green, never licenses implementing the unit beneath it. "Already covered above" is the signal to write the unit's own failing test, not to skip it.
 
 Questions in order:
 
+- **Does the path cross a whole-app capability the journey traverses but no System test yet pins?** Write a System test for that one capability — the whole app wired with real driven adapters. (Only when you started from a Journey test; skip when the outermost test already was the System test.)
 - **Does the path cross a driving-adapter boundary** (HTTP/CLI/queue/cron)? If the translation is non-trivial — routing, deserialization, auth extraction, error-code shaping — write a driving-adapter test with the use-case mocked.
 - **Does the path orchestrate** (call a domain factory, invoke one or more ports, branch on results)? Write a use-case test. In-memory driven adapters satisfy the ports; domain factories are real.
 - **Does the path compute a pure rule** over data with no collaborators? Write a domain test.
