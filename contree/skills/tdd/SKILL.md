@@ -7,7 +7,7 @@ description: "Close gaps between intent and implementation — one failing test 
 
 ## Principles
 
-1. **Outside-in, always** — start with a failing System test, then TDD inward: driving adapter → use-case → domain → port contract → driven adapter. The System test pulls inner layers into being; each inner layer then owns its own complete coverage with its own failing tests at its own seam. "The System test already covers this unit" is never a reason to skip the unit's own test.
+1. **Outside-in, always** — start with a failing Journey test, then TDD inward: System → driving adapter → use-case → domain → port contract → driven adapter. The Journey test pulls System tests into being, and each System test pulls the hex inner layers; every layer then owns its own complete coverage with its own failing tests at its own seam. "The Journey/System test already covers this unit" is never a reason to skip the unit's own test — nor to implement off the higher failure alone.
 2. **Test trees are the contract** — read `## Test Trees` before writing anything. Every test you write reifies exactly one tree. If no tree covers what you're about to build, stop and suggest `change`.
 3. **One failing test at a time** — write one failing test, make it pass, then write the next. Never batch.
 4. **Mutation testing validates finished work** — run at the end, against Domain and Use-case layers only. Never during the cycle.
