@@ -101,7 +101,7 @@ If naming a (sub)tree's paths reveals an awkward shape — the tree doesn't sit 
 
 ### 4. Decompose Across Layers and Positions
 
-A System tree describes a slice's consumer-visible behaviour. Below it sits a set of smaller trees — one per behavioural unit the slice produces. Each smaller tree reifies one test file at one test layer.
+A Journey tree describes a user-visible arc across capabilities. Beneath it, a System tree describes each slice's consumer-visible behaviour, and below that sits a set of smaller trees — one per behavioural unit the slice produces. Each tree reifies one test file at one test layer.
 
 **The test layers, outermost-in:**
 
