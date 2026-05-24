@@ -80,9 +80,9 @@ Confirm how conventions apply to this project:
 - Tree-style output at every layer
 
 **Language-specific conventions that override defaults:**
-- **Rust**: Domain and Use-case tests live inside source (`#[cfg(test)] mod tests`); Adapter (driven) and System tests live in `tests/` at crate root — this is the language convention
-- **Go**: tests are always colocated (`foo_test.go` next to `foo.go`); Adapter (driven) tests use `*_integration_test.go` with `//go:build integration` tags; System tests live in `test/system/` or `tests/system/` per convention
-- **Ruby/RSpec**: separated `spec/` directory is the overwhelming convention — follow it, subdivide by layer (`spec/domain/`, `spec/use_case/`, `spec/adapter/`, `spec/system/`)
+- **Rust**: Domain and Use-case tests live inside source (`#[cfg(test)] mod tests`); Adapter (driven), System, and Journey tests live in `tests/` at crate root — this is the language convention
+- **Go**: tests are always colocated (`foo_test.go` next to `foo.go`); Adapter (driven) tests use `*_integration_test.go` with `//go:build integration` tags; System and Journey tests live in `test/system/` and `test/journey/` (or `tests/...`) per convention
+- **Ruby/RSpec**: separated `spec/` directory is the overwhelming convention — follow it, subdivide by layer (`spec/domain/`, `spec/use_case/`, `spec/adapter/`, `spec/system/`, `spec/journey/`)
 - **Python**, **JS/TS**, **PHP**: both colocated and separated patterns work; prefer colocated for Domain, Use-case, Adapter
 
 **Monorepo strategy:**
