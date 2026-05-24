@@ -10,7 +10,7 @@ Five skills:
 
 - **`/contree:setup`** — Configures your test framework with tree reporters and generates initial test trees from your existing codebase (or plans). Run once per project.
 - **`/contree:change`** — Write or modify test trees in `TEST_TREES.md` before any code is written. Auto-triggers when planning behaviour changes.
-- **`/contree:tdd`** — Auto-triggers when implementing behaviour. Enforces outside-in TDD: confirms tree exists → failing System test → TDD inward through Driving adapter → Use-case → Domain / port contract → Driven adapter, one failing test at a time.
+- **`/contree:tdd`** — Auto-triggers when implementing behaviour. Enforces outside-in TDD: confirms tree exists → failing Journey test → System → TDD inward through Driving adapter → Use-case → Domain / port contract → Driven adapter, one failing test at a time. Implementation waits for a ground-level failing test under the journey/functional failure.
 - **`/contree:sync`** — Audits test trees against implementation, finds gaps and drift, then TDDs any gaps closed.
 - **`/contree:workflow`** — Runs change → sync → tdd end-to-end without pausing.
 
