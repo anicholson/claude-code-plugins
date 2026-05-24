@@ -181,6 +181,12 @@ run_hook_with_last_text() {
   [[ "$output" == *"review"* ]]
 }
 
+@test "change-image nudge directs treating a gpt2 image failure as an error rather than proceeding" {
+  run_hook '{}'
+  [[ "$output" == *"fails"* ]]
+  [[ "$output" == *"error"* ]]
+}
+
 # --- Yield on question ---
 
 @test "hook exits 0 silently when last assistant message ends with a question mark" {
