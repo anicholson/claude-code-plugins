@@ -33,11 +33,14 @@ Use the consumer's vocabulary. If the consumer says "register", the tree says "r
 
 **Adding a new capability:**
 
-**Start with the System tree — and only the System tree.** The System tree names the user-visible behaviour and is the contract a real, max-realism functional test will hold the implementation to. Real driven adapters, real infrastructure, real boundaries. If breadth at that realism is unaffordable, the System tree shrinks to a single expansive journey at max realism — it never becomes a broad in-memory-wired suite.
+**Start outside-in with the outermost tree the change needs — and only that one.**
 
-Inner trees (Use-case, Domain, Port, Adapter) get added *as `tdd` discovers them* by pulling the failing functional test through the layers — they are derived from what the System test demands, not designed ahead of time. The exception is the pure-library case below (no slice), where Domain/Port trees may stand alone. Naming an inner tree before its need has surfaced is YAGNI failure: it commits to a decomposition the implementation hasn't asked for.
+- A brand-new user-visible flow starts as a **Journey tree**: the expansive, max-realism arc that spans multiple capabilities and the contexts they touch, passes through representative error paths (not every one — generic error handling is proven at lower layers), and eventually succeeds. This is the outside-in entry point and the contract a real, max-realism functional test holds the whole system to — real driving and driven adapters, real infrastructure, real boundaries.
+- A capability within an existing flow is captured as a **System tree** — the whole app wired with real driven adapters for that one capability — hung beneath the Journey that traverses it. Extend the existing Journey tree with the new step rather than writing a second journey.
 
-Name the tree — **always `<Layer>: <Subject>`** where `<Layer>` is one of `Domain`, `Use-case`, `Port`, `Adapter`, `System`, and `<Subject>` is a short noun phrase naming the unit under test. Without the layer prefix, readers and `sync` cannot tell what level a tree exercises and cannot detect duplication across layers. Without a clear subject, the tree's tests are unreadable.
+Inner trees (System where the journey has not yet pulled it in, Use-case, Domain, Port, Adapter) get added *as `tdd` discovers them* by pulling the failing journey/functional test through the layers — derived from what the outer test demands, not designed ahead of time. The exception is the pure-library case below (no slice), where Domain/Port trees may stand alone. Naming an inner tree before its need has surfaced is YAGNI failure: it commits to a decomposition the implementation hasn't asked for.
+
+Name the tree — **always `<Layer>: <Subject>`** where `<Layer>` is one of `Journey`, `System`, `Adapter`, `Use-case`, `Domain`, `Port`, and `<Subject>` is a short noun phrase naming the unit under test. Without the layer prefix, readers and `sync` cannot tell what level a tree exercises and cannot detect duplication across layers. Without a clear subject, the tree's tests are unreadable.
 
 **One tree reifies exactly one test file.** If a capability exposes multiple behavioural units (e.g. a module with `generate` AND `isValid`, each testable independently), write **one tree per unit**, not one tree grouping them under a shared header. Grouping destroys the one-tree-one-file invariant and forces the TDD skill to fabricate ambiguous test structure.
 
