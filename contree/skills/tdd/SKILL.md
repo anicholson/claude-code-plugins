@@ -65,7 +65,7 @@ Do not write tests for multiple layers in one step.
 
 ### 4. IMPLEMENT
 
-Write only enough code to make the failing test pass. YAGNI.
+Write only enough code to make the failing test pass. YAGNI. **Never write implementation off a journey/System failure alone — only once the failing test at the behaviour's own ground layer exists (step 3).**
 
 ### 5. GREEN (inner)
 
