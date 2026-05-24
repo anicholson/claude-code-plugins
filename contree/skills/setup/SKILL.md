@@ -94,7 +94,7 @@ Confirm how conventions apply to this project:
 
 ### 5. CONFIGURE INNER TEST RUNNERS
 
-Configure the Domain, Use-case, and Adapter layers as separate projects/configurations in the test runner. See the Framework Reference below — the Vitest projects example shows one config with four projects.
+Configure the Domain, Use-case, and Adapter layers as separate projects/configurations in the test runner. See the Framework Reference below — the Vitest projects example shows one config with all five projects.
 
 **Do NOT skip. Do NOT rely on defaults. Do NOT overwrite existing config — merge into it.**
 
