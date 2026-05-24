@@ -161,13 +161,14 @@ Journey and System are both real functional testing — Journey spans the user a
 
 | Layer          | Shape            | Top-level nodes                                                                                 |
 | -------------- | ---------------- | ----------------------------------------------------------------------------------------------- |
-| Domain         | Code-shaped      | The unit's exported functions/methods. Paths = observable branches.                             |
-| Use-case       | Code-shaped      | The use-case's entry point (usually `execute` or the function name). Paths = observable branches. |
-| Port contract  | Method-shaped    | The port's methods. Paths = behaviours the contract requires of every implementation.           |
-| Adapter        | Protocol-shaped  | The adapter's exposed operations (HTTP routes, CLI commands, queue topics, real-infra concerns). |
+| Journey        | Consumer-shaped  | Steps of the user arc across capabilities, in sequence — eventually succeeding. Consumer vocabulary; representative paths, not every error. |
 | System         | Consumer-shaped  | Consumer-visible events on the slice. Consumer vocabulary; principles, not cases.               |
+| Adapter        | Protocol-shaped  | The adapter's exposed operations (HTTP routes, CLI commands, queue topics, real-infra concerns). |
+| Use-case       | Code-shaped      | The use-case's entry point (usually `execute` or the function name). Paths = observable branches. |
+| Domain         | Code-shaped      | The unit's exported functions/methods. Paths = observable branches.                             |
+| Port contract  | Method-shaped    | The port's methods. Paths = behaviours the contract requires of every implementation.           |
 
-At Domain, Use-case, and Port-contract, TDD + YAGNI means no branch without a path and no path without a branch — the tree maps onto the code's methods and branches. At Adapter and System, the tree describes observable behaviour at the seam, not the internal branches that produce it.
+At Domain, Use-case, and Port-contract, TDD + YAGNI means no branch without a path and no path without a branch — the tree maps onto the code's methods and branches. At Journey, System, and Adapter, the tree describes observable behaviour at the seam, not the internal branches that produce it.
 
 A Domain tree is shaped like its class/module:
 
