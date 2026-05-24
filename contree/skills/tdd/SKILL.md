@@ -123,7 +123,7 @@ UserRegistration
 ### Rules
 
 - Top level names the subject — see the naming heuristic in `skills/change/SKILL.md`.
-- Tree shape depends on the layer — see "Tree shape per layer" in `skills/change/SKILL.md`. At Domain, Use-case, and Port-contract, top-level describes are the unit's functions/methods and every path is an observable branch. At Adapter and System, the tree describes behaviour at the seam.
+- Tree shape depends on the layer — see "Tree shape per layer" in `skills/change/SKILL.md`. At Domain, Use-case, and Port-contract, top-level describes are the unit's functions/methods and every path is an observable branch. At Journey, System, and Adapter, the tree describes behaviour at the seam.
 - Use EARS keywords (`when`, `while`, `if`, `where`, or bare `then`) to match the requirement's nature.
 - `then` describes outcomes.
 - Use `if/then` for error cases and unwanted behaviour.
