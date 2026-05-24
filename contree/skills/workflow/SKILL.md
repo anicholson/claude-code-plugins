@@ -29,7 +29,7 @@ Do not pause to present gaps — proceed directly to implementation.
 
 ### 3. TDD — close gaps
 
-For each gap identified by sync, run the `tdd` skill process: confirm test tree, RED functional, RED unit, implement, GREEN unit, GREEN functional, refactor. Repeat for each `when/then` path.
+For each gap identified by sync, run the `tdd` skill process: confirm test tree, RED journey, RED system/functional, RED unit at the behaviour's ground layer, implement only then, GREEN unit, GREEN functional, GREEN journey, refactor. A journey/functional failure never licenses implementation on its own — descend to a ground-level failing test first. Repeat for each `when/then` path.
 
 Run mutation testing at the end.
 
