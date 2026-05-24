@@ -88,6 +88,7 @@ Confirm how conventions apply to this project:
 **Monorepo strategy:**
 - Colocated test layers (Domain, Use-case, Adapter): stay with source in each package
 - System tests: at monorepo root `test/system/` if they exercise cross-package behaviour, or per-package if they test a single package
+- Journey tests: at monorepo root `test/journey/` — they span packages and capabilities by nature
 - Never create a single root-level test config that reaches into all packages — follow the monorepo tool's conventions (Turborepo tasks, Nx project graph, pnpm workspace scripts)
 - Use shared base config that each package extends
 
