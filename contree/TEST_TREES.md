@@ -123,6 +123,7 @@ post-task-hook (src: hooks/stop-drift-check.sh; unit: test/post-task-hook.bats; 
     and a test-trees nudge prompts detection of drift between trees and implementation
     and a claude-md nudge prompts detection of drift between CLAUDE.md content and reality
     and a readme nudge prompts detection of readme staleness against what the project is, how consumers install it, configure it, and use it
+    and a change-image nudge directs the agent to invoke gpt2 image to generate an image representing the change the task made, choosing what the image depicts from the nature of the change, its important details, and its intended audience, and surfacing those choices for the user to review
   when Claude stops after a response that ends with a question
     then the hook yields the turn to the user without injecting the nudges
   when stop_hook_active is true
