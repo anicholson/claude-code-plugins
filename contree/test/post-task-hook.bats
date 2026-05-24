@@ -175,6 +175,12 @@ run_hook_with_last_text() {
   [[ "$output" == *"audience"* ]]
 }
 
+@test "change-image nudge directs surfacing those choices for the user to review" {
+  run_hook '{}'
+  [[ "$output" == *"surface"* ]]
+  [[ "$output" == *"review"* ]]
+}
+
 # --- Yield on question ---
 
 @test "hook exits 0 silently when last assistant message ends with a question mark" {
