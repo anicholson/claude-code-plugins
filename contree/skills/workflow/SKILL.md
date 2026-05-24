@@ -17,7 +17,7 @@ Carries an idea through the full arc: from intent to contract to verified implem
 
 ### 1. CHANGE — set expected behaviour
 
-Run the `change` skill process: understand the behaviour, identify the consumer, write or modify test trees in `## Test Trees`, decompose across layers and positions. **Outside-in: for a new capability the System tree is the only tree to write up front.** Inner trees (Use-case, Domain, Port, Adapter) get added in step 3 (TDD) as the System test pulls collaborators into being — not pre-specified here.
+Run the `change` skill process: understand the behaviour, identify the consumer, write or modify test trees in `## Test Trees`, decompose across layers and positions. **Outside-in: for a new user-visible flow the Journey tree is the only tree to write up front** (a capability under an existing journey starts as that capability's System tree). System and inner trees (Use-case, Domain, Port, Adapter) get added in step 3 (TDD) as the failing journey/functional test pulls them into being — not pre-specified here.
 
 Do not pause for alignment — proceed directly.
 
