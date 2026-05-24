@@ -168,6 +168,13 @@ run_hook_with_last_text() {
   [[ "$output" == *"image representing the change"* ]]
 }
 
+@test "change-image nudge directs choosing what the image depicts from the nature of the change, its important details, and its audience" {
+  run_hook '{}'
+  [[ "$output" == *"nature of the change"* ]]
+  [[ "$output" == *"important details"* ]]
+  [[ "$output" == *"audience"* ]]
+}
+
 # --- Yield on question ---
 
 @test "hook exits 0 silently when last assistant message ends with a question mark" {
