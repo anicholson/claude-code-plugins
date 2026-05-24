@@ -58,8 +58,8 @@ Check the reverse — does the implementation do things no test tree describes? 
 **Implementation exists without a tree** (code exists, no test tree):
 - Present the two options to the user, with a quick read of the evidence: (a) the implementation is accidental scope creep → remove it, or (b) it's a legitimate capability → write a tree for it. Do not choose. Ask.
 
-**Coverage-by-proxy** (a unit is reachable only through higher-layer tests, with no tree at its native layer):
-- Flag it. The fix is a new tree at the unit's native layer plus its own failing tests, then TDD them — never removal of the higher-layer test. Overlap between layers is intentional. Present to the user and queue the inner tree for `change` (or write it directly if the layer and behaviour are unambiguous), then hand the gaps to `tdd`.
+**Coverage-by-proxy** (a unit is reachable only through higher-layer Journey or System tests, with no tree at its native ground layer):
+- Flag it. Journey and functional coverage is not coverage of the unit beneath. The fix is a new tree at the unit's native layer plus its own failing tests, then TDD them — never removal of the higher-layer test. Overlap between layers is intentional. Present to the user and queue the inner tree for `change` (or write it directly if the layer and behaviour are unambiguous), then hand the gaps to `tdd`.
 
 **Path drift** (a tree names a file path that does not exist on the filesystem):
 - Flag as drift. The path may be wrong (update the tree), the file may have been moved (update the tree), or the implementation is missing (hand to `tdd`). Present to the user and ask.
