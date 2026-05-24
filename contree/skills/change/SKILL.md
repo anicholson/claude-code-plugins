@@ -297,6 +297,21 @@ Once aligned, suggest the user runs `sync` to audit completeness and implement g
 
 ## Examples
 
+**Good** — a Journey tree: the multi-capability arc, passing a representative error, eventually succeeding:
+```
+Journey: checkout
+  when a shopper adds an item to the cart
+    then the cart shows the item and a running total
+  when they enter an invalid shipping address
+    then the address is rejected with a correction prompt
+  when they enter a valid address and pay
+    then payment is captured
+    and an order confirmation is shown
+    and a receipt email is sent
+```
+
+A Journey spans capabilities (cart, address, payment, notification) and the contexts they establish; it walks one representative error (invalid address) and lets the lower layers exhaust the rest; it ends in success.
+
 **Good** — uses EARS patterns to match each requirement's nature:
 ```
 System: media-player
