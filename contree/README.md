@@ -14,7 +14,7 @@ Five skills:
 - **`/contree:sync`** — Audits test trees against implementation, finds gaps and drift, then TDDs any gaps closed.
 - **`/contree:workflow`** — Runs change → sync → tdd end-to-end without pausing.
 
-Plus a **stop hook** that prompts Claude to keep test trees, mental model, CLAUDE.md, and README.md current after every response — and yields silently when Claude ends with a question, so questions to you aren't buried. A **self-care hook** that reminds you to look at something 20 feet away for 20 seconds every 20 minutes (20-20-20 rule). A **session-start header** with skill directions, coding rules, and a random **pressure phrase** ("My boss is watching — make it count", "I'll tip you $200 for a perfect answer"), so the agent starts every session knowing when to reach for each skill and under a little stage-light.
+Plus a **stop hook** that prompts Claude to keep test trees, mental model, CLAUDE.md, and README.md current after every response, and — when a task changed the project — to generate an image of the change with `gpt2 image`. It yields silently when Claude ends with a question, so questions to you aren't buried. The change-image nudge is on by default; set `CONTREE_CHANGE_IMAGE=off` in the hook's environment to disable it. A **self-care hook** that reminds you to look at something 20 feet away for 20 seconds every 20 minutes (20-20-20 rule). A **session-start header** with skill directions, coding rules, and a random **pressure phrase** ("My boss is watching — make it count", "I'll tip you $200 for a perfect answer"), so the agent starts every session knowing when to reach for each skill and under a little stage-light.
 
 ## Install
 
