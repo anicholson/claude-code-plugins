@@ -20,7 +20,7 @@ Users add this repo as a marketplace (`claude plugin marketplace add elimydlarz/
 
 ```
 package.json                    — root package with publish scripts (pnpm publish:<project>)
-.claude-plugin/marketplace.json — plugin catalog (name: susu-eng, relative paths to each plugin)
+.claude-plugin/marketplace.json — plugin catalog (name: elimydlarz, relative paths to each plugin)
 scripts/                        — publish scripts and shared helpers (bump-plugin-version.js)
 README.md                       — unified docs for all products
 CLAUDE.md                       — this file
