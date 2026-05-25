@@ -1,7 +1,6 @@
 {
   "enabledPlugins": {
-    "trunk-sync@elimydlarz": true,
-    "contree@elimydlarz": true
+    "trunk-sync@elimydlarz": true
   },
   "extraKnownMarketplaces": {
     "elimydlarz": {
