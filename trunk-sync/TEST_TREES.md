@@ -349,7 +349,7 @@ Migration note: trunk-sync was previously specified as a flat `## Requirements` 
     when run with a valid scope
       then the scope is passed to `claude plugin marketplace add` and `claude plugin install`
     when run with `--client codex`
-      then a `susu-eng` entry is upserted into `$HOME/.agents/plugins/marketplace.json`
+      then an `elimydlarz` entry is upserted into `$HOME/.agents/plugins/marketplace.json`
       and the operation is idempotent across repeated runs
       and unrelated existing plugins in the marketplace are preserved
     if `--client` is neither `claude` nor `codex`
