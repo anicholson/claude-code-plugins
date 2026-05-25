@@ -57,5 +57,10 @@ echo "==> Create GitHub release"
 gh release create "contree-v$VERSION" --title "contree v$VERSION" --notes-file "$NOTES_FILE"
 
 echo ""
+echo "==> Update marketplace and reinstall"
+claude plugin marketplace update elimydlarz
+claude plugin install contree@elimydlarz --scope user
+
+echo ""
 echo "published contree v$VERSION"
 echo "  git: https://github.com/elimydlarz/claude-code-plugins"
