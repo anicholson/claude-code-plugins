@@ -62,6 +62,7 @@ The script handles: clean-source check, version bump, commit, annotated tag, pus
 - **"Uncommitted changes"** — stop and surface the dirty files. Do not auto-commit; the user owns scope.
 - **"tag exists locally but has not been pushed"** — this used to happen with lightweight tags; the scripts now use annotated tags so `--follow-tags` carries them. If it recurs, fix the script, don't paper over with a manual push.
 - **`gh release create` fails for any other reason** — the commit and tag are already on GitHub. Re-run only the release step: `gh release create <tag> --title "<plugin> v<version>" --notes-file /tmp/<plugin>-notes.md`.
+- **npm deprecate fails** — deprecation targets a different scope than publish, so the publish token may lack write access. The scoped publish token covers `@elimydlarz`; deprecating `@susu-eng/trunk-sync` requires a token with write access to `@susu-eng`. Use the global `~/.npmrc` token (may require `--otp`), or create an automation token for the old scope.
 
 ## What this skill is not
 
