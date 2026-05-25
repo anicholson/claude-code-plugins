@@ -22,7 +22,7 @@ if [ -n "$TRANSCRIPT" ] && [ -f "$TRANSCRIPT" ]; then
   fi
 fi
 
-if [ ! -f MENTAL_MODEL.md ]; then
+if [ ! -f "$CLAUDE_PROJECT_DIR/MENTAL_MODEL.md" ]; then
   echo "MENTAL MODEL: MENTAL_MODEL.md is missing at the project root. Create it with these seven H2 sections in order: Core Domain Identity, World-to-Code Mapping, Ubiquitous Language, Bounded Contexts, Invariants, Decision Rationale, Temporal View. Each section starts with a one-line placeholder describing what belongs there until real content lands." >&2
 else
   echo "MENTAL MODEL: Did this task reveal any knowledge NOT already described in documentation, tests, and code? Default is no change. If a change is warranted: name which of the seven sections it belongs to (Core Domain Identity, World-to-Code Mapping, Ubiquitous Language, Bounded Contexts, Invariants, Decision Rationale, Temporal View); if none fits, it is not part of the mental model; prefer tightening an existing line over adding a new one; state what is true, not what to avoid; when the target section is at its cap, displace or merge an existing item rather than appending." >&2
