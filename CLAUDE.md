@@ -32,7 +32,7 @@ climber/                        — autonomous-clone builder plugin (has its own
 treecon/                        — LSP context injection plugin, pre-implementation (has its own CLAUDE.md)
 ```
 
-Each subdirectory has its own `CLAUDE.md` with project-specific mental model, requirements, and development guidance.
+Each subdirectory has its own `MENTAL_MODEL.md` (its mental model) and `CLAUDE.md` (requirements and development guidance, pointing at the mental model).
 
 ## Publishing
 
