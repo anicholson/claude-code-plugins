@@ -63,7 +63,7 @@ After the publish succeeds, refresh the local marketplace cache and reinstall so
 
 ```
 claude plugin marketplace update elimydlarz
-claude plugin install <plugin>@elimydlarz --scope user
+claude plugin install <plugin>@elimydlarz --scope user  # contree only; omit --scope for others
 ```
 
 ### 6. If it fails
