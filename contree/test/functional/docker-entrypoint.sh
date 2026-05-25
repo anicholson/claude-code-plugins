@@ -298,6 +298,50 @@ of PASS / FAIL / N/A counts across all trees.
 VERIFY
     ;;
 
+  diff-images)
+    # Verifies the user-invoked /contree:diff skill end to end against a mocked
+    # gpt-image-2 endpoint. Claude harness only — the stub overrides OPENAI_API_KEY,
+    # which the codex harness needs for its own model calls.
+    seed_project "greenfield"
+
+    # Introduce an uncommitted, staged change for /diff to depict.
+    cat > "$PROJECT_DIR/index.js" <<'JS'
+export function add(a, b) {
+  return a + b
+}
+JS
+    (cd "$PROJECT_DIR" && git add index.js)
+
+    start_openai_image_stub
+
+    run_agent \
+      "Run /contree:diff to generate an image of the current change."
+
+    kill "$OPENAI_STUB_PID" 2>/dev/null || true
+
+    write_verify << 'VERIFY'
+Evaluate the transcript against the `diff-images-the-change` tree.
+
+The scenario: the working tree has a staged change (a new `add(a, b)` function in
+index.js). OpenAI's images generations endpoint is mocked — a local stub returns a
+canned b64_json image, and both the OpenAI SDK (OPENAI_BASE_URL) and the skill's
+curl recipe (a URL-rewriting curl shim) are pointed at it. The user runs /contree:diff.
+
+Expected signals in the transcript:
+
+  - the agent reads the change via `git diff` / `git diff --staged` (sees the add() function)
+  - the agent calls the images generations endpoint for the `gpt-image-2` model
+    (a request to /v1/images/generations naming model gpt-image-2-2026-04-21)
+  - the agent decodes the returned base64 and saves a .png file in the project
+  - the agent surfaces its choices — what it depicted, the details it foregrounded,
+    and the audience — for the user to review
+  - on success the agent does NOT report a fabricated/placeholder image
+
+For each path in `diff-images-the-change`, return PASS / FAIL / N/A with quoted
+evidence. Report counts at the end.
+VERIFY
+    ;;
+
   describe-it-drift)
     seed_project "describe-it-drift"
 
