@@ -51,6 +51,7 @@ Flow: `setup` prepares the project for test-tree-driven development → `change`
 - `skills/sync/SKILL.md` — identify gaps and cruft: test trees vs implementation in both directions
 - `skills/tdd/SKILL.md` — close gaps: outside-in TDD, one failing test at a time
 - `skills/workflow/SKILL.md` — the full arc: idea → contract → verified implementation
+- `skills/diff/SKILL.md` — user-invoked `/contree:diff`: generate one image of the working-tree change via OpenAI gpt-image-2; choose subject from nature/details/audience; surface choices; fail loudly
 - `test/plugin.bats` — structural tests: plugin manifest, skill files, frontmatter, hook wiring
 - `test/pre-task-hook.bats` — SessionStart hook tests: rules, Directions, mental-model and test-tree framing, file interpolation, pressure phrase
 - `test/post-task-hook.bats` — Stop hook tests: loop prevention, exit codes, question-mark yielding, nudge content
