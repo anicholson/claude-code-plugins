@@ -96,6 +96,11 @@ echo "==> Create GitHub release"
 gh release create "v$VERSION" --title "trunk-sync v$VERSION" --notes-file "$NOTES_FILE"
 
 echo ""
+echo "==> Update marketplace and reinstall"
+claude plugin marketplace update elimydlarz
+claude plugin install trunk-sync@elimydlarz --scope user
+
+echo ""
 echo "published @elimydlarz/trunk-sync v$VERSION"
 echo "  npm: https://www.npmjs.com/package/@elimydlarz/trunk-sync"
 echo "  git: https://github.com/elimydlarz/claude-code-plugins"
