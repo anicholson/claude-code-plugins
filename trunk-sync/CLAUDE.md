@@ -10,7 +10,7 @@ The mental model lives in [MENTAL_MODEL.md](./MENTAL_MODEL.md) — Core Domain I
 
 ```
 .claude-plugin/plugin.json    — plugin manifest (name, version)
-.claude-plugin/marketplace.json — marketplace definition (name: susu-eng, lists plugins)
+.claude-plugin/marketplace.json — marketplace definition (name: elimydlarz, lists plugins)
 dist/                         — compiled JS (tracked in git — marketplace installs from repo)
 hooks/hooks.json              — hook registration (Edit|Write|Bash → scripts/trunk-sync.sh)
 scripts/trunk-sync.sh         — 4-line bash wrapper: exec node dist/lib/hook-entry.js
