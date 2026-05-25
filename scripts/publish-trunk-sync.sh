@@ -96,6 +96,6 @@ echo "==> Create GitHub release"
 gh release create "v$VERSION" --title "trunk-sync v$VERSION" --notes-file "$NOTES_FILE"
 
 echo ""
-echo "published @susu-eng/trunk-sync v$VERSION"
-echo "  npm: https://www.npmjs.com/package/@susu-eng/trunk-sync"
+echo "published @elimydlarz/trunk-sync v$VERSION"
+echo "  npm: https://www.npmjs.com/package/@elimydlarz/trunk-sync"
 echo "  git: https://github.com/elimydlarz/claude-code-plugins"
