@@ -159,6 +159,7 @@ Tactical cheatsheet for the RED/GREEN cycle. See `skills/change/SKILL.md` for th
 - Import: the composition root **wired with real driving and driven adapters, real infrastructure, real boundaries** — the highest realism the project can run.
 - Drive the full user arc across capabilities through the real driving adapter; assert on observable effects through that adapter at each step.
 - Walk one **representative** error path (e.g. an invalid input), let the arc recover, and **eventually succeed** — do not enumerate every error here; those live at the layers below.
+- Keep it runnable in under 5 minutes; curated, not exhaustive. When it exceeds that budget, trim to the highest-impact and most-recent steps — the rest stays covered at lower layers.
 - The outside-in entry point. Everything below appears only because this test cannot be satisfied without it.
 
 ### System (`*.system.test.*` in `test/system/`)
