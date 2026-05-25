@@ -58,7 +58,7 @@ gh release create "openclaw-notifier-v$VERSION" --title "openclaw-notifier v$VER
 echo ""
 echo "==> Update marketplace and reinstall"
 claude plugin marketplace update elimydlarz
-claude plugin install openclaw-notifier@elimydlarz --scope user
+claude plugin install openclaw-notifier@elimydlarz
 
 echo ""
 echo "published openclaw-notifier v$VERSION"
