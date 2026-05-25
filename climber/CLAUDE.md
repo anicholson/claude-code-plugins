@@ -29,7 +29,7 @@ The mental model lives in [MENTAL_MODEL.md](./MENTAL_MODEL.md) — Core Domain I
 
 ```
 /plugin marketplace add elimydlarz/claude-code-plugins
-claude plugin install climber@susu-eng --scope project
+claude plugin install climber@elimydlarz --scope project
 ```
 
 Recommend `--scope project` so climber only activates where you want it. Then run `/climb` once to populate `~/.claude/climber/`.
