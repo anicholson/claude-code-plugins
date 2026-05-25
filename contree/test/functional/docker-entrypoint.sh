@@ -127,6 +127,48 @@ write_verify() {
   cat "$VERIFY_FILE"
 }
 
+OPENAI_STUB_PID=0
+
+start_openai_image_stub() {
+  # Mock OpenAI's images generations endpoint so /diff can run without a real
+  # (billable, non-deterministic) gpt-image-2 call. Serves a canned b64_json
+  # image. Both the OpenAI SDK (via OPENAI_BASE_URL) and the skill's curl recipe
+  # (via a URL-rewriting curl shim) are pointed at this local stub.
+  local port=8771
+  local stub="/tmp/openai-image-stub.js"
+  cat > "$stub" <<'JS'
+const http = require('http')
+const image = Buffer.from('mock-image').toString('base64')
+http.createServer((req, res) => {
+  let body = ''
+  req.on('data', (c) => (body += c))
+  req.on('end', () => {
+    if (req.method === 'POST' && req.url.includes('/images/generations')) {
+      res.writeHead(200, { 'Content-Type': 'application/json' })
+      res.end(JSON.stringify({ data: [{ b64_json: image }] }))
+    } else {
+      res.writeHead(404, { 'Content-Type': 'application/json' })
+      res.end('{}')
+    }
+  })
+}).listen(process.env.STUB_PORT, () => console.error('openai-image-stub listening'))
+JS
+  STUB_PORT="$port" node "$stub" &
+  OPENAI_STUB_PID=$!
+
+  local real_curl; real_curl="$(command -v curl)"
+  cat > /usr/local/bin/curl <<EOF
+#!/usr/bin/env bash
+args=()
+for a in "\$@"; do args+=("\${a//https:\/\/api.openai.com\/v1/http:\/\/127.0.0.1:$port\/v1}"); done
+exec "$real_curl" "\${args[@]}"
+EOF
+  chmod +x /usr/local/bin/curl
+
+  export OPENAI_API_KEY="test-key-mock"
+  export OPENAI_BASE_URL="http://127.0.0.1:$port/v1"
+}
+
 # --- Test cases ---
 
 case "$TEST_NAME" in
