@@ -7,7 +7,7 @@ set -euo pipefail
 # Expects:
 #   - For claude: ANTHROPIC_API_KEY in environment or in .env
 #   - For codex:  OPENAI_API_KEY in environment or in .env
-#   - $1 is the test name (layered-workflow | mental-model-validator-smoke | describe-it-drift)
+#   - $1 is the test name (layered-workflow | mental-model-validator-smoke | describe-it-drift | diff-images)
 #   - $2 is the harness  (claude | codex), default claude
 
 TEST_NAME="${1:?Usage: docker-entrypoint.sh <test-name> [claude|codex]}"
