@@ -63,7 +63,7 @@ Flow: `setup` prepares the project for test-tree-driven development → `change`
 - `test/functional/docker-run.sh` — runs `(test, harness)` pairs from MATRIX in Docker (parallel), passes ANTHROPIC_API_KEY + OPENAI_API_KEY via env
 - `test/functional/docker-entrypoint.sh` — named functional cases (`layered-workflow`, `mental-model-validator-smoke`, `describe-it-drift`, `change-image-nudge`) parameterised by harness (`claude` | `codex`); `change-image-nudge` installs a mock `gpt2` on PATH and verifies the Stop hook's CHANGE IMAGE nudge drives the agent to invoke `gpt2 image`; for codex pre-seeds `~/.agents/plugins/marketplace.json` + cache symlink + `~/.codex/config.toml` enable flag; each writes a `<test>-<harness>-transcript.jsonl` and `<test>-<harness>-verify.txt`
 - `test/fixtures/greenfield/` — empty JS project (used by `mental-model-validator-smoke`)
-- `test/fixtures/bookmarks-api/` — HTTP API fixture for `layered-workflow` (exercises all four hex layers + ports)
+- `test/fixtures/bookmarks-api/` — HTTP API fixture for `layered-workflow` (exercises every test layer, Journey down to Domain, + ports)
 - `test/fixtures/describe-it-drift/` — pre-seeded tree + test file whose describe/it deliberately does not mirror the tree (for the `describe-it-drift` functional case)
 
 ## Functional Testing
