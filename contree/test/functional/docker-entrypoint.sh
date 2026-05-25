@@ -210,8 +210,8 @@ VERIFY
 
   layered-workflow)
     # The single end-to-end journey: setup → workflow → drift+sync against an
-    # HTTP API fixture that exercises Domain, Use-case, Adapter (driving + driven),
-    # System, ports, and in-memory adapters. Run under both harnesses.
+    # HTTP API fixture that exercises Journey, System, Adapter (driving + driven),
+    # Use-case, Domain, ports, and in-memory adapters. Run under both harnesses.
     seed_project "bookmarks-api"
 
     echo ""
