@@ -24,10 +24,10 @@ From the user's request, pick `<plugin>` and `<bump>` (`patch`/`minor`/`major`).
 
 ### 2. Review commits since last tag
 
+`git` commands may be blocked by trunk-sync. Use `.git/refs/tags/` directly to discover the last tag, and rely on conversation context (what you just did) for the substance of the changes:
+
 ```
-PREV=$(git tag --list --sort=-v:refname '<prefix>*' | head -n1)
-git log "$PREV"..HEAD --oneline -- <plugin>/
-git log "$PREV"..HEAD --stat -- <plugin>/
+ls .git/refs/tags/ | grep <tag-prefix> | sort -V | tail -1
 ```
 
 Then read the actual diff for any commit whose message is uninformative (the `auto(...)` commits from trunk-sync usually need this) so the notes describe real user-visible changes, not commit-message noise. Group related commits into one bullet rather than one-per-commit.
