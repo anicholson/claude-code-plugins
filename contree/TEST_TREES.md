@@ -397,7 +397,7 @@ dual-harness-compatibility (src: .claude-plugin/plugin.json, .codex-plugin/plugi
 ## diff-images-the-change
 
 ```
-diff-images-the-change (src: skills/diff/SKILL.md; unit: test/diff-images-the-change.bats; functional: none)
+diff-images-the-change (src: skills/diff/SKILL.md; unit: test/diff-images-the-change.bats; functional: test/functional/docker-entrypoint.sh)
   when the diff skill is invoked
     then it derives the change from the working-tree git diff
     and it generates an image representing that change using OpenAI's gpt-image-2 model via the images generations API
