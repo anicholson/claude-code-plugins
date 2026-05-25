@@ -63,7 +63,8 @@ After the publish succeeds, refresh the local marketplace cache and reinstall so
 
 ```
 claude plugin marketplace update elimydlarz
-claude plugin install <plugin>@elimydlarz --scope user  # contree only; omit --scope for others
+claude plugin install <plugin>@elimydlarz        # project-scope (trunk-sync, climber, openclaw-notifier)
+claude plugin install contree@elimydlarz --scope user  # user-scope
 ```
 
 ### 6. If it fails
