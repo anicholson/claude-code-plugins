@@ -127,26 +127,6 @@ write_verify() {
   cat "$VERIFY_FILE"
 }
 
-install_gpt2_mock() {
-  # Stand-in for the real `gpt2` CLI so the run can prove the agent acts on the
-  # CHANGE IMAGE nudge without depending on a real image model. `gpt2 image ...`
-  # writes a placeholder image to the cwd and echoes a marker that lands in the
-  # transcript; any other invocation exits non-zero.
-  local bin="/usr/local/bin/gpt2"
-  cat > "$bin" <<'MOCK'
-#!/usr/bin/env bash
-if [ "${1:-}" = "image" ]; then
-  shift
-  printf 'mock-image' > change-image.png
-  echo "gpt2 mock: generated change-image.png for: $*"
-  exit 0
-fi
-echo "gpt2 mock: unsupported invocation: $*" >&2
-exit 1
-MOCK
-  chmod +x "$bin"
-}
-
 # --- Test cases ---
 
 case "$TEST_NAME" in
