@@ -9,17 +9,17 @@ SKILL="$PROJECT_ROOT/skills/change/SKILL.md"
   [[ "$output" == *"Talk it through with the user"* || "$output" == *"discuss"* ]]
 }
 
-@test "change scopes consumer vocabulary to Adapter and System layers" {
+@test "change scopes consumer vocabulary to Journey, System, and Adapter layers" {
   run cat "$SKILL"
   [[ "$output" == *"consumer"* ]]
-  [[ "$output" == *"Adapter and System"* ]]
   [[ "$output" == *"vocabulary"* ]]
+  [[ "$output" == *"Journey, System, and Adapter"* ]]
 }
 
-@test "change scopes principles-not-cases to Adapter and System layers" {
+@test "change scopes principles-not-cases to Journey, System, and Adapter layers" {
   run cat "$SKILL"
-  [[ "$output" == *"Adapter and System"* ]]
   [[ "$output" == *"principles, not cases"* ]]
+  [[ "$output" == *"Journey, System, and Adapter"* ]]
 }
 
 @test "change writes Domain, Use-case, and Port-contract trees with top-level nodes naming exported functions, methods, or port operations" {
