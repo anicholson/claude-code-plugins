@@ -4,7 +4,7 @@ import { dirname, join } from "node:path";
 import { homedir } from "node:os";
 import { getGitRoot, commandExists } from "../lib/git.js";
 const REPO = "elimydlarz/claude-code-plugins";
-const MARKETPLACE_NAME = "susu-eng";
+const MARKETPLACE_NAME = "elimydlarz";
 export function installCommand(args) {
     if (args.includes("--help") || args.includes("-h")) {
         console.log(`Usage: trunk-sync install [--client claude|codex] [--scope user|project]
@@ -115,7 +115,7 @@ function upsertCodexMarketplace(marketplacePath) {
     else {
         marketplace = {
             name: MARKETPLACE_NAME,
-            interface: { displayName: "susu-eng" },
+            interface: { displayName: "elimydlarz" },
             plugins: [],
         };
     }
