@@ -53,5 +53,10 @@ echo "==> Create GitHub release"
 gh release create "climber-v$VERSION" --title "climber v$VERSION" --notes-file "$NOTES_FILE"
 
 echo ""
+echo "==> Update marketplace and reinstall"
+claude plugin marketplace update elimydlarz
+claude plugin install climber@elimydlarz --scope user
+
+echo ""
 echo "published climber v$VERSION"
 echo "  git: https://github.com/elimydlarz/claude-code-plugins"
