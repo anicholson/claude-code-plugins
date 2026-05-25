@@ -152,7 +152,7 @@ function upsertCodexMarketplace(marketplacePath: string): void {
   } else {
     marketplace = {
       name: MARKETPLACE_NAME,
-      interface: { displayName: "susu-eng" },
+      interface: { displayName: "elimydlarz" },
       plugins: [],
     };
   }
