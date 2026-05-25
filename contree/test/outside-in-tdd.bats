@@ -34,12 +34,13 @@ SKILL="$PROJECT_ROOT/skills/tdd/SKILL.md"
   [[ "$output" == *"inner"* ]]
 }
 
-@test "tdd writes tests at the tree's layer (Domain / Use-case / Adapter / System)" {
+@test "tdd writes tests at the tree's layer (Journey / System / Adapter / Use-case / Domain)" {
   run cat "$SKILL"
   [[ "$output" == *"Domain"* ]]
   [[ "$output" == *"Use-case"* ]]
   [[ "$output" == *"Adapter"* ]]
   [[ "$output" == *"System"* ]]
+  [[ "$output" == *"Journey"* ]]
 }
 
 @test "tdd mirrors the tree in describe/it hierarchy" {
