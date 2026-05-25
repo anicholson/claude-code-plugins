@@ -128,12 +128,12 @@ SKILL="$PROJECT_ROOT/skills/tdd/SKILL.md"
   [[ "$output" == *"corrected"* || "$output" == *"fix"* || "$output" == *"reconcile"* ]]
 }
 
-@test "tdd directs that a unit pulled into being by a higher-layer test gets its own tree and failing tests at its native layer before the code lands" {
+@test "tdd directs that a unit pulled into being by a higher-layer test gets its own tree and failing tests at its native ground layer before the code lands" {
   run cat "$SKILL"
   [[ "$output" == *"own tree"* ]]
   [[ "$output" == *"own failing test"* ]]
-  [[ "$output" == *"native layer"* ]]
-  [[ "$output" == *"before the implementation lands"* ]]
+  [[ "$output" == *"native ground layer"* ]]
+  [[ "$output" == *"before any implementation lands"* ]]
 }
 
 @test "tdd directs that overlap between layers is intentional and the higher-layer test never excuses the unit's own coverage" {
