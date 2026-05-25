@@ -59,6 +59,11 @@ load test_helper
   assert_success
 }
 
+@test "diff skill exists" {
+  run test -f "$PROJECT_ROOT/skills/diff/SKILL.md"
+  assert_success
+}
+
 # --- Skill frontmatter (generic validator) ---
 
 @test "every SKILL.md has non-empty name and description" {
