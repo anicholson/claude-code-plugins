@@ -4,16 +4,17 @@ load test_helper
 
 SKILL="$PROJECT_ROOT/skills/change/SKILL.md"
 
-@test "change captures the slice as a System tree named for the consumer capability" {
+@test "change captures the outermost tree — a Journey tree for a new arc or a System tree for a capability under an existing journey" {
   run cat "$SKILL"
+  [[ "$output" == *"Journey tree"* ]]
   [[ "$output" == *"System tree"* ]]
   [[ "$output" == *"consumer"* ]]
 }
 
-@test "change writes only the System tree up front; inner trees are added on failing-functional-test pressure" {
+@test "change writes only the outermost tree up front; System and inner trees are added on failing-journey/functional-test pressure" {
   run cat "$SKILL"
-  [[ "$output" == *"only tree you can write up front"* || "$output" == *"only the System tree"* || "$output" == *"only tree written up front"* ]]
-  [[ "$output" == *"failing functional test"* || "$output" == *"failing System test"* ]]
+  [[ "$output" == *"only that one"* || "$output" == *"only the outermost tree"* ]]
+  [[ "$output" == *"failing journey/functional test"* ]]
 }
 
 @test "change writes one tree per behavioural unit at its layer" {
