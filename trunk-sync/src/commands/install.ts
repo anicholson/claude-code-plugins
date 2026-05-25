@@ -5,7 +5,7 @@ import { homedir } from "node:os";
 import { getGitRoot, commandExists } from "../lib/git.js";
 
 const REPO = "elimydlarz/claude-code-plugins";
-const MARKETPLACE_NAME = "susu-eng";
+const MARKETPLACE_NAME = "elimydlarz";
 
 export function installCommand(args: string[]): void {
   if (args.includes("--help") || args.includes("-h")) {
