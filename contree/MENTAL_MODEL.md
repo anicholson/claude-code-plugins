@@ -1,0 +1,79 @@
+## Core Domain Identity
+
+- Contree makes test trees the living contract: `TEST_TREES.md` IS the specification, kept in sync with implementation, never a stale parallel doc.
+- Development is outside-in and layered: a failing Journey test pulls System, then the hex inner layers, into being — one failing test at a time.
+- A tree is both specification (EARS `when/then` in `TEST_TREES.md`) and structure (the test file's describe/it hierarchy, mirrored verbatim).
+- It ships as one product from one `contree/` directory under two harnesses (Claude Code, Codex) via parallel manifests over shared `skills/` and `hooks/`.
+- Coding rules (KISS, fail-fast, hexagonal, no comments, …) ride alongside the trees as the always-on operating discipline.
+
+## World-to-Code Mapping
+
+- Expected behaviour → a tree in `TEST_TREES.md`; anything observable anywhere (files, network, logs, next invocation) belongs there.
+- One tree → exactly one test file; the tree's `when/then` paths → that file's describe/it hierarchy, verbatim.
+- The user-visible arc across capabilities → the **Journey** layer (`test/journey/*.journey.test.*`), the outermost layer and outside-in entry point.
+- A single capability wired whole-app → the **System** layer (`test/system/*.system.test.*`), interior to the Journey.
+- Hexagonal seams → inner layers: Adapter (`*.adapter.test.*`), Use-case (`*.use-case.test.*`), Domain (`*.domain.test.*`).
+- A tree's coverage on disk → a parenthesised label set: `src`, `unit`, `integration`, `functional` (System), `journey` (Journey); `none` marks a declared gap.
+- An outbound dependency → a Port; each Port ships an in-memory twin plus a real adapter, both bound by one shared `*.contract.ts` suite.
+- Workflow phases → skills: `setup`, `change`, `sync`, `tdd`, `workflow`.
+- Enforcement → hooks: SessionStart (rules + trees), Stop (drift check), PostToolUse (mental-model validator), UserPromptSubmit (self-care).
+- The product's theory → `MENTAL_MODEL.md` (this file); its behaviour → `## Test Trees`; its operating discipline → the rules.
+
+## Ubiquitous Language
+
+- Test tree — a `when/then` (EARS) hierarchy that is simultaneously requirement and test structure.
+- Leaf — a single `then`/`and`/`but` assertion at behaviour granularity.
+- EARS keywords — `when` (event), `while` (state), `if` (unwanted), `where` (optional), bare `then` (ubiquitous).
+- Causal nesting — a `when` that can only occur after a prior `then` nests under it, not as a sibling.
+- Journey — the outermost layer: the full user arc across capabilities and contexts, at max realism, walking representative errors, eventually succeeding.
+- System — a single capability wired whole-app with real driven adapters, interior to the Journey.
+- Adapter / Use-case / Domain — one adapter vs its contract / orchestration over in-memory ports / the pure core.
+- Port — an outbound interface; ships an in-memory twin and a real adapter.
+- Shared contract suite — one `*.contract.ts` both adapters must pass, making in-memory substitution sound.
+- Slice — one consumer-visible capability; a Journey traverses several.
+- Outside-in — start from a failing Journey test and let it pull inner layers into being.
+- Ground-level failure — a failing test at a behaviour's own native layer; the precondition for writing implementation.
+- Coverage-by-proxy — a unit reachable only through higher-layer tests with no tree at its native layer; treated as drift.
+- Drift — divergence between trees and implementation in either direction.
+- Coverage categories — `src`, `unit`, `integration`, `functional`, `journey`.
+
+## Bounded Contexts
+
+- Tree language — EARS syntax, causal nesting, one-tree-one-file, leaf granularity; the grammar of the contract.
+- Test-layer taxonomy — Journey ▸ System ▸ Adapter ▸ Use-case ▸ Domain (+ Port contract); each layer owns its own seam.
+- Skill workflow — `setup` (configure) → `change` (set behaviour) → `sync` (find drift) → `tdd` (close gaps); `workflow` runs the arc.
+- Enforcement hooks — SessionStart, Stop drift-check, PostToolUse mental-model validator, UserPromptSubmit self-care.
+- Hexagonal architecture — domain pure, I/O in adapters, dependencies inward, a boundary linter holding the line.
+- Dual-harness packaging — one source directory, parallel `.claude-plugin` / `.codex-plugin` manifests, `CLAUDE_PLUGIN_ROOT` shared by both.
+
+## Invariants
+
+- Trees are the contract: every behaviour/side-effect has a tree; every tree has a test; every test drives real implementation.
+- One tree reifies exactly one test file; the describe/it hierarchy mirrors the tree verbatim.
+- Outside-in always: the first failing test for a capability is a Journey test at max realism.
+- Journey and functional coverage is never coverage of the layers beneath; implementation waits for a ground-level failing test under the journey/functional failure.
+- Every layer owns complete coverage of its own behaviour; a higher-layer test (green or red) never excuses a missing lower-layer test; overlap across layers is intentional.
+- System and Journey wire real driven adapters; in-memory wiring belongs to the Use-case layer, never to a broad System suite.
+- Each outbound Port has an in-memory twin and a real adapter, both bound by one shared contract suite.
+- Trees are never modified silently; drift is never resolved unilaterally — both surface to the user.
+- Behaviour, not internals: a tree describes only what crosses its layer's seam.
+- The same hooks and skills run unchanged under both Claude Code and Codex.
+
+## Decision Rationale
+
+- Journey is canonised as distinct from System so the outside-in entry point is a real multi-capability arc — not a per-capability System test pressed into doing the arc's job.
+- The ground-level gate exists because agents skip lower tests claiming "already covered"; declaring journey/functional coverage not-coverage forces implementation down to a failing test at the behaviour's own layer.
+- Hexagonal layering is chosen over "unit/integration/functional" because seams give sharper targets; a green higher layer can still hide an untested seam.
+- Trees live in `TEST_TREES.md`, not a separate requirements doc, so spec and tests can never drift into two truths.
+- One source directory with parallel manifests avoids duplicating skills/hooks per harness; `CLAUDE_PLUGIN_ROOT` lets identical commands run on both.
+- Enforcement is hook-driven (Stop, PostToolUse) rather than advisory prose, because rules in text alone get ignored under pressure.
+- The mental model is fixed at seven capped sections so it stays a theory, not a dumping ground.
+
+## Temporal View
+
+- Per project: `setup` once → then `change` → `sync` → `tdd` cycles (or `workflow` end-to-end), repeatedly.
+- Per capability: failing Journey test → failing System test(s) → inner failing tests at each native layer → implement → green upward → refactor.
+- Per failing test: write one, run it, see it fail, implement the minimum, see it pass; never batch.
+- Per turn: the Stop hook fires a drift check unless the response ends in a question.
+- At end of work: mutation testing runs against Domain and Use-case as final validation.
+- Across sessions: SessionStart injects rules, mental model, and trees so every session starts in-context.
