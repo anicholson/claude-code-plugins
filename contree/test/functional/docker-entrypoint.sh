@@ -275,7 +275,7 @@ Harness under test: **$HARNESS**.
 Focus areas:
   - change-decomposes-across-layers (Journey → System → inner-layer decomposition; port decomposition, in-memory + real adapters, shared contract)
   - change-writes-trees (Domain/Use-case/Port-contract trees code-shaped; Journey/System/Adapter trees use consumer vocabulary)
-  - outside-in-tdd (first failing test is a Journey test; Use-case wired with in-memory adapters; Adapter runs shared contract; describe/it mirrors trees verbatim; inner units get their own ground-level failing test before code — journey/functional coverage is not coverage)
+  - outside-in-tdd (outermost failing test pulls inner layers in — a Journey test for a new arc, else System; the Journey is curated and kept under 5 minutes; Use-case wired with in-memory adapters; Adapter runs shared contract; describe/it mirrors trees verbatim; inner units get their own ground-level failing test before code — journey/functional coverage is not coverage)
   - composable-testing (file naming conventions, port contract suite)
   - dual-harness-compatibility (when run under codex: SessionStart rules visible in transcript; PostToolUse hook fires after edits)
 
