@@ -365,7 +365,7 @@ export default defineConfig({
 })
 ```
 
-**Separating the four test layers** — use Vitest projects (replaces deprecated `vitest.workspace.ts` in v3.2+). One project per layer: `domain`, `use-case`, `adapter`, `system`. Same pattern shown below — adjust `include` globs and timeouts per layer. Adapter (driven) and System (with real infra) may need much higher timeouts than Domain/Use-case:
+**Separating the five test layers** — use Vitest projects (replaces deprecated `vitest.workspace.ts` in v3.2+). One project per layer: `domain`, `use-case`, `adapter`, `system`, `journey`. Same pattern shown below — adjust `include` globs and timeouts per layer. Adapter (driven), System, and Journey (real infra) may need much higher timeouts than Domain/Use-case:
 ```ts
 // vitest.config.ts
 export default defineConfig({
