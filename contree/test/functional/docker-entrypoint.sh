@@ -324,27 +324,36 @@ JS
 
     kill "$OPENAI_STUB_PID" 2>/dev/null || true
 
-    write_verify << 'VERIFY'
-Evaluate the transcript against the `diff-images-the-change` tree.
+    # Deterministic verification — no AI eval. We assert the two observable
+    # mechanical outcomes: the mocked gpt-image-2 endpoint was called, and the
+    # returned image bytes were written to a file in the project.
+    pass=1
+    if grep -q "images/generations" "$STUB_HITS" && grep -q "gpt-image-2" "$STUB_HITS"; then
+      called="PASS — mocked gpt-image-2 images/generations call recorded"
+    else
+      called="FAIL — no mocked gpt-image-2 images/generations call recorded"
+      pass=0
+    fi
+    if grep -rlF "$STUB_MARKER" "$PROJECT_DIR" --exclude-dir=.git >/dev/null 2>&1; then
+      saved="PASS — the returned image bytes were saved to a file in the project"
+    else
+      saved="FAIL — no file containing the returned image bytes was found"
+      pass=0
+    fi
 
-The scenario: the working tree has a staged change (a new `add(a, b)` function in
-index.js). OpenAI's images generations endpoint is mocked — a local stub returns a
-canned b64_json image, and both the OpenAI SDK (OPENAI_BASE_URL) and the skill's
-curl recipe (a URL-rewriting curl shim) are pointed at it. The user runs /contree:diff.
+    write_verify <<VERIFY
+diff-images — deterministic verification (no AI eval):
 
-Expected signals in the transcript:
+  $called
+  $saved
 
-  - the agent reads the change via `git diff` / `git diff --staged` (sees the add() function)
-  - the agent calls the images generations endpoint for the `gpt-image-2` model
-    (a request to /v1/images/generations naming model gpt-image-2-2026-04-21)
-  - the agent decodes the returned base64 and saves a .png file in the project
-  - the agent surfaces its choices — what it depicted, the details it foregrounded,
-    and the audience — for the user to review
-  - on success the agent does NOT report a fabricated/placeholder image
-
-For each path in `diff-images-the-change`, return PASS / FAIL / N/A with quoted
-evidence. Report counts at the end.
+These cover the diff-images-the-change paths for the gpt-image-2 generation call and
+the saved image. The remaining paths — derives the change from git diff; chooses
+subject from nature/details/audience; surfaces choices for review; fails loudly —
+are covered by the unit test test/diff-images-the-change.bats.
 VERIFY
+
+    [ "$pass" -eq 1 ] || { echo "diff-images: FAILED deterministic checks" >&2; exit 1; }
     ;;
 
   describe-it-drift)
