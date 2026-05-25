@@ -251,9 +251,9 @@ Evaluate the transcript against every tree in the plugin's
 Harness under test: **$HARNESS**.
 
 Focus areas:
-  - change-decomposes-across-layers (port decomposition, in-memory + real adapters, shared contract)
-  - change-writes-trees (Domain/Use-case/Port-contract trees code-shaped; Adapter/System trees use consumer vocabulary)
-  - outside-in-tdd (Use-case wired with in-memory adapters; Adapter runs shared contract; describe/it mirrors trees verbatim)
+  - change-decomposes-across-layers (Journey → System → inner-layer decomposition; port decomposition, in-memory + real adapters, shared contract)
+  - change-writes-trees (Domain/Use-case/Port-contract trees code-shaped; Journey/System/Adapter trees use consumer vocabulary)
+  - outside-in-tdd (first failing test is a Journey test; Use-case wired with in-memory adapters; Adapter runs shared contract; describe/it mirrors trees verbatim; inner units get their own ground-level failing test before code — journey/functional coverage is not coverage)
   - composable-testing (file naming conventions, port contract suite)
   - dual-harness-compatibility (when run under codex: SessionStart rules visible in transcript; PostToolUse hook fires after edits)
 
