@@ -45,10 +45,10 @@ CHANGE="$PROJECT_ROOT/skills/change/SKILL.md"
   [[ "$output" == *"highest tolerable realism"* || "$output" == *"max realism"* || "$output" == *"max-realism"* ]]
 }
 
-@test "change falls back to a single expansive journey at max realism when breadth is unaffordable" {
+@test "change leans on the journey when breadth at max realism is unaffordable" {
   run cat "$CHANGE"
-  [[ "$output" == *"single expansive journey"* ]]
   [[ "$output" == *"unaffordable"* || "$output" == *"unafford"* ]]
+  [[ "$output" == *"lean on the journey"* ]]
 }
 
 @test "change pairs each outbound port with a shared contract suite" {
