@@ -50,6 +50,7 @@ outside-in-tdd (src: skills/tdd/SKILL.md; unit: test/outside-in-tdd.bats; functi
   when writing a Journey test
     then real driving and driven adapters are wired across the multi-capability arc at max realism
     and the arc walks representative error paths, not every error, and eventually succeeds
+    and the journey is curated and kept runnable in under 5 minutes, trimmed to the highest-impact and most-recent steps
   when writing a System test
     then real driven adapters are wired at the highest tolerable realism by default
   while breadth at max realism is unaffordable
