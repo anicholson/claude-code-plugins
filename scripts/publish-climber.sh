@@ -55,7 +55,7 @@ gh release create "climber-v$VERSION" --title "climber v$VERSION" --notes-file "
 echo ""
 echo "==> Update marketplace and reinstall"
 claude plugin marketplace update elimydlarz
-claude plugin install climber@elimydlarz --scope user
+claude plugin install climber@elimydlarz
 
 echo ""
 echo "published climber v$VERSION"
