@@ -260,7 +260,7 @@ Focus areas:
 Specific layer-shape checks:
   - Inspect TEST_TREES.md — at least one Domain/Use-case/Port-contract tree has top-level nodes named after the unit's functions/methods/operations.
   - Inspect the corresponding test file — describe/it mirrors the tree verbatim.
-  - Adapter/System trees use consumer vocabulary, describe principles not enumerated cases.
+  - Journey/System/Adapter trees use consumer vocabulary, describe principles not enumerated cases.
 
 Out of scope for this scenario (mark these tree paths N/A, not FAIL):
   - outside-in-tdd: "when all trees for a slice have passing tests then run mutation testing" — the prompt instructs the agent to skip Stryker execution to stay within budget. Stryker should be CONFIGURED (phase 1 setup) but NOT EXECUTED. If the transcript shows the agent ran Stryker anyway, that is a FAIL of obedience to the user instruction, not a tree FAIL.
