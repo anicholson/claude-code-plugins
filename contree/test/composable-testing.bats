@@ -27,6 +27,12 @@ CHANGE="$PROJECT_ROOT/skills/change/SKILL.md"
   [[ "$output" == *"*.system.test.*"* ]]
 }
 
+@test "setup places Journey tests under test/journey/ (*.journey.test.*)" {
+  run cat "$SETUP"
+  [[ "$output" == *"test/journey/"* ]]
+  [[ "$output" == *"*.journey.test.*"* ]]
+}
+
 @test "change pairs each outbound port with an in-memory adapter used by Use-case tests" {
   run cat "$CHANGE"
   [[ "$output" == *"in-memory adapter"* ]]
