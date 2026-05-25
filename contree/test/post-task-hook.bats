@@ -236,7 +236,7 @@ run_hook_with_last_text() {
   local input_file="$BATS_TEST_TMPDIR/input.json"
   printf '{"transcript_path":"%s"}' "$transcript" > "$input_file"
   local cmd; cmd=$(hook_command)
-  run env CLAUDE_PLUGIN_ROOT="$PROJECT_ROOT" CMD="$cmd" INPUT_FILE="$input_file" \
+  run env CLAUDE_PLUGIN_ROOT="$PROJECT_ROOT" CMD="$cmd" INPUT_FILE="$input_file" CLAUDE_PROJECT_DIR="$BATS_TEST_TMPDIR" \
     bash -c 'bash -c "$CMD" < "$INPUT_FILE" 2>&1'
   [ "$status" -eq 2 ]
   [ -n "$output" ]
