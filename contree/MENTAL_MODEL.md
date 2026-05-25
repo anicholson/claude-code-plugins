@@ -50,7 +50,7 @@
 
 - Trees are the contract: every behaviour/side-effect has a tree; every tree has a test; every test drives real implementation.
 - One tree reifies exactly one test file; the describe/it hierarchy mirrors the tree verbatim.
-- Outside-in always: the first failing test for a capability is a Journey test at max realism.
+- Outside-in: a capability's outermost failing test pulls the inner layers into being — a Journey test for a new user-visible arc, otherwise a System test. The Journey is curated, never exhaustive: kept runnable in under 5 minutes and trimmed to the highest-impact and most-recent steps, since every behaviour is also covered below.
 - Journey and functional coverage is never coverage of the layers beneath; implementation waits for a ground-level failing test under the journey/functional failure.
 - Every layer owns complete coverage of its own behaviour; a higher-layer test (green or red) never excuses a missing lower-layer test; overlap across layers is intentional.
 - System and Journey wire real driven adapters; in-memory wiring belongs to the Use-case layer, never to a broad System suite.
