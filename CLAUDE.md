@@ -24,6 +24,7 @@ package.json                    — root package with publish scripts (pnpm publ
 scripts/                        — publish scripts and shared helpers (bump-plugin-version.js)
 README.md                       — unified docs for all products
 CLAUDE.md                       — this file
+MENTAL_MODEL.md                 — index of per-product mental models (references only — see the file for the rationale)
 
 trunk-sync/                     — multi-agent sync plugin + seance CLI (has its own CLAUDE.md)
 contree/                        — test trees as living requirements plugin (has its own CLAUDE.md)
