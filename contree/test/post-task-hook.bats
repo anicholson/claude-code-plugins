@@ -14,7 +14,7 @@ hook_command() {
 run_hook() {
   local input="$1"
   local cmd; cmd=$(hook_command)
-  run env CLAUDE_PLUGIN_ROOT="$PROJECT_ROOT" CMD="$cmd" INPUT="$input" PROJECT_DIR="$BATS_TEST_TMPDIR" \
+  run env CLAUDE_PLUGIN_ROOT="$PROJECT_ROOT" CMD="$cmd" INPUT="$input" PROJECT_DIR="$BATS_TEST_TMPDIR" CLAUDE_PROJECT_DIR="$BATS_TEST_TMPDIR" \
     bash -c 'cd "$PROJECT_DIR" && printf "%s" "$INPUT" | bash -c "$CMD" 2>&1'
 }
 
@@ -27,7 +27,7 @@ run_hook_with_last_text() {
   local input_file="$BATS_TEST_TMPDIR/input.json"
   printf '{"transcript_path":"%s"}' "$transcript" > "$input_file"
   local cmd; cmd=$(hook_command)
-  run env CLAUDE_PLUGIN_ROOT="$PROJECT_ROOT" CMD="$cmd" INPUT_FILE="$input_file" PROJECT_DIR="$BATS_TEST_TMPDIR" \
+  run env CLAUDE_PLUGIN_ROOT="$PROJECT_ROOT" CMD="$cmd" INPUT_FILE="$input_file" PROJECT_DIR="$BATS_TEST_TMPDIR" CLAUDE_PROJECT_DIR="$BATS_TEST_TMPDIR" \
     bash -c 'cd "$PROJECT_DIR" && bash -c "$CMD" < "$INPUT_FILE" 2>&1'
 }
 
