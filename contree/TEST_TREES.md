@@ -39,7 +39,7 @@ setup-scaffolds-mental-model (src: skills/setup/SKILL.md; unit: test/setup-scaff
 ```
 outside-in-tdd (src: skills/tdd/SKILL.md; unit: test/outside-in-tdd.bats; functional: test/functional/docker-entrypoint.sh)
   when starting a new capability
-    then the first failing test is a Journey test at the highest tolerable realism — real driving and driven adapters, real infrastructure, real boundaries
+    then the first failing test is the outermost the capability needs at the highest tolerable realism — a Journey test for a new user-visible arc, otherwise a System test — with real driving and driven adapters, real infrastructure, real boundaries
     and System and inner-layer trees and tests are added only as implementation pressure from that failing journey/functional test demands them
     and inner layers are not designed up front
   when implementing a tree
