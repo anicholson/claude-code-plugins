@@ -61,7 +61,7 @@
 
 ## Decision Rationale
 
-- Journey is canonised as distinct from System so the outside-in entry point is a real multi-capability arc — not a per-capability System test pressed into doing the arc's job.
+- Journey is canonised as distinct from System so the outside-in entry point is a real multi-capability arc — not a per-capability System test pressed into doing the arc's job; it is kept curated and under 5 minutes (highest-impact + most-recent steps) because it cannot be exhaustive — the lower layers carry the rest.
 - The ground-level gate exists because agents skip lower tests claiming "already covered"; declaring journey/functional coverage not-coverage forces implementation down to a failing test at the behaviour's own layer.
 - Hexagonal layering is chosen over "unit/integration/functional" because seams give sharper targets; a green higher layer can still hide an untested seam.
 - Trees live in `TEST_TREES.md`, not a separate requirements doc, so spec and tests can never drift into two truths.
