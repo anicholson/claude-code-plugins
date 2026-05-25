@@ -189,7 +189,7 @@ run_hook_with_last_text() {
 
 @test "no change-image nudge is emitted while the change-image feature is turned off" {
   local cmd; cmd=$(hook_command)
-  run env CLAUDE_PLUGIN_ROOT="$PROJECT_ROOT" CMD="$cmd" INPUT='{}' PROJECT_DIR="$BATS_TEST_TMPDIR" CONTREE_CHANGE_IMAGE=off \
+  run env CLAUDE_PLUGIN_ROOT="$PROJECT_ROOT" CMD="$cmd" INPUT='{}' PROJECT_DIR="$BATS_TEST_TMPDIR" CLAUDE_PROJECT_DIR="$BATS_TEST_TMPDIR" CONTREE_CHANGE_IMAGE=off \
     bash -c 'cd "$PROJECT_DIR" && printf "%s" "$INPUT" | bash -c "$CMD" 2>&1'
   [[ "$output" != *"gpt2 image"* ]]
 }
