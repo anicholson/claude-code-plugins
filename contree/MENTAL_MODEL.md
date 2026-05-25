@@ -1,7 +1,7 @@
 ## Core Domain Identity
 
 - Contree makes test trees the living contract: `TEST_TREES.md` IS the specification, kept in sync with implementation, never a stale parallel doc.
-- Development is outside-in and layered: a failing Journey test pulls System, then the hex inner layers, into being — one failing test at a time.
+- Development is outside-in and layered: the outermost failing test the change needs — a curated Journey for a new user-visible arc, else a System test — pulls the inner layers into being, one failing test at a time.
 - A tree is both specification (EARS `when/then` in `TEST_TREES.md`) and structure (the test file's describe/it hierarchy, mirrored verbatim).
 - It ships as one product from one `contree/` directory under two harnesses (Claude Code, Codex) via parallel manifests over shared `skills/` and `hooks/`.
 - Coding rules (KISS, fail-fast, hexagonal, no comments, …) ride alongside the trees as the always-on operating discipline.
