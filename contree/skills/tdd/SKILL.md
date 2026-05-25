@@ -41,6 +41,7 @@ Write **one** failing test at the outermost layer the slice needs. For a new use
 - Drive through a real driving adapter (HTTP, CLI). **Wire real driven adapters at the highest tolerable realism — real infrastructure, real boundaries.** This is the max-validity functional test that owns the user-visible arc (Journey) or the single capability (System).
 - No internal mocks. No stubs. No in-memory driven adapters at this layer.
 - A Journey walks **representative** error paths (e.g. an invalid input) and **eventually succeeds** — it does not enumerate every error; those belong to the layers below.
+- **Keep the Journey runnable in under 5 minutes.** It is curated, never exhaustive — when it runs longer, trim it to the highest-impact (most damaging if broken) and most-recent (most likely to break) steps; trimmed behaviour stays covered at lower layers. Re-evaluate and trim the journey whenever you touch it, and do not auto-add a journey step for every capability.
 - When breadth at max realism is unaffordable, lean on the journey and push combinatorial detail down to inner layers — never wire many in-memory System tests. If you're tempted to wire in-memory at the System layer to "get faster tests", you want a Use-case test instead; write one when implementation pressure asks for it.
 - The test WILL fail — that's the point.
 - **Write exactly one test. Run it. See it fail. Then proceed.**
