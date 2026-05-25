@@ -134,7 +134,7 @@ Journey and System are both real functional testing — Journey spans the user a
 
 **Decomposition rules:**
 
-- The outermost tree describes the **journey** — a Journey tree named for the user-visible arc (`checkout`, `onboarding`). It drives the journey test and is the outside-in entry point; one journey traverses several slices and the contexts they touch.
+- The outermost tree describes the **journey** — a Journey tree named for the user-visible arc (`checkout`, `onboarding`). It drives the journey test and is the outside-in entry point; one journey traverses several slices and the contexts they touch. Keep it curated and runnable in under 5 minutes (highest-impact + most-recent steps) — there is rarely more than one or a few journeys, and never one per capability.
 - Each **slice** the journey traverses is a System tree named for the consumer-visible capability (`save-score`, `cancel-order`). It drives that capability's System test.
 - **Pure libraries (no vertical slice).** A library with only exported functions and no driving adapter, no use-case, and no driven port has no slice in the usual sense. Still write a System tree if any cross-function invariant is observable (e.g. `ShortCode` — *when `generate()` produces a code, then `isValid()` accepts it*). If no cross-function invariant exists, omit System altogether and document the omission — but never leave a System test file without a corresponding tree.
 - Below the slice, write a **separate tree** for each behavioural unit that has observable behaviour someone could change silently:
