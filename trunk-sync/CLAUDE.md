@@ -4,22 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Mental Model
 
-trunk-sync has two independent layers that share one git repo:
-
-**Hook layer** — a Claude Code plugin that fires after every Edit/Write tool use. It stages, commits, pulls from `origin/main`, and pushes — keeping multiple agents in continuous integration. The logic is implemented in TypeScript (functional core in `hook-plan.ts`, imperative shell in `hook-execute.ts`) and invoked via a thin bash wrapper (`scripts/trunk-sync.sh → node dist/lib/hook-entry.js`). Merge conflicts are surfaced as hook feedback (exit 2); the agent resolves by editing the file, and the hook completes the merge on the next fire.
-
-**CLI layer** — a TypeScript CLI (`trunk-sync`) with three commands:
-- `install` — soft checks (git repo warns, missing remote is silent), hard checks (jq, claude), adds the GitHub repo as a marketplace source, then installs the plugin via `claude plugin install` (default project scope, `--scope user` for all repos). `--client codex` writes a marketplace entry under `~/.agents/plugins/marketplace.json` instead.
-- `seance` — traces a line of code via `git blame` → commit body → `Session:` + `Agent:` fields → truncates the session transcript to that commit's timestamp → creates a worktree at that commit → dispatches per agent: Claude resumes via `claude --resume` reading rewritten JSONL under `~/.claude/projects/<worktree-slug>/`; Codex resumes via `codex exec --sandbox read-only … resume <uuid>` reading a rewritten rollout under `~/.codex/sessions/<Y>/<M>/<D>/`.
-- `config` — reads/writes `~/.trunk-sync` config file (key=value format)
-
-The hook writes `Session: <uuid>` and `Agent: <claude|codex>` into every commit body, plus `TranscriptPath: <path>` when the payload provides one (Codex) — for Claude the transcript is derived from the project slug + session ID. This (and the optional `.transcripts/` snapshot) is the only coupling between the two layers.
-
-Codex-side seance fact, non-obvious and not recoverable from code alone: **`codex resume <uuid>` finds rollouts by scanning `~/.codex/sessions/<date>/`**. A row in `~/.codex/state_5.sqlite`'s `threads` table is *not* required — placing a rollout file at the canonical path with a rewritten `SessionMeta.payload.id`/`cwd` is sufficient. Don't add DB insertion logic.
-
-**Clocking in** — agents clock in and out of work. On every commit, the hook writes a timecard to `.trunk-sync/timeclock/<session-id>.json` recording who the agent is, what branch it's on, and what task it's working on (extracted from the transcript). Timecards are committed and pushed alongside code changes, giving cross-machine visibility. Agents with dead PIDs (local) or stale timestamps (remote, 30 min) are automatically clocked out. When other agents are clocked in, the hook surfaces a throttled message (exit 2, once per 5 min) so the agent can reason about resource conflicts (ports, build locks, test databases).
-
-Key domain concepts: worktree (optional, via `claude -w` — needed for multi-agent to isolate working trees), trunk (always `origin/main`), session ID (links commits to Claude conversations), timecard (`.trunk-sync/timeclock/<id>.json` — who's clocked in, what they're working on).
+The mental model lives in [MENTAL_MODEL.md](./MENTAL_MODEL.md) — Core Domain Identity, World-to-Code Mapping, Ubiquitous Language, Bounded Contexts, Invariants, Decision Rationale, and Temporal View. It covers the hook/CLI split, seance, the timeclock, and the non-obvious Codex-resume fact (rollouts are found by path, not DB insertion).
 
 ## Repo Map
 
