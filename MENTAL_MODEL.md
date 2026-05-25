@@ -1,6 +1,6 @@
 # Mental Model
 
-This repository is the **susu-eng monorepo** — several independent products that happen to share a marketplace, a publish pipeline, and one git history. It has **no single mental model, by design.**
+This repository is the **elimydlarz monorepo** — several independent products that happen to share a marketplace, a publish pipeline, and one git history. It has **no single mental model, by design.**
 
 Each product owns its mental model in its own `MENTAL_MODEL.md`:
 
