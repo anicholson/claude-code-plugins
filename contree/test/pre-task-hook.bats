@@ -69,8 +69,14 @@ run_hook_in() {
   run_hook_in "$BATS_TEST_TMPDIR"
   [[ "$output" == *"Layer completeness"* ]]
   [[ "$output" == *"every layer owns complete coverage of its own behaviour"* ]]
-  [[ "$output" == *"green higher-layer test never excuses a missing lower-layer test"* ]]
   [[ "$output" == *"overlap across layers is intentional"* ]]
+  [[ "$output" == *"never excuses a missing lower-layer test"* ]]
+}
+
+@test "session start directs the agent that journey and functional coverage is never coverage of the layers beneath" {
+  run_hook_in "$BATS_TEST_TMPDIR"
+  [[ "$output" == *"ground layer"* ]]
+  [[ "$output" == *"Journey and functional coverage is never coverage of the layers beneath"* ]]
 }
 
 # --- Skill directions ---
