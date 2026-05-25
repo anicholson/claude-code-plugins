@@ -56,5 +56,10 @@ echo "==> Create GitHub release"
 gh release create "openclaw-notifier-v$VERSION" --title "openclaw-notifier v$VERSION" --notes-file "$NOTES_FILE"
 
 echo ""
+echo "==> Update marketplace and reinstall"
+claude plugin marketplace update elimydlarz
+claude plugin install openclaw-notifier@elimydlarz --scope user
+
+echo ""
 echo "published openclaw-notifier v$VERSION"
 echo "  git: https://github.com/elimydlarz/claude-code-plugins"
