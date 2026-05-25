@@ -4,4 +4,6 @@
 - Adapter tests at the Adapter layer exercise one adapter against its port contract. For driven adapters, that means real infrastructure — Testcontainers, a local service, or recorded cassettes. Not mocks.
 - Driven adapters ship in two flavours that share one port contract suite: an in-memory adapter used by Use-case tests, and a real adapter used in production and at the System layer. Both adapter test files import and run the same `*.contract.ts` suite. The real adapter's test file layers on adapter-specific behaviour (timeouts, retries, constraint handling) beyond the shared suite.
 - Name adapter tests `*.adapter.test.*` and colocate with the adapter
+- Journey and System tests use real inference (LLM API calls) by default. When cost or latency makes real inference unaffordable, the fallback must be raised — the mock site must carry a visible marker naming the reason. Silent fallback is not acceptable.
+- Adapter tests use the real subject and real downstream dependencies. A downstream dependency may be mocked when it is unavailable or prohibitively expensive, but each mock must carry a visible marker naming the reason.
 - *Do not* use environment variables to vary behaviour between test and runtime
