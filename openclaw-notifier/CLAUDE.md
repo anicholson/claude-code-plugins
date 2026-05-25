@@ -2,9 +2,7 @@
 
 ## Mental Model
 
-A Claude Code plugin that notifies OpenClaw when a subagent completes a task. The SubagentStop hook extracts agent info from the event payload, wraps it into a `/hooks/agent` message (via `jq`), and POSTs it to the OpenClaw gateway. This wakes the parent agent session so it can act on the completed subagent's results. Fire-and-forget — notification failures never block the agent.
-
-Two env vars control behaviour: `OPENCLAW_URL` (required, gateway base URL) and `OPENCLAW_TOKEN` (optional, the `hooks.token` Bearer token — NOT the gateway auth token). When `OPENCLAW_URL` is unset the hook is a silent no-op, so the plugin is safe to install in non-OpenClaw sessions.
+The mental model lives in [MENTAL_MODEL.md](./MENTAL_MODEL.md) — Core Domain Identity, World-to-Code Mapping, Ubiquitous Language, Bounded Contexts, Invariants, Decision Rationale, and Temporal View.
 
 ## Repo Map
 
