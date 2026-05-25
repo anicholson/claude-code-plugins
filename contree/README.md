@@ -23,7 +23,7 @@ Plus a **stop hook** that prompts Claude to keep test trees, mental model, CLAUD
 
 ```sh
 claude plugin marketplace add elimydlarz/claude-code-plugins
-claude plugin install contree@susu-eng --scope project
+claude plugin install contree@elimydlarz --scope project
 ```
 
 **Codex CLI** — install via `/plugins` in the Codex CLI, pointing at this repository. Skills run by default; hooks require enabling codex's under-development `plugin_hooks` feature: `codex features enable plugin_hooks`. Codex sets `CLAUDE_PLUGIN_ROOT` in hook command env so the existing scripts work unchanged.
