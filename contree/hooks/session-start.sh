@@ -32,7 +32,7 @@ Eagerly use these skills to fulfil operator requests, where applicable:
 - **Read docs** — use Context7 before using any library; don't guess API usage
 - **Consumer-driven** — implement only what a consumer already needs
 - **Resolve uncertainty** — look directly and remove optionality; don't hedge with fallbacks
-- **Act, don't ask** — if your reasoning already clearly indicates the right answer, act on it rather than fabricating a question to externalize the decision
+- **Act, don't ask** — if your reasoning already clearly indicates the right answer, act on it rather than fabricating a question or reply to externalize the decision
 - **pnpm** — use pnpm, not npm, for JS/TS
 - **Trees are the contract** — every expected behaviour and side effect goes in `## Test Trees`; every tree is verified by a test; every test drives the real implementation. File writes, external calls, state mutations, and cleanup all count as behaviour — if it's observable anywhere (filesystem, network, logs, next invocation), it belongs in the tree. If you're wondering whether an expectation belongs in the trees, the answer is yes.
 - **Behaviour, not internals** — every tree describes what crosses its level's interface (inputs, outputs, side-effects). Never the implementation inside. Journey/System/Adapter speak the consumer's vocabulary; Domain/Use-case/Port-contract speak the unit's own functions, types, and errors — both only as observable at the seam.
