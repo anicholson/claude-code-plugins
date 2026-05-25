@@ -22,6 +22,14 @@ SKILL="$PROJECT_ROOT/skills/tdd/SKILL.md"
   [[ "$output" == *"lean on the journey"* ]]
 }
 
+@test "tdd keeps the journey curated and runnable under 5 minutes, trimmed to highest-impact and most-recent" {
+  run cat "$SKILL"
+  [[ "$output" == *"curated"* ]]
+  [[ "$output" == *"under 5 minutes"* ]]
+  [[ "$output" == *"highest-impact"* ]]
+  [[ "$output" == *"most-recent"* ]]
+}
+
 @test "tdd gates implementation on a ground-level failing test under the journey/functional failure" {
   run cat "$SKILL"
   [[ "$output" == *"ground layer"* ]]
