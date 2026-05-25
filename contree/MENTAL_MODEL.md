@@ -33,7 +33,7 @@
 - Slice — one consumer-visible capability; a Journey traverses several.
 - Outside-in — start from a failing Journey test and let it pull inner layers into being.
 - Ground-level failure — a failing test at a behaviour's own native layer; the precondition for writing implementation.
-- Coverage-by-proxy — a unit reachable only through higher-layer tests with no tree at its native layer; treated as drift.
+- Coverage-by-proxy — a unit reachable only through higher-layer tests with no tree at its native layer; treated as uncovered.
 - Drift — divergence between trees and implementation in either direction.
 - Coverage categories — `src`, `unit`, `integration`, `functional`, `journey`.
 
