@@ -105,7 +105,7 @@ Print:
 - Path to `~/.claude/climber/lessons.md` (for the user to review).
 - Path to `~/.claude/climber/manual.md` (injected into every session where climber is enabled via the SessionStart hook — no paste required).
 - Confirm `antipatterns.md` and `precedents.md` are in place.
-- Remind the user to install climber in any project they want the clone active in: `claude plugin install climber@susu-eng --scope project`.
+- Remind the user to install climber in any project they want the clone active in: `claude plugin install climber@elimydlarz --scope project`.
 
 ## When to re-run
 
