@@ -15,12 +15,13 @@ SKILL="$PROJECT_ROOT/skills/setup/SKILL.md"
   [[ "$output" == *"tree reporters"* || "$output" == *"tree-shaped"* ]]
 }
 
-@test "setup configures the four test layers as separate commands" {
+@test "setup configures the five test layers as separate commands" {
   run cat "$SKILL"
   [[ "$output" == *"Domain"* ]]
   [[ "$output" == *"Use-case"* ]]
   [[ "$output" == *"Adapter"* ]]
   [[ "$output" == *"System"* ]]
+  [[ "$output" == *"Journey"* ]]
 }
 
 @test "setup configures mutation testing with layer-suffix exclusions" {
