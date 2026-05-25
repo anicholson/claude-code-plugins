@@ -1,6 +1,6 @@
 {
   "extraKnownMarketplaces": {
-    "susu-eng": {
+    "elimydlarz": {
       "source": {
         "source": "github",
         "repo": "elimydlarz/claude-code-plugins"
@@ -8,6 +8,6 @@
     }
   },
   "enabledPlugins": {
-    "trunk-sync@susu-eng": true
+    "trunk-sync@elimydlarz": true
   }
 }
