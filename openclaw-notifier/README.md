@@ -10,7 +10,7 @@ The notification is **fire-and-forget** — failures are logged to stderr but ne
 
 ## Installation
 
-Add the `susu-eng` marketplace and install the plugin:
+Add the `elimydlarz` marketplace and install the plugin:
 
 ```bash
 claude plugin marketplace add elimydlarz/claude-code-plugins
