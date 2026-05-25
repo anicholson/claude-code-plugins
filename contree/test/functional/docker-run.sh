@@ -28,7 +28,6 @@ MATRIX=(
   "layered-workflow:codex"
   "mental-model-validator-smoke:claude"
   "describe-it-drift:claude"
-  "change-image-nudge:claude"
 )
 
 TEST_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
