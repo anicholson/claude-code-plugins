@@ -55,6 +55,8 @@ pnpm publish:<plugin> <bump> --notes-file /tmp/<plugin>-notes.md
 
 The script handles: clean-source check, version bump, commit, annotated tag, push with `--follow-tags`, GitHub release. trunk-sync also publishes to npm.
 
+**Auth:** trunk-sync's publish script reads `TRUNK_SYNC_PUBLISHER` from `$REPO_ROOT/.env`, writes it to a temp `trunk-sync/.npmrc` as `//registry.npmjs.org/:_authToken`, and runs `pnpm publish --no-git-checks`. The token is a scoped npm publish token with 2FA disabled. If publish fails with E401/E404, the `.env` token is stale or scope-restricted — the user regenerates it.
+
 ### 5. If it fails
 
 - **"Uncommitted changes"** — stop and surface the dirty files. Do not auto-commit; the user owns scope.
