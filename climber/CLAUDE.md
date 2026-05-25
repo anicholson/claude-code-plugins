@@ -8,14 +8,7 @@ See [TEST_TREES.md](TEST_TREES.md) — the definition of functional and cross-fu
 
 ## Mental Model
 
-Climber splits the job into **build time** and **test time**:
-
-- **Build time** — the `/climb` skill mines the user's Claude Code transcripts (`~/.claude/projects/**/*.jsonl`) and produces user-specific artefacts under `~/.claude/climber/`:
-  - `manual.md` — the ambient rulebook; the SessionStart hook injects it into every session where climber is enabled.
-  - `antipatterns.md` — the if-then list `review-turn` consumes.
-  - `precedents.md` — the decision table `predict-user` consumes.
-  - `lessons.md` — two-halved human-readable doc (explicit + implicit) for the user to review.
-- **Test time** — the clone operates a Claude Code session on the user's behalf. Three skills fire on their triggers and consume the artefacts. **No skill ever touches raw transcripts at test time.** A **SessionStart hook** (`hooks/inject-manual.sh`) reads `~/.claude/climber/manual.md` and injects it as session context, so the clone is ambient from turn one without the user pasting anything. A **Stop hook** (`hooks/drive-to-vision.sh`) enforces climbing: while `./VISION.md` exists and isn't marked `Status: Achieved`, it blocks turn-end and directs the clone to invoke the `drive-to-vision` skill. The skill does one turn's work per invocation; the hook re-fires at each turn boundary, creating the loop. The clone codes directly — no dispatch layer — and the Stop hook is the whole orchestration mechanism. The hook yields when the clone's last message ends with `?` (escalation), when VISION.md is absent (vision-definition phase), or when it's marked achieved.
+The mental model lives in [MENTAL_MODEL.md](./MENTAL_MODEL.md) — Core Domain Identity, World-to-Code Mapping, Ubiquitous Language, Bounded Contexts, Invariants, Decision Rationale, and Temporal View.
 
 ## Skills
 
