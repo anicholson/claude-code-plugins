@@ -1,4 +1,4 @@
-# susu-eng — Claude Code Plugins
+# elimydlarz — Claude Code Plugins
 
 Tools for working with Claude Code: parallel agent coordination, test-driven development, living documentation, and shared coding rules.
 
