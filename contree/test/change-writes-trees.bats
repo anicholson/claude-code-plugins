@@ -84,12 +84,13 @@ SKILL="$PROJECT_ROOT/skills/change/SKILL.md"
   [[ "$output" == *"labelled"* ]]
 }
 
-@test "change specifies the four coverage categories" {
+@test "change specifies the five coverage categories" {
   run cat "$SKILL"
   [[ "$output" == *"src"* ]]
   [[ "$output" == *"unit"* ]]
   [[ "$output" == *"integration"* ]]
   [[ "$output" == *"functional"* ]]
+  [[ "$output" == *"journey"* ]]
 }
 
 @test "change declares gaps explicitly with 'none' and omits not-applicable categories" {
