@@ -5,7 +5,7 @@ set -euo pipefail
 # Works both inside Docker (called by docker-run.sh) and directly on the host.
 #
 # Expects:
-#   - For claude: ANTHROPIC_API_KEY in environment or in .env
+#   - For claude: ANTHROPIC_API_KEY or DEEPSEEK_API_KEY (via docker-run.sh DeepSeek env vars)
 #   - For codex:  OPENAI_API_KEY in environment or in .env
 #   - $1 is the test name (layered-workflow | mental-model-validator-smoke | describe-it-drift | diff-images)
 #   - $2 is the harness  (claude | codex), default claude

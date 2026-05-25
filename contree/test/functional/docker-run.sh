@@ -20,6 +20,32 @@ for env_file in "$SCRIPT_DIR/.env" "$REPO_ROOT/.env"; do
   [ -f "$env_file" ] && set -a && . "$env_file" && set +a
 done
 
+# Provider selection: DeepSeek (preferred) or Anthropic.
+# When DEEPSEEK_API_KEY is set, configure Claude Code to use the DeepSeek
+# Anthropic-compatible endpoint per https://api-docs.deepseek.com/quick_start/agent_integrations/claude_code
+if [ -n "${DEEPSEEK_API_KEY:-}" ]; then
+  ANTHROPIC_BASE_URL="https://api.deepseek.com/anthropic"
+  ANTHROPIC_AUTH_TOKEN="$DEEPSEEK_API_KEY"
+  ANTHROPIC_MODEL="deepseek-v4-pro[1m]"
+  ANTHROPIC_DEFAULT_OPUS_MODEL="deepseek-v4-pro[1m]"
+  ANTHROPIC_DEFAULT_SONNET_MODEL="deepseek-v4-pro[1m]"
+  ANTHROPIC_DEFAULT_HAIKU_MODEL="deepseek-v4-flash"
+  CLAUDE_CODE_SUBAGENT_MODEL="deepseek-v4-flash"
+  CLAUDE_CODE_EFFORT_LEVEL="max"
+  DOCKER_LLM_ENV=(
+    -e ANTHROPIC_BASE_URL
+    -e ANTHROPIC_AUTH_TOKEN
+    -e ANTHROPIC_MODEL
+    -e ANTHROPIC_DEFAULT_OPUS_MODEL
+    -e ANTHROPIC_DEFAULT_SONNET_MODEL
+    -e ANTHROPIC_DEFAULT_HAIKU_MODEL
+    -e CLAUDE_CODE_SUBAGENT_MODEL
+    -e CLAUDE_CODE_EFFORT_LEVEL
+  )
+else
+  DOCKER_LLM_ENV=(-e ANTHROPIC_API_KEY)
+fi
+
 # (test-name, harness) pairs run by `all`. layered-workflow is the only
 # end-to-end journey and runs under both harnesses; the narrow cases run
 # under claude only.
@@ -47,7 +73,7 @@ run_pair() {
   echo "=== Starting: $name ($harness) ==="
   docker run --rm \
     --name "contree-test-${name}-${harness}-$$" \
-    -e ANTHROPIC_API_KEY \
+    "${DOCKER_LLM_ENV[@]}" \
     -e "CODEX_API_KEY=${OPENAI_API_KEY:-}" \
     -v "$REPO_ROOT:/repo:ro" \
     -v "$SCRIPT_DIR:/output" \
