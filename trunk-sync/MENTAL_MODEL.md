@@ -1,0 +1,66 @@
+## Core Domain Identity
+
+- trunk-sync keeps multiple agents in continuous integration on `origin/main` via a post-edit git hook, plus a CLI for install / seance / config.
+- Two independent layers share one repo: a Claude Code hook (auto commit/pull/push) and a TypeScript CLI.
+- Conflicts are surfaced as hook feedback for the agent to resolve in file content; the hook completes the merge on the next fire — agents never run git themselves.
+- Every commit is provenance-stamped so any line can be traced back to the conversation that wrote it (seance).
+- Agents clock in and out via committed timecards, giving cross-machine visibility of who is working on what.
+
+## World-to-Code Mapping
+
+- Pure decision logic → `hook-plan.ts`; git/fs execution → `hook-execute.ts`; entry wiring → `hook-entry.ts`; bash wrapper → `scripts/trunk-sync.sh`.
+- CLI commands → `src/commands/{install,seance,config}.ts`; shared git utilities → `src/lib/git.ts`.
+- A line of code → `git blame` → commit-body provenance → truncated transcript → worktree at that commit → resumed agent session (seance).
+- "Who is clocked in" → `.trunk-sync/timeclock/<session-id>.json`, committed and pushed.
+- Trunk → always `origin/main`; worktree → optional isolation for multi-agent (`claude -w`).
+- Distribution → `dist/` tracked in git (marketplace installs) + an npm tarball selected by the `files` field.
+
+## Ubiquitous Language
+
+- Trunk — `origin/main`, the shared integration branch.
+- Hook layer — fires on Edit/Write/Bash; stages, commits, pulls, pushes.
+- CLI layer — `trunk-sync install | seance | config`.
+- Seance — reconstruct and resume the agent session behind a line of code; modes default / `--inspect` / `--list`.
+- Session ID — links a commit to a Claude/Codex conversation.
+- Provenance fields — `Session:`, `Agent:`, `TranscriptPath:` in the commit body.
+- Timecard — `.trunk-sync/timeclock/<id>.json`; who is clocked in and on what.
+- Clock in / clock out — agents register/deregister work; dead PIDs (local) and stale (30 min, remote) timecards auto-clock-out.
+- Worktree — optional isolated working tree for multi-agent runs.
+- Conflict feedback — exit 2 with a stderr message; the agent fixes file content only.
+- Install scope — project by default, `--scope user` for all repos, `--client codex` for the Codex marketplace path.
+
+## Bounded Contexts
+
+- Hook (continuous integration) — the auto commit/pull/push loop and conflict surfacing.
+- CLI install — marketplace registration + plugin install across Claude Code and Codex.
+- Seance — provenance-driven session reconstruction and resume.
+- Timeclock — cross-machine agent presence and resource-conflict signalling.
+- Config — the `~/.trunk-sync` key=value store.
+
+## Invariants
+
+- The hook owns all git operations during a sync; agents only edit files, never run git.
+- Conflicts are resolved by editing file contents; the hook completes the merge on the next fire.
+- Every commit carries `Session:` and `Agent:`; `TranscriptPath:` is added when the payload provides one.
+- `dist/` is committed (minus tests and `.d.ts`) because marketplace installs run the compiled hook.
+- Pure logic is unit-tested; git/fs callers use real temp repos — never mocks for git.
+- Every exported function ships with tests in the same PR.
+- Hook exit codes: 0 = success/no-op, 2 = conflict/failure with agent feedback on stderr.
+- npm and `.claude-plugin/plugin.json` versions stay in lockstep via the `version` lifecycle script.
+
+## Decision Rationale
+
+- The hook handles git so agents stay focused on content and never corrupt the shared branch with ad-hoc git.
+- The functional-core / imperative-shell split keeps decision logic pure and fast to unit-test.
+- Seance finds Codex rollouts by scanning `~/.codex/sessions/<date>/`; placing a rewritten rollout at the canonical path is sufficient — no DB insertion, do not add it.
+- Timecards are committed (not local-only) so presence is visible across machines.
+- `dist/` is tracked because marketplace installs have no build step.
+- The two distribution channels (npm + marketplace) are bumped together to avoid version skew.
+
+## Temporal View
+
+- Per edit: stage → commit (provenance + timecard) → pull `origin/main` → push; on conflict, exit 2 → agent edits → next fire completes the merge.
+- Throttled (≤ once / 5 min): surface other clocked-in agents so the agent can reason about shared resources.
+- Auto clock-out: local dead PID, or a remote timecard older than 30 min.
+- Seance, on demand: blame → provenance → transcript truncation → worktree → resume.
+- Release: bump both manifests → build → `pnpm publish` (npm) → push to GitHub (marketplace).
