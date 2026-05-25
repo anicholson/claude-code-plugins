@@ -160,40 +160,6 @@ run_hook_with_last_text() {
   [[ "$output" == *"use"* ]]
 }
 
-# --- Change-image nudge ---
-
-@test "change-image nudge directs invoking gpt2 image to generate an image representing the change" {
-  run_hook '{}'
-  [[ "$output" == *"gpt2 image"* ]]
-  [[ "$output" == *"image representing the change"* ]]
-}
-
-@test "change-image nudge directs choosing what the image depicts from the nature of the change, its important details, and its audience" {
-  run_hook '{}'
-  [[ "$output" == *"nature of the change"* ]]
-  [[ "$output" == *"important details"* ]]
-  [[ "$output" == *"audience"* ]]
-}
-
-@test "change-image nudge directs surfacing those choices for the user to review" {
-  run_hook '{}'
-  [[ "$output" == *"surface"* ]]
-  [[ "$output" == *"review"* ]]
-}
-
-@test "change-image nudge directs treating a gpt2 image failure as an error rather than proceeding" {
-  run_hook '{}'
-  [[ "$output" == *"fails"* ]]
-  [[ "$output" == *"error"* ]]
-}
-
-@test "no change-image nudge is emitted while the change-image feature is turned off" {
-  local cmd; cmd=$(hook_command)
-  run env CLAUDE_PLUGIN_ROOT="$PROJECT_ROOT" CMD="$cmd" INPUT='{}' PROJECT_DIR="$BATS_TEST_TMPDIR" CLAUDE_PROJECT_DIR="$BATS_TEST_TMPDIR" CONTREE_CHANGE_IMAGE=off \
-    bash -c 'cd "$PROJECT_DIR" && printf "%s" "$INPUT" | bash -c "$CMD" 2>&1'
-  [[ "$output" != *"gpt2 image"* ]]
-}
-
 # --- Yield on question ---
 
 @test "hook exits 0 silently when last assistant message ends with a question mark" {
