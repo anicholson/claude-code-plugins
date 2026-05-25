@@ -2,6 +2,8 @@
 
 ## Mental Model
 
+> Each product's own mental model lives in its `MENTAL_MODEL.md`, indexed at [MENTAL_MODEL.md](MENTAL_MODEL.md). That index only references the per-product models and explains why the mental model is decomposed (do not centralize it). This section is the monorepo-level overview — what's here and how it's published — not a per-product model.
+
 This is the **susu-eng** monorepo — source code, plugin marketplace, and documentation for all Claude Code plugins and packages. The individual repos (`elimydlarz/trunk-sync`, `elimydlarz/req-mod-sync`, `elimydlarz/test-trees`, `elimydlarz/eli-rules`) are deprecated and point here.
 
 Products in this repo:
