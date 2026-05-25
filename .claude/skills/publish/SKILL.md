@@ -57,7 +57,16 @@ The script handles: clean-source check, version bump, commit, annotated tag, pus
 
 **Auth:** trunk-sync's publish script reads `TRUNK_SYNC_PUBLISHER` from `$REPO_ROOT/.env`, writes it to a temp `trunk-sync/.npmrc` as `//registry.npmjs.org/:_authToken`, and runs `pnpm publish --no-git-checks`. The token is a scoped npm publish token with 2FA disabled. If publish fails with E401/E404, the `.env` token is stale or scope-restricted — the user regenerates it.
 
-### 5. If it fails
+### 5. Update local marketplace and reinstall
+
+After the publish succeeds, refresh the local marketplace cache and reinstall so the publisher picks up the new version immediately:
+
+```
+claude plugin marketplace update elimydlarz
+claude plugin install <plugin>@elimydlarz --scope user
+```
+
+### 6. If it fails
 
 - **"Uncommitted changes"** — stop and surface the dirty files. Do not auto-commit; the user owns scope.
 - **"tag exists locally but has not been pushed"** — this used to happen with lightweight tags; the scripts now use annotated tags so `--follow-tags` carries them. If it recurs, fix the script, don't paper over with a manual push.
