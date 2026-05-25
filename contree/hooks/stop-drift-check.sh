@@ -31,7 +31,7 @@ fi
 echo "TEST TREES: Have test trees and implementation drifted apart? If so, propose solutions." >&2
 echo "CLAUDE.md: Has CLAUDE.md content drifted from reality? If so, update it." >&2
 
-if [ ! -f README.md ]; then
+if [ ! -f "$CLAUDE_PROJECT_DIR/README.md" ]; then
   echo "README: README.md is missing at the project root. Create it so consumers can understand what the project is, how to install it, how to configure it, and how to use it." >&2
 else
   echo "README: Is the README out of date now? It should tell consumers what the project is, how to install it, how to configure it, and how to use it. If anything is stale or wrong, update it." >&2
