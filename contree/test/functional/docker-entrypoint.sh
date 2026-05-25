@@ -136,14 +136,19 @@ start_openai_image_stub() {
   # (via a URL-rewriting curl shim) are pointed at this local stub.
   local port=8771
   local stub="/tmp/openai-image-stub.js"
+  STUB_MARKER="CONTREE-MOCK-IMAGE-BYTES"
+  STUB_HITS="/tmp/openai-stub-hits.log"
+  : > "$STUB_HITS"
   cat > "$stub" <<'JS'
+const fs = require('fs')
 const http = require('http')
-const image = Buffer.from('mock-image').toString('base64')
+const image = Buffer.from(process.env.STUB_MARKER).toString('base64')
 http.createServer((req, res) => {
   let body = ''
   req.on('data', (c) => (body += c))
   req.on('end', () => {
     if (req.method === 'POST' && req.url.includes('/images/generations')) {
+      fs.appendFileSync(process.env.STUB_HITS, `${req.method} ${req.url} ${body}\n`)
       res.writeHead(200, { 'Content-Type': 'application/json' })
       res.end(JSON.stringify({ data: [{ b64_json: image }] }))
     } else {
@@ -153,7 +158,7 @@ http.createServer((req, res) => {
   })
 }).listen(process.env.STUB_PORT, () => console.error('openai-image-stub listening'))
 JS
-  STUB_PORT="$port" node "$stub" &
+  STUB_PORT="$port" STUB_MARKER="$STUB_MARKER" STUB_HITS="$STUB_HITS" node "$stub" &
   OPENAI_STUB_PID=$!
 
   local real_curl; real_curl="$(command -v curl)"
