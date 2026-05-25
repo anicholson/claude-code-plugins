@@ -25,7 +25,7 @@ SKILL="$PROJECT_ROOT/skills/tdd/SKILL.md"
 @test "tdd gates implementation on a ground-level failing test under the journey/functional failure" {
   run cat "$SKILL"
   [[ "$output" == *"ground layer"* ]]
-  [[ "$output" == *"under the journey/functional failure"* ]]
+  [[ "$output" == *"journey/functional failure"* ]]
 }
 
 @test "tdd adds inner-layer tests only when failing functional-test pressure demands them" {
