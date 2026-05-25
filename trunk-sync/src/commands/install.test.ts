@@ -176,7 +176,7 @@ describe("install command", () => {
     writeFileSync(
       marketplacePath,
       JSON.stringify({
-        name: "susu-eng",
+        name: "elimydlarz",
         plugins: [
           {
             name: "other-plugin",
