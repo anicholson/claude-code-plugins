@@ -295,7 +295,6 @@ VERIFY
     echo "  layered-workflow              — HTTP API: setup → workflow → drift → sync (every tree, every layer)"
     echo "  mental-model-validator-smoke  — one-shot: malformed MM + agent edit → verifies PostToolUse hook + validator"
     echo "  describe-it-drift             — one-shot: pre-seeded describe/it mismatch → verifies sync flags it"
-    echo "  change-image-nudge            — one-shot: mock gpt2 + small change → verifies CHANGE IMAGE nudge + agent invokes gpt2 image"
     echo ""
     echo "Harness (2nd arg): claude | codex (default claude)"
     exit 1
