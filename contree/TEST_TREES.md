@@ -394,6 +394,20 @@ dual-harness-compatibility (src: .claude-plugin/plugin.json, .codex-plugin/plugi
     then the PostToolUse matcher fires
 ```
 
+## diff-images-the-change
+
+```
+diff-images-the-change (src: skills/diff/SKILL.md; unit: test/diff-images-the-change.bats; functional: none)
+  when the diff skill is invoked
+    then it derives the change from the working-tree git diff
+    and it generates an image representing that change using OpenAI's gpt-image-2 model via the images generations API
+    and it chooses what the image depicts from the nature of the change, its important details, and its intended audience
+    and it saves the returned image as a .png file
+    and it surfaces those choices to the user for review
+  if the gpt-image-2 request fails
+    then the failure is surfaced as an error and no image is fabricated
+```
+
 ## Cross-Functional Requirements
 
 - Supported languages: JS/TS (Node, Bun, React, React Native), Elixir (Phoenix, Jido), Go. Setup refuses other languages and names the supported set.
