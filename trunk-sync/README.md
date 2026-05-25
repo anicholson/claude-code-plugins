@@ -9,7 +9,7 @@ Two pieces: a **Claude Code / Codex CLI hook** that turns Git into continuous in
 ## Install
 
 ```bash
-npm install -g trunk-sync
+npm install -g @elimydlarz/trunk-sync
 trunk-sync install                  # Claude Code, project scope
 trunk-sync install --scope user     # Claude Code, all repos
 trunk-sync install --client codex   # OpenAI Codex CLI
