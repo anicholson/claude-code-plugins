@@ -141,7 +141,7 @@ describe("install command", () => {
 
     const marketplacePath = join(fakeHome, ".agents", "plugins", "marketplace.json");
     const marketplace = JSON.parse(readFileSync(marketplacePath, "utf-8"));
-    assert.equal(marketplace.name, "susu-eng");
+    assert.equal(marketplace.name, "elimydlarz");
     const entry = marketplace.plugins.find((p: { name: string }) => p.name === "trunk-sync");
     assert.ok(entry, "trunk-sync entry present");
     assert.equal(entry.source.source, "git-subdir");
