@@ -51,7 +51,7 @@ Flow: `setup` prepares the project for test-tree-driven development → `change`
 - `skills/workflow/SKILL.md` — the full arc: idea → contract → verified implementation
 - `skills/diff/SKILL.md` — user-invoked `/contree:diff`: generate one image of the working-tree change via OpenAI gpt-image-2; choose subject from nature/details/audience; surface choices; fail loudly
 - `test/plugin.bats` — structural tests: plugin manifest, skill files, frontmatter, hook wiring
-- `test/pre-task-hook.bats` — SessionStart hook tests: rules, Directions, mental-model and test-tree framing, file interpolation, pressure phrase
+- `test/pre-task-hook.bats` — SessionStart hook tests: rules, Directions, mental-model and test-tree framing, file interpolation
 - `test/post-task-hook.bats` — Stop hook tests: loop prevention, exit codes, question-mark yielding, nudge content
 - `test/post-update-hook.bats` — PostToolUse hook tests: validator runs only on MENTAL_MODEL.md edits, findings surface via additionalContext
 - `test/mental-model-validator.bats` — validator tests: seven-section enforcement, cap overflow, rogue-heading flagging, missing-file flagging
