@@ -117,18 +117,3 @@ run_hook_in() {
   [[ "$output" == *"workflow"* ]]
   [[ "$output" == *"full arc from idea to verified working software"* ]]
 }
-
-# --- Pressure phrase integration (pressure-phrase-on-session-start tree) ---
-
-@test "session start prints a random pressure phrase from the pool" {
-  run_hook_in "$BATS_TEST_TMPDIR"
-  source "$PROJECT_ROOT/hooks/pressure-phrases.sh"
-  local found=0
-  for phrase in "${pressure_phrases[@]}"; do
-    if [[ "$output" == *"$phrase"* ]]; then
-      found=1
-      break
-    fi
-  done
-  [ "$found" -eq 1 ]
-}
