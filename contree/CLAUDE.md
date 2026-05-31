@@ -21,7 +21,6 @@ Mechanisms:
 - **diff skill** — user-invoked (`/contree:diff`). Generates one image representing the working-tree change via OpenAI's gpt-image-2 model (images generations API, `OPENAI_API_KEY`), choosing what to depict from the nature of the change, its key details, and its audience; surfaces those choices for review; fails loudly rather than fabricating an image. Not hook-triggered.
 - **Stop hook** — guard the contract. Fires after every response, detecting drift between intent and implementation. Yields the turn silently when the response ends with a question, so questions to the user aren't buried under drift-check output.
 - **Mental-model validator (PostToolUse)** — after any tool call that edits MENTAL_MODEL.md, `hooks/post-update-check.sh` runs `hooks/validate-mental-model.sh` and surfaces its advisory findings (missing sections, rogue headings, cap overflow) via additionalContext JSON.
-- **Pressure phrase** — inject motivation. The SessionStart hook prints one random pressure phrase (tip-framing, career-stakes, boss-watching, or urgency) alongside the rules, so the agent starts every session under a little stage-light.
 - **Self-care hook** — nudge the user. Fires on each `UserPromptSubmit` in any session; records a shared heartbeat and, after 20 minutes of continuous interaction (no gap longer than 5 minutes between heartbeats across any sessions), injects a 20-20-20 eye-break reminder into Claude's context via `additionalContext` so Claude opens its response with the nudge.
 
 ## Mental Model
