@@ -55,7 +55,6 @@ Flow: `setup` prepares the project for test-tree-driven development → `change`
 - `test/post-task-hook.bats` — Stop hook tests: loop prevention, exit codes, question-mark yielding, nudge content
 - `test/post-update-hook.bats` — PostToolUse hook tests: validator runs only on MENTAL_MODEL.md edits, findings surface via additionalContext
 - `test/mental-model-validator.bats` — validator tests: seven-section enforcement, cap overflow, rogue-heading flagging, missing-file flagging
-- `test/pressure-phrases.bats` — pool tests: minimum size, randomness, register coverage, source-vs-run behaviour
 - `test/self-care.bats` — self-care hook tests: heartbeat pruning, 20-minute continuity, reminder throttling, silent failure
 - `test/validate-skill-frontmatter.bats` — frontmatter validator tests
 - `test/dual-harness-compatibility.bats` — dual-harness contract: both manifests, version lockstep, shared hooks.json, `$CLAUDE_PLUGIN_ROOT` invocation, PostToolUse matcher
