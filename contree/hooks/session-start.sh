@@ -46,9 +46,6 @@ Eagerly use these skills to fulfil operator requests, where applicable:
 - **One tree, one test file** — each tree in `## Test Trees` reifies exactly one test file; the test file's describe/it hierarchy mirrors the tree verbatim (framework-agnostic contract)
 EOF
 
-printf '\n'
-bash "$(dirname "${BASH_SOURCE[0]}")/pressure-phrases.sh"
-
 if [ -f MENTAL_MODEL.md ]; then
   printf '\n# Mental Model\n\n'
   cat MENTAL_MODEL.md
