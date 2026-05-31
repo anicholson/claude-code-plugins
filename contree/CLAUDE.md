@@ -36,9 +36,8 @@ Flow: `setup` prepares the project for test-tree-driven development → `change`
 - `.claude-plugin/plugin.json` — Claude Code plugin manifest (name, version, description)
 - `.codex-plugin/plugin.json` — Codex CLI plugin manifest (skills + hooks; mirrors Claude version, bumped together by `publish-contree.sh`)
 - `package.json` — dev dependencies (bats-support, bats-assert) and test scripts
-- `hooks/hooks.json` — wires SessionStart (rules + pressure phrase), Stop (drift check), UserPromptSubmit (self-care), and PostToolUse (mental-model validator)
-- `hooks/session-start.sh` — SessionStart hook: prints the skill Directions block, the inline rules list, and one random pressure phrase (sourced from `hooks/pressure-phrases.sh`) to stdout
-- `hooks/pressure-phrases.sh` — pressure-phrase pool: prints one random phrase when run, exposes `pressure_phrases` array when sourced
+- `hooks/hooks.json` — wires SessionStart (rules), Stop (drift check), UserPromptSubmit (self-care), and PostToolUse (mental-model validator)
+- `hooks/session-start.sh` — SessionStart hook: prints the skill Directions block and the inline rules list to stdout
 - `hooks/stop-drift-check.sh` — Stop hook: injects drift-check prompt unless Claude's last response ends with a question, in which case it yields the turn to the user
 - `hooks/self-care-20-20-20.sh` — UserPromptSubmit hook: reminds user of the 20-20-20 rule after 20 min of keyboard time
 - `hooks/post-update-check.sh` — PostToolUse hook: when MENTAL_MODEL.md is edited, runs `validate-mental-model.sh` and surfaces findings to Claude via additionalContext JSON
