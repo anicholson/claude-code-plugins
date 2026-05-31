@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# SessionStart hook: print rules plus one random pressure phrase to stdout.
+# SessionStart hook: print rules to stdout.
 # Claude Code injects SessionStart stdout (exit 0) into the model's context.
 
 cat <<'EOF'
