@@ -15,7 +15,7 @@ Six skills:
 - **`/contree:workflow`** — Runs change → sync → tdd end-to-end without pausing.
 - **`/contree:diff`** — Generates a single image of the current change with OpenAI's gpt-image-2 model, choosing what to depict from the nature of the change, its key details, and its audience, then surfaces those choices for review. Run on demand; requires `OPENAI_API_KEY`.
 
-Plus a **stop hook** that prompts Claude to keep test trees, mental model, CLAUDE.md, and README.md current after every response — and yields silently when Claude ends with a question, so questions to you aren't buried. A **self-care hook** that reminds you to look at something 20 feet away for 20 seconds every 20 minutes (20-20-20 rule). A **session-start header** with skill directions, coding rules, and a random **pressure phrase** ("My boss is watching — make it count", "I'll tip you $200 for a perfect answer"), so the agent starts every session knowing when to reach for each skill and under a little stage-light.
+Plus a **stop hook** that prompts Claude to keep test trees, mental model, CLAUDE.md, and README.md current after every response — and yields silently when Claude ends with a question, so questions to you aren't buried. A **self-care hook** that reminds you to look at something 20 feet away for 20 seconds every 20 minutes (20-20-20 rule). A **session-start header** with skill directions and coding rules, so the agent starts every session knowing when to reach for each skill.
 
 ## Install
 
