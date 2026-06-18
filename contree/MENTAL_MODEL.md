@@ -71,7 +71,7 @@
 
 ## Temporal View
 
-- Per project: `setup` once → then `change` → `sync` → `tdd` cycles (or `workflow` end-to-end), repeatedly.
+- Per project: `setup` once → then `change` → `sync` → `tdd` → `second-opinion` cycles (or `workflow` end-to-end), repeatedly.
 - Per capability: failing Journey test → failing System test(s) → inner failing tests at each native layer → implement → green upward → refactor.
 - Per failing test: write one, run it, see it fail, implement the minimum, see it pass; never batch.
 - Per turn: the Stop hook fires a drift check unless the response ends in a question.
