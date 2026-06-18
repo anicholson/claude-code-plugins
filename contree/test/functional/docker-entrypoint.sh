@@ -174,6 +174,52 @@ EOF
   export OPENAI_BASE_URL="http://127.0.0.1:$port/v1"
 }
 
+ZAI_STUB_PID=0
+
+start_zai_review_stub() {
+  # Mock Z.AI's chat completions endpoint so /contree:second-opinion can run
+  # without a real (billable, non-deterministic) GLM 5.2 call. Serves a canned
+  # review carrying a recognisable marker. The skill's curl recipe is pointed at
+  # this local stub via a URL-rewriting curl shim.
+  local port=8772
+  local stub="/tmp/zai-review-stub.js"
+  ZAI_MARKER="CONTREE-MOCK-GLM-REVIEW"
+  ZAI_HITS="/tmp/zai-stub-hits.log"
+  : > "$ZAI_HITS"
+  cat > "$stub" <<'JS'
+const fs = require('fs')
+const http = require('http')
+const review = `${process.env.ZAI_MARKER}: the change satisfies the test-tree contract; one nit: name things for what they do.`
+http.createServer((req, res) => {
+  let body = ''
+  req.on('data', (c) => (body += c))
+  req.on('end', () => {
+    if (req.method === 'POST' && req.url.includes('/chat/completions')) {
+      fs.appendFileSync(process.env.ZAI_HITS, `${req.method} ${req.url} ${body}\n`)
+      res.writeHead(200, { 'Content-Type': 'application/json' })
+      res.end(JSON.stringify({ choices: [{ message: { role: 'assistant', content: review } }] }))
+    } else {
+      res.writeHead(404, { 'Content-Type': 'application/json' })
+      res.end('{}')
+    }
+  })
+}).listen(process.env.ZAI_PORT, () => console.error('zai-review-stub listening'))
+JS
+  ZAI_PORT="$port" ZAI_MARKER="$ZAI_MARKER" ZAI_HITS="$ZAI_HITS" node "$stub" &
+  ZAI_STUB_PID=$!
+
+  local real_curl; real_curl="$(command -v curl)"
+  cat > /usr/local/bin/curl <<EOF
+#!/usr/bin/env bash
+args=()
+for a in "\$@"; do args+=("\${a//https:\/\/api.z.ai/http:\/\/127.0.0.1:$port}"); done
+exec "$real_curl" "\${args[@]}"
+EOF
+  chmod +x /usr/local/bin/curl
+
+  export ZAI_API_KEY="test-key-mock"
+}
+
 # --- Test cases ---
 
 case "$TEST_NAME" in
