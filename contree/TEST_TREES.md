@@ -309,6 +309,8 @@ workflow-runs-end-to-end (src: skills/workflow/SKILL.md; unit: test/workflow-run
     then tdd implements each gap immediately
   when all gaps are implemented
     then all test trees have passing tests
+  when the work is synced and implemented
+    then second-opinion reviews the completed work with an independent model
 ```
 
 ## skill-discoverability
