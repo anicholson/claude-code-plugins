@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>contree — test trees as living requirements</title>
+<meta name="description" content="contree turns the test-first habit you already know into a living specification: test trees that are your requirements, organised by architectural layer, kept in sync with your code." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #0f1511;
+    --bg-soft: #141d17;
+    --panel: #18221b;
+    --panel-2: #1d2a21;
+    --line: #2a3a2f;
+    --ink: #e8f0e9;
+    --ink-soft: #abbcae;
+    --ink-dim: #7e9183;
+    --leaf: #58c878;
+    --leaf-bright: #7be59a;
+    --leaf-deep: #2f8f52;
+    --bark: #c79a6b;
+    --amber: #e8b860;
+    --rose: #e98a8a;
+    --radius: 16px;
+    --maxw: 1080px;
+    --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: radial-gradient(1200px 700px at 75% -10%, #1a2a1f 0%, var(--bg) 55%) no-repeat, var(--bg);
+    color: var(--ink);
+    font-family: "Inter", system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--leaf-bright); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  .wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 24px; }
+
+  h1, h2, h3 { font-family: "Fraunces", Georgia, serif; line-height: 1.1; letter-spacing: -0.01em; }
+  h2 { font-size: clamp(1.7rem, 3.6vw, 2.5rem); font-weight: 600; margin: 0 0 .4em; }
+  h3 { font-size: 1.2rem; font-weight: 600; margin: 0 0 .3em; }
+  p { margin: 0 0 1em; }
+  .lede { color: var(--ink-soft); font-size: 1.12rem; }
+  .eyebrow {
+    font-family: var(--mono); font-size: .74rem; letter-spacing: .22em;
+    text-transform: uppercase; color: var(--leaf); margin: 0 0 1rem;
+  }
+
+  /* nav */
+  nav {
+    position: sticky; top: 0; z-index: 10;
+    backdrop-filter: blur(12px);
+    background: rgba(15, 21, 17, .72);
+    border-bottom: 1px solid var(--line);
+  }
+  nav .wrap { display: flex; align-items: center; gap: 28px; height: 60px; }
+  .brand { font-family: "Fraunces", serif; font-weight: 900; font-size: 1.25rem; letter-spacing: -.02em; }
+  .brand span { color: var(--leaf); }
+  .nav-links { margin-left: auto; display: flex; gap: 24px; }
+  .nav-links a { color: var(--ink-soft); font-size: .92rem; font-weight: 500; }
+  .nav-links a:hover { color: var(--ink); text-decoration: none; }
+  @media (max-width: 680px) { .nav-links { display: none; } }
+
+  /* hero */
+  header.hero { padding: 92px 0 72px; }
+  .hero h1 {
+    font-size: clamp(2.7rem, 7vw, 4.6rem);
+    font-weight: 900; margin: 0 0 .3em; max-width: 16ch;
+  }
+  .hero h1 em { font-style: normal; color: var(--leaf); }
+  .hero .lede { max-width: 56ch; font-size: 1.25rem; }
+  .cta-row { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 30px; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 12px 22px; border-radius: 999px; font-weight: 600; font-size: .98rem;
+    border: 1px solid transparent; cursor: pointer;
+  }
+  .btn-primary { background: var(--leaf); color: #06140b; }
+  .btn-primary:hover { background: var(--leaf-bright); text-decoration: none; }
+  .btn-ghost { border-color: var(--line); color: var(--ink); }
+  .btn-ghost:hover { border-color: var(--leaf); text-decoration: none; }
+
+  .pill {
+    display: inline-block; font-family: var(--mono); font-size: .72rem;
+    letter-spacing: .14em; text-transform: uppercase; color: var(--leaf-bright);
+    border: 1px solid var(--leaf-deep); border-radius: 999px; padding: 5px 13px;
+    margin-bottom: 26px; background: rgba(47, 143, 82, .12);
+  }
+
+  section { padding: 60px 0; border-top: 1px solid var(--line); }
+  section.plain { border-top: none; }
+
+  /* bridge cards */
+  .bridge { display: grid; grid-template-columns: 1fr auto 1fr; gap: 22px; align-items: stretch; margin-top: 34px; }
+  @media (max-width: 760px) { .bridge { grid-template-columns: 1fr; } .bridge .arrow { transform: rotate(90deg); } }
+  .card {
+    background: var(--panel); border: 1px solid var(--line);
+    border-radius: var(--radius); padding: 24px 26px;
+  }
+  .card.know { border-color: #36492f; }
+  .card.add { border-color: var(--leaf-deep); background: linear-gradient(180deg, rgba(47,143,82,.10), var(--panel)); }
+  .card h3 { display: flex; align-items: center; gap: 9px; }
+  .card .tag { font-family: var(--mono); font-size: .68rem; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-dim); }
+  .card ul { margin: .6em 0 0; padding-left: 1.1em; color: var(--ink-soft); }
+  .card li { margin: .35em 0; }
+  .arrow { display: grid; place-items: center; color: var(--leaf); font-size: 1.8rem; }
+
+  /* code */
+  pre {
+    background: #0c120e; border: 1px solid var(--line); border-radius: 14px;
+    padding: 20px 22px; overflow-x: auto; font-family: var(--mono);
+    font-size: .86rem; line-height: 1.7; margin: 0;
+  }
+  code { font-family: var(--mono); }
+  .tree-c { color: var(--ink); }
+  .tree-c .root { color: var(--leaf-bright); font-weight: 700; }
+  .tree-c .kw { color: var(--amber); }
+  .tree-c .ifkw { color: var(--rose); }
+  .tree-c .then { color: var(--ink-soft); }
+  .tree-c .meta { color: var(--ink-dim); }
+  .tree-c .cmt { color: var(--leaf-deep); font-style: italic; }
+
+  .two { display: grid; grid-template-columns: 1.05fr .95fr; gap: 40px; align-items: start; }
+  @media (max-width: 820px) { .two { grid-template-columns: 1fr; gap: 28px; } }
+
+  /* layers */
+  .layers { display: flex; flex-direction: column; gap: 10px; margin-top: 30px; }
+  .layer {
+    display: grid; grid-template-columns: 130px 1fr; gap: 18px; align-items: center;
+    background: var(--panel); border: 1px solid var(--line); border-left: 4px solid var(--lc, var(--leaf));
+    border-radius: 12px; padding: 16px 20px;
+  }
+  .layer .lname { font-family: "Fraunces", serif; font-weight: 600; font-size: 1.1rem; }
+  .layer .lname small { display: block; font-family: var(--mono); font-size: .68rem; color: var(--ink-dim); letter-spacing: .04em; margin-top: 3px; }
+  .layer .ldesc { color: var(--ink-soft); font-size: .95rem; }
+  @media (max-width: 560px){ .layer { grid-template-columns: 1fr; gap: 6px; } }
+  .layers-note { margin-top: 18px; color: var(--ink-dim); font-size: .92rem; }
+  .l-journey { --lc: #7be59a; } .l-system { --lc: #58c878; }
+  .l-adapter { --lc: var(--bark); } .l-usecase { --lc: var(--amber); } .l-domain { --lc: var(--rose); }
+
+  /* flow */
+  .flow { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-top: 30px; }
+  @media (max-width: 820px){ .flow { grid-template-columns: 1fr 1fr; } }
+  .step {
+    background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 20px 18px;
+  }
+  .step .scmd { font-family: var(--mono); color: var(--leaf-bright); font-size: .88rem; font-weight: 500; }
+  .step .stitle { font-weight: 600; margin: 8px 0 4px; }
+  .step p { font-size: .9rem; color: var(--ink-soft); margin: 0; }
+
+  /* feature grid */
+  .feat { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 30px; }
+  @media (max-width: 820px){ .feat { grid-template-columns: 1fr; } }
+  .feat .card h3 { font-size: 1.08rem; }
+  .feat .ic { font-size: 1.4rem; }
+
+  /* install */
+  .install pre { background: #0a0f0c; }
+  .install .label { font-family: var(--mono); font-size: .74rem; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-dim); margin: 0 0 8px; }
+  .install-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 26px; margin-top: 24px; }
+  @media (max-width: 720px){ .install-grid { grid-template-columns: 1fr; } }
+
+  .callout {
+    background: linear-gradient(180deg, rgba(47,143,82,.10), transparent);
+    border: 1px solid var(--leaf-deep); border-radius: var(--radius);
+    padding: 30px 32px; margin-top: 10px;
+  }
+  .callout h2 { color: var(--leaf-bright); }
+  .callout .lede { color: var(--ink); }
+
+  footer { border-top: 1px solid var(--line); padding: 40px 0 60px; color: var(--ink-dim); font-size: .9rem; }
+  footer .wrap { display: flex; flex-wrap: wrap; gap: 18px; align-items: center; justify-content: space-between; }
+
+  .muted { color: var(--ink-dim); }
+  .kbd { font-family: var(--mono); background: var(--panel-2); border: 1px solid var(--line); border-radius: 6px; padding: 2px 7px; font-size: .82em; }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <div class="brand">con<span>tree</span></div>
+    <div class="nav-links">
+      <a href="#trees">Test trees</a>
+      <a href="#living">Living requirements</a>
+      <a href="#architecture">Architecture</a>
+      <a href="#workflow">Workflow</a>
+      <a href="#install">Install</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="pill">For developers who've started TDD</div>
+    <h1>You already write the test first. <em>Now make it your spec.</em></h1>
+    <p class="lede">
+      contree takes the test-first habit you're learning and turns it into a <strong>living specification</strong> —
+      readable trees of expected behaviour that <em>are</em> your requirements, organised by architectural layer,
+      and kept honest against your code automatically.
+    </p>
+    <div class="cta-row">
+      <a class="btn btn-primary" href="#trees">See a test tree ↓</a>
+      <a class="btn btn-ghost" href="#install">Install contree</a>
+    </div>
+  </div>
+</header>
+
+<!-- BRIDGE FROM TDD -->
+<section id="bridge" class="plain">
+  <div class="wrap">
+    <p class="eyebrow">Start from what you know</p>
+    <h2>Red, green, refactor — keep all of it</h2>
+    <p class="lede" style="max-width:62ch">
+      A couple of TDD sessions in, you've felt the loop: write a failing test, make it pass, clean up.
+      contree doesn't replace that. It answers the two questions that show up right after:
+      <em>“where does each test belong?”</em> and <em>“where do the requirements live?”</em>
+    </p>
+
+    <div class="bridge">
+      <div class="card know">
+        <span class="tag">What you already do</span>
+        <h3>Test-first</h3>
+        <ul>
+          <li>Write a test before the code</li>
+          <li>Watch it fail, then make it pass</li>
+          <li>Refactor under a green bar</li>
+          <li>Tests describe behaviour</li>
+        </ul>
+      </div>
+      <div class="arrow">→</div>
+      <div class="card add">
+        <span class="tag">What contree adds</span>
+        <h3>Test-first, with a map</h3>
+        <ul>
+          <li>Each test has a <strong>home layer</strong> — from whole-journey down to pure logic</li>
+          <li>Your tests double as the <strong>requirements doc</strong></li>
+          <li>A hook flags drift when code and intent diverge</li>
+          <li>You start from a <strong>vision</strong> and discover exact requirements as you go</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TEST TREES -->
+<section id="trees">
+  <div class="wrap">
+    <p class="eyebrow">The core idea</p>
+    <h2>A test tree is a test you can read like a sentence</h2>
+    <div class="two">
+      <div>
+        <p>
+          Instead of a flat list of <code>it("does x")</code> calls, contree organises expectations as a
+          <strong>tree of <code>when</code> / <code>then</code></strong> branches. It reads top-to-bottom like
+          plain English, but every branch is backed by a real assertion in a real test.
+        </p>
+        <p>
+          The keywords come from <strong>EARS</strong>, a lightweight requirements grammar:
+          <code class="kbd">when</code> an event, <code class="kbd">if</code> something unwanted,
+          <code class="kbd">while</code> a state holds, and bare <code class="kbd">then</code> for always-true rules.
+        </p>
+        <p>
+          Nesting is <strong>causal</strong>: a case that can only happen <em>after</em> an earlier outcome sits
+          underneath it. So the duplicate-URL case below lives under the successful-save branch — because that's
+          the only world where it can occur.
+        </p>
+        <p class="muted">
+          One tree maps to exactly one test file, and the file's <code>describe</code>/<code>it</code> structure
+          mirrors the tree word-for-word. The tree and the test never disagree.
+        </p>
+      </div>
+      <div>
+        <pre class="tree-c"><span class="meta">### createBookmark (Use-case)</span>
+
+<span class="root">createBookmark</span>
+  <span class="kw">when</span> called with a valid URL
+       for a signed-in user
+    <span class="then">then the URL is canonicalised</span>
+    <span class="then">and the bookmark is saved</span>
+    <span class="then">and the saved bookmark is returned</span>
+    <span class="kw">when</span> a bookmark with the same
+         canonical URL already exists  <span class="cmt"># causal nesting</span>
+      <span class="then">then the existing one is returned</span>
+      <span class="then">and the store is not written to</span>
+  <span class="ifkw">if</span> canonicalisation fails
+    <span class="then">then a ValidationError is raised</span>
+    <span class="then">and the store is never touched</span></pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LIVING REQUIREMENTS -->
+<section id="living">
+  <div class="wrap">
+    <p class="eyebrow">Why it matters</p>
+    <h2>The trees <em>are</em> the requirements — not a doc that rots beside them</h2>
+    <div class="two">
+      <div>
+        <p class="lede" style="font-size:1.1rem">
+          Every tree lives in one file at your project root: <code class="kbd">TEST_TREES.md</code>.
+          That file is the single source of truth for what your system does.
+        </p>
+        <p>
+          You've probably seen requirements live in a wiki, a ticket, or someone's head — and slowly drift from
+          what the code actually does. contree removes the second copy entirely. There's no separate spec to keep
+          in sync, because <strong>the spec and the tests are the same artefact</strong>.
+        </p>
+        <p>
+          After every response, a <strong>stop hook</strong> asks whether the trees and the code have drifted —
+          and proposes fixes when they have. Your requirements can't quietly go stale, because something is always
+          watching the gap.
+        </p>
+      </div>
+      <div class="card" style="align-self:start">
+        <h3>📄 TEST_TREES.md</h3>
+        <p class="muted" style="margin:.2em 0 1em">at your project root</p>
+        <ul style="padding-left:1.1em;color:var(--ink-soft)">
+          <li>Reads like a requirements document</li>
+          <li>Runs like a test suite</li>
+          <li>Each branch declares its coverage — and <code>none</code> marks an honest gap</li>
+          <li>Updated <em>before</em> code, in plain language, by you</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ARCHITECTURE -->
+<section id="architecture">
+  <div class="wrap">
+    <p class="eyebrow">Where each test belongs</p>
+    <h2>One standardised architecture, layered outside-in</h2>
+    <p class="lede" style="max-width:64ch">
+      The question that stumps most people new to TDD is <em>“what kind of test should this be?”</em>
+      contree answers it the same way for every project: a <strong>hexagonal</strong> structure with five
+      test layers. You start at the outside and let each failing test pull the next layer into being.
+    </p>
+
+    <div class="layers">
+      <div class="layer l-journey">
+        <div class="lname">Journey <small>test/journey</small></div>
+        <div class="ldesc">One curated, max-realism arc across several features — real everything, under 5 minutes. The outside-in entry point for new user-visible work.</div>
+      </div>
+      <div class="layer l-system">
+        <div class="lname">System <small>test/system</small></div>
+        <div class="ldesc">A single capability, wired as the whole app with real driven adapters. Speaks the user's vocabulary.</div>
+      </div>
+      <div class="layer l-adapter">
+        <div class="lname">Adapter <small>*.adapter.test</small></div>
+        <div class="ldesc">One adapter against the real infrastructure it fronts — a database, an HTTP API, the filesystem.</div>
+      </div>
+      <div class="layer l-usecase">
+        <div class="lname">Use-case <small>*.use-case.test</small></div>
+        <div class="ldesc">Orchestration logic over fast in-memory stand-ins for its dependencies.</div>
+      </div>
+      <div class="layer l-domain">
+        <div class="lname">Domain <small>*.domain.test</small></div>
+        <div class="ldesc">The pure core — rules and calculations with no I/O at all. Fast and deterministic.</div>
+      </div>
+    </div>
+
+    <p class="layers-note">
+      <strong>Hexagonal</strong> means the domain stays pure, all I/O lives in adapters, and dependencies point inward.
+      Each outbound dependency is a <strong>port</strong> shipping two versions — a fast in-memory twin and the real adapter —
+      both held to one shared contract, so the stand-in your fast tests use never lies about the real thing.
+      Higher layers never excuse a missing lower one: you implement only once there's a failing test at the behaviour's own layer.
+    </p>
+  </div>
+</section>
+
+<!-- WORKFLOW -->
+<section id="workflow">
+  <div class="wrap">
+    <p class="eyebrow">The day-to-day loop</p>
+    <h2>Five skills carry you from idea to verified code</h2>
+    <p class="lede" style="max-width:60ch">
+      contree installs as skills your AI assistant reaches for automatically — so the discipline holds even when
+      you're moving fast. Run <code class="kbd">/contree:setup</code> once, then live in the loop.
+    </p>
+    <div class="flow">
+      <div class="step">
+        <div class="scmd">/setup</div>
+        <div class="stitle">Prepare</div>
+        <p>Configure the test framework with tree reporters; generate starting trees. Once per project.</p>
+      </div>
+      <div class="step">
+        <div class="scmd">/change</div>
+        <div class="stitle">Set behaviour</div>
+        <p>Write or edit the trees first — the contract — before any code exists.</p>
+      </div>
+      <div class="step">
+        <div class="scmd">/sync</div>
+        <div class="stitle">Find drift</div>
+        <p>Compare trees against code both ways; surface gaps and staleness.</p>
+      </div>
+      <div class="step">
+        <div class="scmd">/tdd</div>
+        <div class="stitle">Close gaps</div>
+        <p>Outside-in TDD, one failing test at a time, until the contract is met.</p>
+      </div>
+      <div class="step">
+        <div class="scmd">/workflow</div>
+        <div class="stitle">All of it</div>
+        <p>Run change → sync → tdd end to end, without pausing.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- NOT A FACTORY -->
+<section class="plain">
+  <div class="wrap">
+    <div class="callout">
+      <p class="eyebrow">Set expectations</p>
+      <h2>Not a software factory — a harness you steer</h2>
+      <p class="lede">
+        contree doesn't turn a prompt into shipped software while you watch. <strong>You stay in the loop</strong>,
+        working mainly at the level of test trees — the place where intent lives. You start from a <em>vision</em>,
+        not a finished spec, and discover the exact requirements one tree at a time.
+      </p>
+      <div class="feat" style="margin-top:24px">
+        <div class="card"><div class="ic">🌱</div><h3>Vision → requirements</h3><p class="muted">Begin loosely. Each tree you refine sharpens what the system should do; the code follows from it.</p></div>
+        <div class="card"><div class="ic">🪜</div><h3>A strong foundation</h3><p class="muted">The layered discipline, the trees-as-contract rule, the skills and hooks all come bootstrapped for you.</p></div>
+        <div class="card"><div class="ic">🛠️</div><h3>Yours to extend</h3><p class="muted">It's the foundation, not the whole house. Your fixtures, runners, and conventions go on top.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- INSTALL -->
+<section id="install" class="install">
+  <div class="wrap">
+    <p class="eyebrow">Get going</p>
+    <h2>Install in two commands</h2>
+    <div class="install-grid">
+      <div>
+        <p class="label">Claude Code</p>
+        <pre>claude plugin marketplace add \
+  elimydlarz/claude-code-plugins
+claude plugin install contree@elimydlarz \
+  --scope user</pre>
+        <p class="muted" style="margin-top:14px">Then run <code class="kbd">/contree:setup</code> in your project and start writing trees.</p>
+      </div>
+      <div>
+        <p class="label">Codex CLI</p>
+        <pre>codex features enable plugin_hooks
+# then add this repo via /plugins
+# in the Codex CLI</pre>
+        <p class="muted" style="margin-top:14px">Same skills and hooks, one shared source. <code class="kbd">jq</code> is required on the host for the stop hook.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div><strong class="brand">con<span style="color:var(--leaf)">tree</span></strong> &nbsp;·&nbsp; test trees as living requirements</div>
+    <div><a href="https://github.com/elimydlarz/claude-code-plugins">github.com/elimydlarz/claude-code-plugins</a></div>
+  </div>
+</footer>
+
+</body>
+</html>
