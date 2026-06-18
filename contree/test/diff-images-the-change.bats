@@ -54,6 +54,12 @@ SKILL="$PROJECT_ROOT/skills/diff/SKILL.md"
   [[ "$output" == *"review"* ]]
 }
 
+@test "diff skill says so and stops without calling the API when there are no non-trivial changes to depict" {
+  run cat "$SKILL"
+  [[ "$output" == *"no non-trivial change"* || "$output" == *"nothing to depict"* ]]
+  [[ "$output" == *"stop"* ]]
+}
+
 @test "diff skill surfaces a failed gpt-image-2 request as an error and fabricates no image" {
   run cat "$SKILL"
   [[ "$output" == *"fails"* ]]
