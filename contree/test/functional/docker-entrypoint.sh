@@ -127,6 +127,25 @@ write_verify() {
   cat "$VERIFY_FILE"
 }
 
+install_curl_shim() {
+  # Route a skill's curl recipe at a local stub by shadowing curl with a shim
+  # earlier on PATH. The container runs as non-root testuser, so the shim lives
+  # in a writable dir (not /usr/local/bin) and PATH is prepended for the agent.
+  # Args are the slash-escaped from/to URL fragments for bash ${a//from/to}.
+  local from="$1" to="$2"
+  local shimdir="/tmp/curl-shim"
+  mkdir -p "$shimdir"
+  local real_curl; real_curl="$(command -v curl)"
+  cat > "$shimdir/curl" <<EOF
+#!/usr/bin/env bash
+args=()
+for a in "\$@"; do args+=("\${a//$from/$to}"); done
+exec "$real_curl" "\${args[@]}"
+EOF
+  chmod +x "$shimdir/curl"
+  export PATH="$shimdir:$PATH"
+}
+
 OPENAI_STUB_PID=0
 
 start_openai_image_stub() {
