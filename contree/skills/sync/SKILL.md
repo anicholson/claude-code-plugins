@@ -108,3 +108,5 @@ After sync completes:
 5. No stale trees — every tree describes something that exists
 6. Test output reads like `## Test Trees` — same language, same structure
 7. You can truthfully say: the project behaves as the trees describe, and the trees describe and verify all behaviour
+
+Once the project is in sync, suggest the user runs `second-opinion` for an independent review of the completed work from a different model.
