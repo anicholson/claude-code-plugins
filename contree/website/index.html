@@ -248,6 +248,34 @@
   pre .fn { color: var(--amber); }
   pre .st { color: #9fe6b6; }
 
+  /* lifecycle stages (one spine, walked top to bottom) */
+  .stages { position: relative; margin-top: 34px; }
+  .stage { position: relative; padding: 0 0 30px 66px; }
+  .stage::before { content: ""; position: absolute; left: 21px; top: 30px; bottom: -4px; width: 2px; background: var(--line); }
+  .stage:last-child::before { display: none; }
+  .stagenum {
+    position: absolute; left: 6px; top: 0; width: 32px; height: 32px; border-radius: 50%;
+    display: grid; place-items: center; font-family: var(--mono); font-weight: 700; font-size: .9rem;
+    background: var(--panel-2); border: 2px solid var(--leaf-deep); color: var(--leaf-bright); z-index: 1;
+  }
+  .stage.usr .stagenum { border-color: var(--bark); color: var(--bark); }
+  .stagewhen { font-family: "Fraunces", serif; font-weight: 600; font-size: 1.22rem; line-height: 1.2; }
+  .stagemeta { display: flex; gap: 8px 10px; align-items: center; flex-wrap: wrap; margin: 8px 0 14px; }
+  .stagemeta .scr { font-family: var(--mono); font-size: .76rem; color: var(--ink-dim); }
+  .stage .sub { color: var(--ink-soft); font-size: .94rem; max-width: 72ch; margin: 0 0 14px; }
+  .stage pre { font-size: .79rem; line-height: 1.65; }
+  .impact { margin-top: 14px; display: grid; gap: 9px; }
+  .impact p { margin: 0; font-size: .92rem; color: var(--ink-soft); max-width: 72ch; }
+  .impact .lbl { color: var(--leaf-bright); font-family: var(--mono); font-size: .68rem; letter-spacing: .1em; text-transform: uppercase; margin-right: 8px; }
+  .loopnote {
+    margin: 16px 0 0; padding: 14px 18px; border-radius: 12px;
+    background: rgba(232,184,96,.08); border: 1px solid #7a6322; color: var(--amber); font-size: .92rem;
+  }
+  .loopnote code { color: var(--amber); }
+  .chan-legend { display: flex; flex-wrap: wrap; gap: 16px 26px; margin-top: 22px; padding: 16px 20px; background: var(--bg-soft); border: 1px solid var(--line); border-radius: 12px; }
+  .chan-legend div { font-size: .86rem; color: var(--ink-soft); }
+  .chan-legend div span.chan { margin-right: 8px; }
+
   footer { border-top: 1px solid var(--line); padding: 40px 0 60px; color: var(--ink-dim); font-size: .9rem; }
   footer .wrap { display: flex; flex-wrap: wrap; gap: 18px; align-items: center; justify-content: space-between; }
 
