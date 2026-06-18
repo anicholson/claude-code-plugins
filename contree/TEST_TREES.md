@@ -293,6 +293,8 @@ sync-audits-and-resolves (src: skills/sync/SKILL.md; unit: test/sync-audits-and-
     then they are discussed with the user before removal
   when gaps are identified
     then the user is suggested to run tdd to implement them
+  when the project is in sync
+    then the user is suggested to run second-opinion for an independent review of the completed work
 ```
 
 ## workflow-runs-end-to-end
