@@ -220,14 +220,7 @@ JS
   ZAI_PORT="$port" ZAI_MARKER="$ZAI_MARKER" ZAI_HITS="$ZAI_HITS" node "$stub" &
   ZAI_STUB_PID=$!
 
-  local real_curl; real_curl="$(command -v curl)"
-  cat > /usr/local/bin/curl <<EOF
-#!/usr/bin/env bash
-args=()
-for a in "\$@"; do args+=("\${a//https:\/\/api.z.ai/http:\/\/127.0.0.1:$port}"); done
-exec "$real_curl" "\${args[@]}"
-EOF
-  chmod +x /usr/local/bin/curl
+  install_curl_shim 'https:\/\/api.z.ai' "http:\/\/127.0.0.1:$port"
 
   export ZAI_API_KEY="test-key-mock"
 }
