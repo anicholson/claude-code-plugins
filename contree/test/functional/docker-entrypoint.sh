@@ -180,14 +180,7 @@ JS
   STUB_PORT="$port" STUB_MARKER="$STUB_MARKER" STUB_HITS="$STUB_HITS" node "$stub" &
   OPENAI_STUB_PID=$!
 
-  local real_curl; real_curl="$(command -v curl)"
-  cat > /usr/local/bin/curl <<EOF
-#!/usr/bin/env bash
-args=()
-for a in "\$@"; do args+=("\${a//https:\/\/api.openai.com\/v1/http:\/\/127.0.0.1:$port\/v1}"); done
-exec "$real_curl" "\${args[@]}"
-EOF
-  chmod +x /usr/local/bin/curl
+  install_curl_shim 'https:\/\/api.openai.com\/v1' "http:\/\/127.0.0.1:$port\/v1"
 
   export OPENAI_API_KEY="test-key-mock"
   export OPENAI_BASE_URL="http://127.0.0.1:$port/v1"
