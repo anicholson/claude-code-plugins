@@ -1,6 +1,6 @@
 ---
 name: publish
-description: "Publish a plugin from this repo end-to-end: review commits since the last tag, draft release notes, run the publish script. TRIGGER when the user says 'publish <plugin>', 'release <plugin>', 'cut a release', 'ship contree/trunk-sync/climber/openclaw-notifier', or asks to publish without specifying how."
+description: "Publish a plugin from this repo end-to-end: review commits since the last tag, draft release notes, run the publish script. TRIGGER when the user says 'publish <plugin>', 'release <plugin>', 'cut a release', 'ship contree/trunk-sync', or asks to publish without specifying how."
 ---
 
 # Publish a plugin
