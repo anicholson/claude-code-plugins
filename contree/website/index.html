@@ -541,81 +541,89 @@
   }
 }</pre>
 
-    <h3 style="margin-top:40px">Where each hook fires in a Claude Code turn</h3>
-    <p class="muted" style="max-width:66ch">
-      Claude Code emits named events as it moves through a session. A hook is just a command bound to one event;
-      the harness runs it, hands it the event as JSON on stdin, and reads back its output. Here is one full turn,
-      with contree's hooks marked where they fire:
+    <p class="muted" style="max-width:66ch; margin-top:22px">
+      A hook replies to the harness over one of three channels, and which one decides how forcefully its words land.
+      You'll meet each at the stage that uses it — here's the legend to refer back to:
     </p>
-    <div class="timeline">
-      <div class="tl fire">
-        <div class="when"><span class="hookbadge">SessionStart</span> Session opens</div>
-        <div class="desc">Before you type anything. <code>session-start.sh</code> streams the rules and your living docs into the fresh context, so the model starts the session already holding the contract.</div>
-      </div>
-      <div class="tl fire">
-        <div class="when"><span class="hookbadge">UserPromptSubmit</span> You send a prompt</div>
-        <div class="desc">After you hit enter, before the model sees it. <code>self-care-20-20-20.sh</code> records a heartbeat and may prepend an eye-break nudge — otherwise it stays out of the way.</div>
-      </div>
-      <div class="tl">
-        <div class="when"><span class="actor">model</span> Claude reasons &amp; calls tools</div>
-        <div class="desc">The model works the request — reading files, running commands, and writing code.</div>
-      </div>
-      <div class="tl fire">
-        <div class="when"><span class="hookbadge">PostToolUse</span> after every Edit / Write / MultiEdit</div>
-        <div class="desc">Fires on each matching tool call. <code>post-update-check.sh</code> looks at which file changed and, if it was <code>MENTAL_MODEL.md</code>, validates it on the spot. (This is the only hook gated by a <code>matcher</code>.)</div>
-      </div>
-      <div class="tl fire">
-        <div class="when"><span class="hookbadge">Stop</span> Claude finishes its reply</div>
-        <div class="desc">When the model is about to hand the turn back to you. <code>stop-drift-check.sh</code> decides whether to let it stop, or to push back a drift check first.</div>
-      </div>
-      <div class="tl loopback">
-        <div class="when"><span class="actor">↺ exit 2</span> Drift check found → back into the model</div>
-        <div class="desc">If the Stop hook exits 2, its message becomes a new turn the model must answer — reconcile the docs, or reply <code>0</code>. Only once it exits 0 does control return to you. This is the loop you see after each of my responses.</div>
-      </div>
+    <div class="chan-legend">
+      <div><span class="chan chan-out">stdout · exit 0</span> quiet — appended to context as background</div>
+      <div><span class="chan chan-json">additionalContext</span> structured — injected only when there's something to say</div>
+      <div><span class="chan chan-err">stderr · exit 2</span> loud — fed back as a turn the model must answer</div>
     </div>
 
-    <h3 style="margin-top:42px">How a hook talks back — stdin in, three channels out</h3>
-    <p class="muted" style="max-width:64ch">Each script reads the event on <span class="chan chan-in">stdin</span> and answers over one of three channels. Which channel it uses decides <em>how forcefully</em> the message lands:</p>
-    <div class="channels">
-      <div class="channel">
-        <h4><span class="chan chan-out">stdout · exit 0</span></h4>
-        <p>Appended to context as background. Quiet — the model reads it but isn't forced to act. <strong>SessionStart</strong> seeds the session this way.</p>
-      </div>
-      <div class="channel">
-        <h4><span class="chan chan-err">stderr · exit 2</span></h4>
-        <p>Fed back as a fresh turn the model must answer before it can stop. Loud — it interrupts. The <strong>Stop</strong> hook forces its drift check this way.</p>
-      </div>
-      <div class="channel">
-        <h4><span class="chan chan-json">additionalContext JSON</span></h4>
-        <p>A <code>{hookSpecificOutput:{additionalContext}}</code> object on stdout, injected only when there's something to say. <strong>PostToolUse</strong> and <strong>UserPromptSubmit</strong> use it.</p>
-      </div>
-    </div>
+    <h3 style="margin-top:44px">One session, stage by stage</h3>
+    <p class="muted" style="max-width:66ch">
+      Claude Code emits a named event at each point in a turn. Walk the turn top to bottom: at every event one
+      contree hook fires — see what it runs, why, and what it changes — then move to the next.
+    </p>
 
-    <h3 style="margin-top:44px">What each script actually does</h3>
-    <p class="muted" style="max-width:64ch">Every hook is plain <code>bash</code> — no daemon, no state but a few files. Condensed to its essence, here is the real logic of each:</p>
-
-    <div class="walk h-ss">
-      <div class="whd"><span class="ev">SessionStart</span><span class="scr">session-start.sh</span><span class="fires">→ <span class="chan chan-out">stdout · exit 0</span></span></div>
-      <p class="sub">Concatenate the operating discipline and the project's living documents, then print them. Claude folds SessionStart stdout into the model's context.</p>
-<pre><span class="co"># everything printed here is appended to the new session's context</span>
-<span class="fn">cat</span> &lt;&lt;'EOF'
+    <div class="stages">
+      <div class="stage">
+        <span class="stagenum">1</span>
+        <div class="stagewhen">The session opens</div>
+        <div class="stagemeta"><span class="hookbadge">SessionStart</span><span class="scr">session-start.sh</span><span class="chan chan-out">stdout · exit 0</span></div>
+        <p class="sub">Before you've typed anything, the harness fires <code>SessionStart</code>. The script concatenates the operating discipline and the project's living documents and prints them; Claude folds SessionStart's stdout into the model's context.</p>
+<pre><span class="fn">cat</span> &lt;&lt;'EOF'
   # Directions   <span class="co">— one line per skill: when to reach for change / tdd / sync / setup</span>
   # Rules        <span class="co">— KISS, fail-fast, hexagonal, no-comments, trees-are-the-contract…</span>
 EOF
 
-[ -f MENTAL_MODEL.md ] &amp;&amp; <span class="fn">cat</span> MENTAL_MODEL.md   <span class="co"># the architecture, vocabulary &amp; invariants</span>
+[ -f MENTAL_MODEL.md ] &amp;&amp; <span class="fn">cat</span> MENTAL_MODEL.md   <span class="co"># architecture, vocabulary &amp; invariants</span>
 [ -f TEST_TREES.md ]   &amp;&amp; <span class="fn">cat</span> TEST_TREES.md     <span class="co"># the behaviour contract, verbatim</span>
 
-<span class="fn">exit</span> 0</pre>
-      <p class="why"><b>Why:</b> the single most expensive failure mode is a model that hasn't read the spec. Injecting it at <code>t=0</code> means every session — and every parallel agent — starts from the same contract instead of rediscovering it.</p>
-    </div>
+<span class="fn">exit</span> 0                                <span class="co"># stdout → appended to the new session's context</span></pre>
+        <div class="impact">
+          <p><span class="lbl">Why</span> The most expensive failure mode is a model that never read the spec. Seeding it at <code>t=0</code> removes that risk before the first prompt.</p>
+          <p><span class="lbl">Impact</span> Every session — and every parallel agent — begins holding the same contract: the architecture, the trees, and when to use each skill. No rediscovery.</p>
+        </div>
+      </div>
 
-    <div class="walk h-stop">
-      <div class="whd"><span class="ev">Stop</span><span class="scr">stop-drift-check.sh</span><span class="fires">→ <span class="chan chan-err">stderr · exit 2</span></span></div>
-      <p class="sub">Two guards, then the drift check. The guards are what make a re-prompting hook safe to run on every single turn.</p>
+      <div class="stage usr">
+        <span class="stagenum">2</span>
+        <div class="stagewhen">You send a prompt</div>
+        <div class="stagemeta"><span class="hookbadge">UserPromptSubmit</span><span class="scr">self-care-20-20-20.sh</span><span class="chan chan-json">additionalContext</span></div>
+        <p class="sub">The moment you hit enter, before the model sees your message, <code>UserPromptSubmit</code> fires. No model, no network — just heartbeat files on disk, so the “how long have you been at it” signal is shared across every concurrent session.</p>
+<pre><span class="fn">touch</span> $HEARTBEAT_DIR/$now              <span class="co"># stamp this moment</span>
+<span class="fn">rm</span> heartbeats older than 1h           <span class="co"># keep the dir bounded</span>
+
+stretch=$(newest_run_without_gap 5min) <span class="co"># unbroken keyboard time</span>
+[ "$stretch" -lt 20min ] &amp;&amp; <span class="fn">exit</span> 0     <span class="co"># not at the 20-min mark yet → stay silent</span>
+[ nudged_within 20min ]  &amp;&amp; <span class="fn">exit</span> 0     <span class="co"># throttle: one nudge per window</span>
+
+emit_additionalContext "look 20ft away for 20s — the 20-20-20 rule"</pre>
+        <div class="impact">
+          <p><span class="lbl">Why</span> The discipline is about sustainable practice, not just clean code. State lives in files rather than memory, so the timer stays honest even when you're driving several agents at once.</p>
+          <p><span class="lbl">Impact</span> Almost always a no-op. Once every 20 minutes of continuous work, Claude opens its reply with a brief eye-break nudge, then carries on with your request.</p>
+        </div>
+      </div>
+
+      <div class="stage">
+        <span class="stagenum">3</span>
+        <div class="stagewhen">Claude works — and edits a file</div>
+        <div class="stagemeta"><span class="hookbadge">PostToolUse</span><span class="scr">post-update-check.sh</span><span class="chan chan-json">additionalContext</span></div>
+        <p class="sub">As the model reasons and calls tools, <code>PostToolUse</code> fires after each one — but this hook is bound to the <code>Edit|Write|MultiEdit</code> matcher, so it only runs when a file actually changed. It guards exactly one file.</p>
+<pre>file=$(<span class="fn">jq</span> -r .tool_input.file_path &lt;&lt;&lt;"$(<span class="fn">cat</span>)")    <span class="co"># what did the edit touch?</span>
+
+[ "$(<span class="fn">basename</span> "$file")" != MENTAL_MODEL.md ] &amp;&amp; <span class="fn">exit</span> 0  <span class="co"># not the mental model → done</span>
+
+findings=$(validate-mental-model.sh)             <span class="co"># 7 named sections? caps? rogue headings?</span>
+[ -n "$findings" ] &amp;&amp; emit_additionalContext "$findings"  <span class="co"># surface only if something's off</span>
+
+<span class="fn">exit</span> 0</pre>
+        <div class="impact">
+          <p><span class="lbl">Why</span> The mental model is a deliberately constrained artifact — seven sections, capped, no stray headings — so it stays a theory, not a junk drawer.</p>
+          <p><span class="lbl">Impact</span> The instant <code>MENTAL_MODEL.md</code> is edited, any structural breakage is fed straight back to the model to fix — no human reviewer required.</p>
+        </div>
+      </div>
+
+      <div class="stage">
+        <span class="stagenum">4</span>
+        <div class="stagewhen">Claude finishes its reply</div>
+        <div class="stagemeta"><span class="hookbadge">Stop</span><span class="scr">stop-drift-check.sh</span><span class="chan chan-err">stderr · exit 2</span></div>
+        <p class="sub">As the model goes to hand the turn back to you, <code>Stop</code> fires. Two guards run first — they're what make a hook that re-prompts on <em>every</em> turn safe — and only then does the drift check.</p>
 <pre>INPUT=$(<span class="fn">cat</span>)                                   <span class="co"># the Stop event JSON, on stdin</span>
 
-<span class="co"># guard 1 — the harness sets this when a hook's own exit 2 re-triggered the model.</span>
+<span class="co"># guard 1 — set when a hook's own exit 2 re-triggered the model.</span>
 <span class="co">#           bail, or we'd drift-check our own drift-check forever.</span>
 <span class="fn">jq</span> -e .stop_hook_active &lt;&lt;&lt;"$INPUT" &amp;&amp; <span class="fn">exit</span> 0
 
@@ -624,48 +632,26 @@ EOF
 last=$(<span class="fn">jq</span> -rs '<span class="st">last assistant text | trim | final char</span>' "$transcript_path")
 [ "$last" = "?" ] &amp;&amp; <span class="fn">exit</span> 0
 
-<span class="co"># otherwise — emit the four reconciliation prompts and force a turn</span>
+<span class="co"># otherwise — push back the four reconciliation prompts and force a turn</span>
 <span class="fn">echo</span> "MENTAL MODEL: did this task reveal knowledge not in the docs?" &gt;&amp;2
 <span class="fn">echo</span> "TEST TREES:   have trees and implementation drifted?"          &gt;&amp;2
 <span class="fn">echo</span> "CLAUDE.md:    has it drifted from reality?"                     &gt;&amp;2
 <span class="fn">echo</span> "README:       is it out of date now?"                          &gt;&amp;2
 <span class="fn">exit</span> 2                                          <span class="co"># → Claude must answer before stopping</span></pre>
-      <p class="why"><b>Why:</b> documentation rots because nothing checks it at the moment of change. This makes the check unavoidable and immediate — yet the two guards keep it from looping or talking over a question meant for you. The <code>0</code> I reply when nothing drifted is the all-clear.</p>
-    </div>
-
-    <div class="walk h-ptu">
-      <div class="whd"><span class="ev">PostToolUse</span><span class="scr">post-update-check.sh</span><span class="fires">→ <span class="chan chan-json">additionalContext</span></span></div>
-      <p class="sub">Bound to the <code>Edit|Write|MultiEdit</code> matcher, so it only runs after a file actually changed. It cares about exactly one file.</p>
-<pre>file=$(<span class="fn">jq</span> -r .tool_input.file_path &lt;&lt;&lt;"$(<span class="fn">cat</span>)")    <span class="co"># what did the edit touch?</span>
-
-[ "$(<span class="fn">basename</span> "$file")" != MENTAL_MODEL.md ] &amp;&amp; <span class="fn">exit</span> 0  <span class="co"># not the mental model → done</span>
-
-findings=$(validate-mental-model.sh)             <span class="co"># 7 named sections? section caps? rogue headings?</span>
-[ -n "$findings" ] &amp;&amp; emit_additionalContext "$findings"  <span class="co"># surface only if something's off</span>
-
-<span class="fn">exit</span> 0</pre>
-      <p class="why"><b>Why:</b> the mental model is a deliberately constrained artifact — seven sections, capped, no stray headings — so it stays a theory and not a junk drawer. Validating it the instant it's edited keeps that shape without a human reviewer in the loop.</p>
-    </div>
-
-    <div class="walk h-ups">
-      <div class="whd"><span class="ev">UserPromptSubmit</span><span class="scr">self-care-20-20-20.sh</span><span class="fires">→ <span class="chan chan-json">additionalContext</span></span></div>
-      <p class="sub">No language model, no network — just heartbeat files on disk, so the “how long have you been working” signal is shared across every concurrent session.</p>
-<pre><span class="fn">touch</span> $HEARTBEAT_DIR/$now              <span class="co"># stamp this moment</span>
-<span class="fn">rm</span> heartbeats older than 1h           <span class="co"># keep the dir bounded</span>
-
-<span class="co"># the unbroken run of heartbeats with no gap &gt; 5 min = continuous keyboard time</span>
-stretch=$(newest_run_without_gap 5min)
-[ "$stretch" -lt 20min ] &amp;&amp; <span class="fn">exit</span> 0     <span class="co"># not at the 20-min mark yet</span>
-[ nudged_within 20min ]  &amp;&amp; <span class="fn">exit</span> 0     <span class="co"># throttle: one nudge per window</span>
-
-emit_additionalContext "look 20ft away for 20s — the 20-20-20 rule"</pre>
-      <p class="why"><b>Why:</b> the contract is about sustainable practice, not just clean code. State lives in files rather than memory, so the timer is honest even when you're running several agents at once.</p>
+        <div class="impact">
+          <p><span class="lbl">Why</span> Docs rot because nothing checks them at the moment of change. This makes the check immediate and unavoidable — while the two guards stop it looping or talking over a question meant for you.</p>
+          <p><span class="lbl">Impact</span> After every substantive response, the trees, mental model, CLAUDE.md, and README are reconciled against what just changed before the model is allowed to rest.</p>
+        </div>
+        <div class="loopnote">
+          ↺ <strong>The loop you've been watching.</strong> That <code>exit 2</code> turns the drift prompts into a new turn the model must answer — fix the docs, or reply <code>0</code> for all-clear. Only when the hook exits 0 does control return to you, and the turn completes.
+        </div>
+      </div>
     </div>
 
     <p class="layers-note" style="margin-top:34px">
-      All four are wired by the one <code>hooks.json</code> above, and every command is prefixed with
-      <code>$CLAUDE_PLUGIN_ROOT</code> — which the harness expands to the install path, so nothing is hard-coded.
-      Codex CLI sets the same variable and fires the same events, which is why <strong>one set of scripts drives both harnesses</strong> with no changes.
+      Every command in that <code>hooks.json</code> is prefixed with <code>$CLAUDE_PLUGIN_ROOT</code>, which the harness
+      expands to the install path — so nothing is hard-coded. Codex CLI sets the same variable and fires the same
+      events, which is why <strong>one set of scripts drives both harnesses</strong> with no changes.
     </p>
   </div>
 </section>
