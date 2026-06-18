@@ -169,6 +169,11 @@ http.createServer((req, res) => {
   req.on('end', () => {
     if (req.method === 'POST' && req.url.includes('/images/generations')) {
       fs.appendFileSync(process.env.STUB_HITS, `${req.method} ${req.url} ${body}\n`)
+      if (body.includes('response_format')) {
+        res.writeHead(400, { 'Content-Type': 'application/json' })
+        res.end(JSON.stringify({ error: { message: "Unknown parameter: 'response_format'.", type: 'invalid_request_error', param: 'response_format', code: 'unknown_parameter' } }))
+        return
+      }
       res.writeHead(200, { 'Content-Type': 'application/json' })
       res.end(JSON.stringify({ data: [{ b64_json: image }] }))
     } else {
