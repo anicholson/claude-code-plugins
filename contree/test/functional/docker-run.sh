@@ -77,6 +77,7 @@ run_pair() {
     --name "contree-test-${name}-${harness}-$$" \
     "${DOCKER_LLM_ENV[@]}" \
     -e "CODEX_API_KEY=${OPENAI_API_KEY:-}" \
+    -e "ZAI_API_KEY=${ZAI_API_KEY:-}" \
     -v "$REPO_ROOT:/repo:ro" \
     -v "$SCRIPT_DIR:/output" \
     "$IMAGE_NAME" \
