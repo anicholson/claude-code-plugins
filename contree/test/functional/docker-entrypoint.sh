@@ -220,7 +220,7 @@ JS
   ZAI_PORT="$port" ZAI_MARKER="$ZAI_MARKER" ZAI_HITS="$ZAI_HITS" node "$stub" &
   ZAI_STUB_PID=$!
 
-  install_curl_shim 'https:\/\/api.z.ai' "http:\/\/127.0.0.1:$port"
+  install_curl_shim 'https:\/\/api.z.ai' "http://127.0.0.1:$port"
 
   export ZAI_API_KEY="test-key-mock"
 }
