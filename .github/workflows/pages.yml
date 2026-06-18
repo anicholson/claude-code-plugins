@@ -26,8 +26,12 @@ jobs:
       - uses: actions/configure-pages@v5
         with:
           enablement: true
+      - name: Assemble site (one subdir per plugin)
+        run: |
+          mkdir -p _site/contree
+          cp -R contree/website/. _site/contree/
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: contree/website
+          path: _site
       - id: deployment
         uses: actions/deploy-pages@v4
