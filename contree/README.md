@@ -16,13 +16,14 @@ It is a foundation, not the whole house. You are still expected to **build your 
 
 **Test trees become requirements.** Instead of separate requirement documents and test code, contree puts `when/then` test trees directly in your project's `TEST_TREES.md` at the project root. Every test you write reifies exactly one tree.
 
-Six skills:
+Seven skills:
 
 - **`/contree:setup`** — Configures your test framework with tree reporters and generates initial test trees from your existing codebase (or plans). Run once per project.
 - **`/contree:change`** — Write or modify test trees in `TEST_TREES.md` before any code is written. Auto-triggers when planning behaviour changes.
 - **`/contree:tdd`** — Auto-triggers when implementing behaviour. Enforces outside-in TDD: confirms tree exists → failing Journey test → System → TDD inward through Driving adapter → Use-case → Domain / port contract → Driven adapter, one failing test at a time. Implementation waits for a ground-level failing test under the journey/functional failure.
-- **`/contree:sync`** — Audits test trees against implementation, finds gaps and drift, then TDDs any gaps closed.
-- **`/contree:workflow`** — Runs change → sync → tdd end-to-end without pausing.
+- **`/contree:sync`** — Audits test trees against implementation, finds gaps and drift, then TDDs any gaps closed. Suggests `second-opinion` once you're in sync.
+- **`/contree:workflow`** — Runs change → sync → tdd → second-opinion end-to-end without pausing.
+- **`/contree:second-opinion`** — Sends the current change and your test-tree contract to Z.AI's GLM 5.2 for an independent review of completed work, then surfaces its critique. Fails loudly rather than fabricating a review; requires `ZAI_API_KEY`.
 - **`/contree:diff`** — Generates a single image of the current change with OpenAI's gpt-image-2 model, choosing what to depict from the nature of the change, its key details, and its audience, then surfaces those choices for review. Run on demand; requires `OPENAI_API_KEY`.
 
 Plus a **stop hook** that prompts Claude to keep test trees, mental model, CLAUDE.md, and README.md current after every response — and yields silently when Claude ends with a question, so questions to you aren't buried. A **self-care hook** that reminds you to look at something 20 feet away for 20 seconds every 20 minutes (20-20-20 rule). A **session-start header** with skill directions and coding rules, so the agent starts every session knowing when to reach for each skill.
