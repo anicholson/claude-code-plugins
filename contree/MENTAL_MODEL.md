@@ -15,7 +15,7 @@
 - Hexagonal seams → inner layers: Adapter (`*.adapter.test.*`), Use-case (`*.use-case.test.*`), Domain (`*.domain.test.*`).
 - A tree's coverage on disk → a parenthesised label set: `src`, `unit`, `integration`, `functional` (System), `journey` (Journey); `none` marks a declared gap.
 - An outbound dependency → a Port; each Port ships an in-memory twin plus a real adapter, both bound by one shared `*.contract.ts` suite.
-- Workflow phases → skills: `setup`, `change`, `sync`, `tdd`, `workflow`.
+- Workflow phases → skills: `setup`, `change`, `sync`, `tdd`, `second-opinion`, `workflow`.
 - Enforcement → hooks: SessionStart (rules + trees), Stop (drift check), PostToolUse (mental-model validator), UserPromptSubmit (self-care).
 - The product's theory → `MENTAL_MODEL.md` (this file); its behaviour → `## Test Trees`; its operating discipline → the rules.
 
