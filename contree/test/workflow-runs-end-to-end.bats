@@ -27,3 +27,9 @@ SKILL="$PROJECT_ROOT/skills/workflow/SKILL.md"
   run cat "$SKILL"
   [[ "$output" == *"passing tests"* ]]
 }
+
+@test "workflow skill directs second-opinion to review completed work after sync" {
+  run cat "$SKILL"
+  [[ "$output" == *"SECOND OPINION"* ]]
+  [[ "$output" == *"second-opinion"* ]]
+}
