@@ -276,6 +276,26 @@
   .chan-legend div { font-size: .86rem; color: var(--ink-soft); }
   .chan-legend div span.chan { margin-right: 8px; }
 
+  /* verbatim injected-context disclosure */
+  details.real { margin-top: 14px; border: 1px solid var(--leaf-deep); border-radius: 12px; background: #0c120e; overflow: hidden; }
+  details.real > summary {
+    cursor: pointer; list-style: none; padding: 12px 16px; font-family: var(--mono); font-size: .8rem;
+    color: var(--leaf-bright); display: flex; align-items: center; gap: 9px; user-select: none;
+  }
+  details.real > summary::-webkit-details-marker { display: none; }
+  details.real > summary::before { content: "▸"; color: var(--leaf); transition: transform .15s ease; }
+  details.real[open] > summary::before { transform: rotate(90deg); }
+  details.real > summary:hover { background: rgba(88,200,120,.06); }
+  details.real > summary .what { color: var(--ink-soft); font-family: "Inter", sans-serif; }
+  pre.injected {
+    margin: 0; border: none; border-top: 1px solid var(--leaf-deep); border-radius: 0;
+    max-height: 380px; overflow: auto; font-size: .76rem; line-height: 1.62; background: #0a0f0c;
+    white-space: pre-wrap; word-break: break-word;
+  }
+  pre.injected .hd { color: var(--leaf-bright); font-weight: 700; }
+  pre.injected .nm { color: var(--amber); }
+  .real .cap { padding: 9px 16px; font-size: .76rem; color: var(--ink-dim); border-top: 1px solid var(--line); font-family: var(--mono); }
+
   footer { border-top: 1px solid var(--line); padding: 40px 0 60px; color: var(--ink-dim); font-size: .9rem; }
   footer .wrap { display: flex; flex-wrap: wrap; gap: 18px; align-items: center; justify-content: space-between; }
 
