@@ -32,11 +32,11 @@ For a wider grouping spanning several trunk-sync commits, diff the appropriate r
 
 ### 2. Ask GLM 5.2 to review against the contract
 
-Call Z.AI's chat completions API with the `glm-5.2` model, authenticated with `ZAI_API_KEY`. Send the diff and the test trees, and ask GLM 5.2 to review the work as an independent critic: does the change satisfy the test-tree contract, are there bugs or drift, does it honour the rules (KISS, YAGNI, no fake code, fail-fast, no comments), and what would it change?
+Call Z.AI's chat completions API with the `glm-5.2` model, authenticated with `ZAI_API_KEY`. Send the change and the test trees, and ask GLM 5.2 to review the work as an independent critic: does the change satisfy the test-tree contract, are there bugs or drift, does it honour the rules (KISS, YAGNI, no fake code, fail-fast, no comments), and what would it change?
 
 ```bash
-REVIEW_INPUT=$(printf 'TEST TREES (the contract):\n\n%s\n\nDIFF (the completed work):\n\n%s\n' \
-  "$(cat TEST_TREES.md)" "$(git diff HEAD)")
+REVIEW_INPUT=$(printf 'TEST TREES (the contract):\n\n%s\n\nCHANGE (the work to review):\n\n%s\n' \
+  "$(cat TEST_TREES.md)" "$CHANGE")
 
 curl -sS -f -X POST "https://api.z.ai/api/paas/v4/chat/completions" \
   -H "Authorization: Bearer $ZAI_API_KEY" \
