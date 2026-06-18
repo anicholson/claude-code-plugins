@@ -13,8 +13,6 @@ Drives `scripts/publish-<plugin>.sh` end-to-end. The script requires `--notes-fi
 |---|---|---|
 | `contree` | `publish-contree.sh` | `contree-v` |
 | `trunk-sync` | `publish-trunk-sync.sh` | `v` |
-| `climber` | `publish-climber.sh` | `climber-v` |
-| `openclaw-notifier` | `publish-openclaw-notifier.sh` | `openclaw-notifier-v` |
 
 ## Process
 
