@@ -45,7 +45,7 @@ claude plugin install contree@elimydlarz --scope user
 2. When you plan a behaviour change, `/contree:change` writes or modifies test trees first
 3. `/contree:tdd` auto-triggers during implementation — outside-in TDD against test trees
 4. The stop hook keeps `CLAUDE.md` and `README.md` current after every response
-5. Run `/contree:sync` periodically to verify completeness, or `/contree:workflow` for the full cycle
+5. Run `/contree:sync` periodically to verify completeness, then `/contree:second-opinion` for an independent review — or `/contree:workflow` for the full cycle
 
 ## Standardised architecture
 
