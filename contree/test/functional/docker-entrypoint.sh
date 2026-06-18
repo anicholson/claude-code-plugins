@@ -468,17 +468,26 @@ JS
       surfaced="FAIL — GLM 5.2's returned review did not surface in the agent output"
       pass=0
     fi
+    if grep -qF "$UNTRACKED_MARKER" "$ZAI_HITS"; then
+      untracked="PASS — the untracked new file reached the GLM 5.2 review request"
+    else
+      untracked="FAIL — the untracked new file did not reach the GLM 5.2 review request"
+      pass=0
+    fi
 
     write_verify <<VERIFY
 second-opinion — deterministic verification (no AI eval):
 
   $called
   $surfaced
+  $untracked
 
 These cover the second-opinion-reviews-completed-work paths for the GLM 5.2 review
-call and the surfaced review. The remaining paths — derives the work from git diff;
-reads the test trees as the contract; stops without calling the API when there is no
-change; fails loudly — are covered by the unit test
+call, the surfaced review, and that the work it gathers includes new files not yet
+tracked by git. The remaining paths — determines the work from any natural-language
+indication; absent one reviews the last non-trivial, naturally grouped changes;
+reads the test trees as the contract; stops without calling the API when there are
+no non-trivial changes; fails loudly — are covered by the unit test
 test/second-opinion-reviews-completed-work.bats.
 VERIFY
 
