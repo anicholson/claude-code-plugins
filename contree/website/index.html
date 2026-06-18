@@ -687,6 +687,14 @@ findings=$(validate-mental-model.sh)             <span class="co"># 7 named sect
           <p><span class="lbl">Why</span> The mental model is a deliberately constrained artifact — seven sections, capped, no stray headings — so it stays a theory, not a junk drawer.</p>
           <p><span class="lbl">Impact</span> The instant <code>MENTAL_MODEL.md</code> is edited, any structural breakage is fed straight back to the model to fix — no human reviewer required.</p>
         </div>
+        <details class="real">
+          <summary>The exact text injected into the agent <span class="what">— example findings</span></summary>
+<pre class="injected"><span class="nm">MENTAL_MODEL.md validator findings:</span>
+- Missing required section: "Temporal View"
+- Section "Invariants" exceeds its cap (12 bullets; max 10)
+- Rogue heading not in the seven-section set: "Open Questions"</pre>
+          <div class="cap">injected only when the validator finds something; a clean file injects nothing.</div>
+        </details>
       </div>
 
       <div class="stage">
