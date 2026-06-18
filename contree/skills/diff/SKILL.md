@@ -16,7 +16,18 @@ Turns the current change into one image — a picture of what this diff does —
 
 ### 1. Read the change
 
-Derive the change from the working tree: run `git diff` and `git diff --staged` to see what actually changed. If there is no change, say so and stop — there is nothing to depict.
+Work out *what* to depict before reading it. Rely on natural language, not on a fixed git boundary:
+
+- **If the user gave a natural-language indication** of what to depict — "the second-opinion change", "the last thing we did" — depict exactly that.
+- **Absent a clear indication**, depict the **last non-trivial, naturally grouped change**. Do not equate the change with a single commit: **trunk-sync** commits continuously, so one logical change is smeared across many tiny auto-commits. Do not limit yourself to the working tree either — it is often empty once trunk-sync has committed. Read the recent history and the working tree together, skip trivial commits (version bumps, formatting, the sync's own noise), and assemble the most recent coherent unit of work.
+
+Gather that change as a diff. For the working tree plus any new untracked files (the common case):
+
+```bash
+CHANGE=$(git diff HEAD; git ls-files --others --exclude-standard | while read -r f; do git diff --no-index -- /dev/null "$f"; done)
+```
+
+For a wider grouping spanning several trunk-sync commits, diff the appropriate range instead. If there are no non-trivial changes to depict, say so and stop — there is nothing to depict.
 
 ### 2. Decide what the image should depict
 
