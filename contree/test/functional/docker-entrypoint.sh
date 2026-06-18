@@ -436,6 +436,14 @@ export function add(a, b) {
 }
 JS
     (cd "$PROJECT_DIR" && git add -A)
+    # An untracked new file, left unstaged — the skill must include files not yet
+    # tracked by git in the work it reviews, so this marker must reach the request.
+    UNTRACKED_MARKER="CONTREE-UNTRACKED-MARKER"
+    cat > "$PROJECT_DIR/subtract.js" <<JS
+export function subtract(a, b) {
+  return a - b // $UNTRACKED_MARKER
+}
+JS
 
     start_zai_review_stub
 
