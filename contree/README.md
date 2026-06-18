@@ -131,6 +131,15 @@ Setup configures tree reporters, test runners, and mutation testing for:
 
 Languages marked "flat" don't support nested test output natively — contree uses the best available option and is honest about the limitation.
 
+## Configuration
+
+Two skills call external APIs and read their credentials from the environment where Claude Code runs (export them in your shell, or whatever launches Claude Code, so its tools inherit them):
+
+- **`ZAI_API_KEY`** — required by `/contree:second-opinion` to call Z.AI's GLM 5.2. Without it the skill fails loudly rather than fabricating a review.
+- **`OPENAI_API_KEY`** — required by `/contree:diff` to call OpenAI's gpt-image-2.
+
+Both are only needed when you invoke the skill that uses them; the rest of contree works without any keys.
+
 ## Dependencies
 
 - `jq` on the host system (for the stop hook)
