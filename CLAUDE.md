@@ -25,9 +25,6 @@ MENTAL_MODEL.md                 — index of per-product mental models (referenc
 
 trunk-sync/                     — multi-agent sync plugin + seance CLI (has its own CLAUDE.md)
 contree/                        — test trees as living requirements plugin (has its own CLAUDE.md)
-openclaw-notifier/              — OpenClaw subagent completion notifier (has its own CLAUDE.md)
-climber/                        — autonomous-clone builder plugin (has its own CLAUDE.md)
-treecon/                        — LSP context injection plugin, pre-implementation (has its own CLAUDE.md)
 ```
 
 Each subdirectory has its own `MENTAL_MODEL.md` (its mental model) and `CLAUDE.md` (requirements and development guidance, pointing at the mental model).
