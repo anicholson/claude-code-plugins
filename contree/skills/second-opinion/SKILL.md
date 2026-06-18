@@ -15,9 +15,20 @@ Sends the completed change to a **different model** — Z.AI's **GLM 5.2** — a
 
 ## Process
 
-### 1. Gather the completed work
+### 1. Gather the work to review
 
-Derive the change from the working tree: run `git diff` and `git diff --staged` to see what changed. Read `## Test Trees` (or `TEST_TREES.md`) — this is the contract the work must satisfy. If there is no change, say so and stop — there is nothing to review.
+Work out *what* to review before gathering it. Rely on natural language, not on a fixed git boundary:
+
+- **If the user gave a natural-language indication** of what to review — "the second-opinion change", "the last thing we did", "everything since the refactor" — review exactly that.
+- **Absent a clear indication**, review the **last non-trivial, naturally grouped change**. Do not equate the work with a single commit: **trunk-sync** commits continuously, so one logical change is smeared across many tiny auto-commits and the latest commit is rarely the whole story. Do not limit yourself to the working tree either — it is often empty once trunk-sync has committed. Read the recent history and the working tree together, skip trivial commits (version bumps, formatting, the sync's own noise), and assemble the most recent coherent unit of work.
+
+Gather that change as a diff. For the working tree plus any new untracked files (the common case):
+
+```bash
+CHANGE=$(git diff HEAD; git ls-files --others --exclude-standard | while read -r f; do git diff --no-index -- /dev/null "$f"; done)
+```
+
+For a wider grouping spanning several trunk-sync commits, diff the appropriate range instead. Then read `## Test Trees` (or `TEST_TREES.md`) — this is the contract the work must satisfy. If there are no non-trivial changes to review, say so and stop — there is nothing to review.
 
 ### 2. Ask GLM 5.2 to review against the contract
 
