@@ -402,6 +402,70 @@ VERIFY
     [ "$pass" -eq 1 ] || { echo "diff-images: FAILED deterministic checks" >&2; exit 1; }
     ;;
 
+  second-opinion)
+    # Verifies the user-invoked /contree:second-opinion skill end to end against a
+    # mocked Z.AI GLM 5.2 endpoint. Claude harness only — the stub overrides
+    # ZAI_API_KEY; nothing real is billed.
+    seed_project "greenfield"
+
+    # A test-tree contract for the skill to send as the review's context.
+    cat > "$PROJECT_DIR/TEST_TREES.md" <<'TT'
+## adder
+
+```
+adder (src: index.js; unit: none; functional: none)
+  when add is called with two numbers
+    then their sum is returned
+```
+TT
+    # Completed work for the skill to review.
+    cat > "$PROJECT_DIR/index.js" <<'JS'
+export function add(a, b) {
+  return a + b
+}
+JS
+    (cd "$PROJECT_DIR" && git add -A)
+
+    start_zai_review_stub
+
+    run_agent \
+      "Run /contree:second-opinion to get an independent review of the current change."
+
+    kill "$ZAI_STUB_PID" 2>/dev/null || true
+
+    # Deterministic verification — no AI eval. Two observable outcomes: the
+    # mocked GLM 5.2 chat/completions endpoint was called with the glm-5.2 model,
+    # and the review it returned surfaced in the agent's output.
+    pass=1
+    if grep -q "chat/completions" "$ZAI_HITS" && grep -q "glm-5.2" "$ZAI_HITS"; then
+      called="PASS — mocked GLM 5.2 chat/completions call recorded"
+    else
+      called="FAIL — no mocked GLM 5.2 chat/completions call recorded"
+      pass=0
+    fi
+    if grep -qF "$ZAI_MARKER" "$TRANSCRIPT_FILE"; then
+      surfaced="PASS — GLM 5.2's returned review surfaced in the agent output"
+    else
+      surfaced="FAIL — GLM 5.2's returned review did not surface in the agent output"
+      pass=0
+    fi
+
+    write_verify <<VERIFY
+second-opinion — deterministic verification (no AI eval):
+
+  $called
+  $surfaced
+
+These cover the second-opinion-reviews-completed-work paths for the GLM 5.2 review
+call and the surfaced review. The remaining paths — derives the work from git diff;
+reads the test trees as the contract; stops without calling the API when there is no
+change; fails loudly — are covered by the unit test
+test/second-opinion-reviews-completed-work.bats.
+VERIFY
+
+    [ "$pass" -eq 1 ] || { echo "second-opinion: FAILED deterministic checks" >&2; exit 1; }
+    ;;
+
   describe-it-drift)
     seed_project "describe-it-drift"
 
