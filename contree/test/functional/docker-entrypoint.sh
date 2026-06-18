@@ -506,6 +506,7 @@ VERIFY
     echo "  mental-model-validator-smoke  — one-shot: malformed MM + agent edit → verifies PostToolUse hook + validator"
     echo "  describe-it-drift             — one-shot: pre-seeded describe/it mismatch → verifies sync flags it"
     echo "  diff-images                   — one-shot: staged change + mocked gpt-image-2 → verifies /contree:diff generates an image of the change"
+    echo "  second-opinion                — one-shot: staged change + mocked GLM 5.2 → verifies /contree:second-opinion reviews the change"
     echo ""
     echo "Harness (2nd arg): claude | codex (default claude)"
     exit 1
