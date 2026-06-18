@@ -405,7 +405,7 @@ diff-images-the-change (src: skills/diff/SKILL.md; unit: test/diff-images-the-ch
 ## second-opinion-reviews-completed-work
 
 ```
-second-opinion-reviews-completed-work (src: skills/second-opinion/SKILL.md; unit: test/second-opinion-reviews-completed-work.bats; functional: test/functional/docker-entrypoint.sh)
+second-opinion-reviews-completed-work (src: skills/second-opinion/SKILL.md; unit: test/second-opinion-reviews-completed-work.bats; functional: none)
   when the second-opinion skill is invoked
     then it derives the completed work from the working-tree git diff
     and it reads the test trees as the contract the work must satisfy
