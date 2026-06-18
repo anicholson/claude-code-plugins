@@ -45,6 +45,12 @@ SKILL="$PROJECT_ROOT/skills/sync/SKILL.md"
   [[ "$output" == *"gaps"* ]]
 }
 
+@test "sync suggests second-opinion for an independent review once the project is in sync" {
+  run cat "$SKILL"
+  [[ "$output" == *"second-opinion"* ]]
+  [[ "$output" == *"independent review"* ]]
+}
+
 @test "sync never resolves drift unilaterally" {
   run cat "$SKILL"
   [[ "$output" == *"Never resolve drift unilaterally"* ]]
