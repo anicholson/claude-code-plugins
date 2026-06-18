@@ -44,6 +44,22 @@ claude plugin install contree@elimydlarz --scope user
 4. The stop hook keeps `CLAUDE.md` and `README.md` current after every response
 5. Run `/contree:sync` periodically to verify completeness, or `/contree:workflow` for the full cycle
 
+## Standardised architecture
+
+contree imposes one architecture on every project, so the harness it bootstraps is the same regardless of stack or domain. It is **hexagonal**: the domain is pure, all I/O lives in adapters, and dependencies point inward toward the domain. Each outbound dependency is a **Port** that ships two implementations — an in-memory twin and a real adapter — both held to one shared `*.contract.ts` suite, so the in-memory substitution used by fast tests stays faithful to the real thing.
+
+Tests are **layered outside-in**, each layer owning complete coverage of its own seam:
+
+- **Journey** (`test/journey/*.journey.test.*`) — the outermost layer and outside-in entry point: a curated, max-realism user arc spanning multiple capabilities, kept under 5 minutes.
+- **System** (`test/system/*.system.test.*`) — one capability wired whole-app with real driven adapters, interior to the Journey.
+- **Adapter** (`*.adapter.test.*`) — one adapter against the real infrastructure it fronts.
+- **Use-case** (`*.use-case.test.*`) — orchestration over in-memory ports.
+- **Domain** (`*.domain.test.*`) — the pure core, no I/O.
+
+Journey and System are max-validity functional tests; the hex inner layers — Adapter, Use-case, Domain — emerge only when a failing journey/functional test demands them. **Higher-layer coverage is never coverage of the layers beneath:** implementation waits for a ground-level failing test at the behaviour's own native layer, sitting under the journey/functional failure that motivated it. Overlap across layers is intentional, not waste.
+
+This is the standardised foundation. Your project's own fixtures, runners, and conventions are layered on top of it.
+
 ## Test tree format
 
 Trees in `TEST_TREES.md` look like this:
