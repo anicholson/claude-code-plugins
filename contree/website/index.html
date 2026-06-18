@@ -456,6 +456,99 @@
   </div>
 </section>
 
+<!-- MECHANICS -->
+<section id="mechanics">
+  <div class="wrap">
+    <p class="eyebrow">Under the hood</p>
+    <h2>How it actually runs inside Claude Code</h2>
+    <p class="lede" style="max-width:66ch">
+      contree isn't prompt-engineering you have to remember to apply. It's <strong>four hooks</strong> wired into
+      Claude Code's lifecycle. Hooks are shell commands the harness runs at fixed events; contree's are plain
+      <code>bash</code> scripts that read the event on <span class="chan chan-in">stdin</span> and reply over three
+      channels the model can see. Here's the entire wiring — one file:
+    </p>
+
+    <pre><span class="muted">// contree/hooks/hooks.json — runs identically under Claude Code and Codex</span>
+{
+  "hooks": {
+    "SessionStart":    [{ "command": "bash $CLAUDE_PLUGIN_ROOT/hooks/session-start.sh" }],
+    "Stop":            [{ "command": "bash $CLAUDE_PLUGIN_ROOT/hooks/stop-drift-check.sh" }],
+    "UserPromptSubmit":[{ "command": "bash $CLAUDE_PLUGIN_ROOT/hooks/self-care-20-20-20.sh" }],
+    "PostToolUse": [{ "matcher": "Edit|Write|MultiEdit",
+                      "command": "bash $CLAUDE_PLUGIN_ROOT/hooks/post-update-check.sh" }]
+  }
+}</pre>
+
+    <h3 style="margin-top:38px">The three channels a hook injects through</h3>
+    <p class="muted" style="max-width:64ch">Every contree hook influences the model in exactly one of these ways. Knowing which channel a hook uses tells you <em>when</em> and <em>how forcefully</em> its text lands.</p>
+    <div class="channels">
+      <div class="channel">
+        <h4><span class="chan chan-out">stdout · exit 0</span></h4>
+        <p>Appended to the model's context as background. Quiet — the model reads it but isn't forced to act. Used by <strong>SessionStart</strong> to seed the session.</p>
+      </div>
+      <div class="channel">
+        <h4><span class="chan chan-err">stderr · exit 2</span></h4>
+        <p>Fed back to the model as a fresh turn it must answer before stopping. Loud — it interrupts. Used by the <strong>Stop</strong> hook to force a drift check.</p>
+      </div>
+      <div class="channel">
+        <h4><span class="chan chan-json">additionalContext JSON</span></h4>
+        <p>Structured <code>{hookSpecificOutput:{additionalContext}}</code> printed to stdout. Injected only when there's something to say. Used by <strong>PostToolUse</strong> and <strong>UserPromptSubmit</strong>.</p>
+      </div>
+    </div>
+
+    <h3 style="margin-top:42px">The four hooks, and why each exists</h3>
+    <div class="hooks">
+      <div class="hook h-ss">
+        <div><span class="ev">SessionStart</span><span class="scr">session-start.sh</span></div>
+        <h3>Seed every session with the contract</h3>
+        <p>Prints the skill <em>Directions</em>, the coding <em>Rules</em>, and the full text of <code>MENTAL_MODEL.md</code> and <code>TEST_TREES.md</code> to stdout.</p>
+        <div class="wire"><b>reads</b> the two project docs <span class="chan chan-out">stdout</span></div>
+        <p style="margin-top:10px"><b>Why:</b> the model starts already knowing the architecture, the behaviour contract, and when to reach for each skill — no rediscovery, no drift from a forgotten spec.</p>
+      </div>
+
+      <div class="hook h-stop">
+        <div><span class="ev">Stop</span><span class="scr">stop-drift-check.sh</span></div>
+        <h3>Guard the contract after every response</h3>
+        <p>Reads the transcript from stdin. Unless the turn ended in a question, it writes drift-check prompts and <strong>exits&nbsp;2</strong> — so the model must reconcile docs and code before it's allowed to stop.</p>
+        <div class="wire"><b>reads</b> transcript_path <span class="chan chan-in">stdin</span> <b>→</b> <span class="chan chan-err">stderr · exit 2</span></div>
+        <p style="margin-top:10px"><b>Why:</b> requirements can't silently rot. Every response is checked against the trees, CLAUDE.md, and README before the model goes idle.</p>
+      </div>
+
+      <div class="hook h-ptu">
+        <div><span class="ev">PostToolUse</span><span class="scr">post-update-check.sh</span></div>
+        <h3>Validate the mental model on edit</h3>
+        <p>Matches <code>Edit|Write|MultiEdit</code>. If the edited <code>file_path</code> is <code>MENTAL_MODEL.md</code>, it runs the validator and surfaces any findings (missing sections, rogue headings, cap overflow).</p>
+        <div class="wire"><b>reads</b> tool_input.file_path <span class="chan chan-in">stdin</span> <b>→</b> <span class="chan chan-json">additionalContext</span></div>
+        <p style="margin-top:10px"><b>Why:</b> the mental model stays a disciplined, seven-section theory instead of a dumping ground — checked the instant it changes.</p>
+      </div>
+
+      <div class="hook h-ups">
+        <div><span class="ev">UserPromptSubmit</span><span class="scr">self-care-20-20-20.sh</span></div>
+        <h3>Look after the human</h3>
+        <p>Drops a heartbeat file each prompt. After ~20 minutes of continuous keyboard time it injects a one-off 20-20-20 eye-break reminder, then continues with your request.</p>
+        <div class="wire"><b>tracks</b> heartbeats on disk <b>→</b> <span class="chan chan-json">additionalContext</span></div>
+        <p style="margin-top:10px"><b>Why:</b> the discipline is for sustainable work, not just clean code. State lives in files, so it spans every concurrent session.</p>
+      </div>
+    </div>
+
+    <h3 style="margin-top:42px">Inside the Stop hook — the control flow that makes it safe</h3>
+    <p class="muted" style="max-width:64ch">A hook that re-prompts on every stop could loop forever or bury a question to you. The script handles both before it ever emits a drift check:</p>
+    <div class="stopflow">
+      <div class="sfrow"><div class="n">1</div><div class="b">If <code>stop_hook_active</code> is set, <code>exit 0</code> — the harness's own guard against a hook re-triggering itself. No infinite loop.</div></div>
+      <div class="sfrow"><div class="n">2</div><div class="b">Read the transcript; take the last assistant message's final non-whitespace character. If it's <code>?</code>, <code>exit 0</code> silently — a question to you is never buried under drift output.</div></div>
+      <div class="sfrow"><div class="n">3</div><div class="b">Otherwise write the MENTAL&nbsp;MODEL / TEST&nbsp;TREES / CLAUDE.md / README prompts to stderr and <code>exit 2</code> — the model must answer, or reply <code>0</code> if nothing drifted.</div></div>
+    </div>
+    <p class="muted" style="margin-top:18px">
+      That <code>exit 2</code> is exactly the loop you've been watching all session: after each of my responses, this hook asks whether anything drifted, and I either fix it or reply <code>0</code>.
+    </p>
+
+    <p class="layers-note" style="margin-top:30px">
+      <code>$CLAUDE_PLUGIN_ROOT</code> resolves to wherever the plugin is installed, so the commands are path-independent.
+      Codex CLI sets the same variable, which is why <strong>one set of scripts and one <code>hooks.json</code> drive both harnesses</strong> unchanged.
+    </p>
+  </div>
+</section>
+
 <!-- NOT A FACTORY -->
 <section class="plain">
   <div class="wrap">
