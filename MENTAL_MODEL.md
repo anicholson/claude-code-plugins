@@ -9,7 +9,7 @@ Each product owns its mental model in its own `MENTAL_MODEL.md`:
 
 ## Why this file only references — and must stay that way
 
-- **The products have disjoint domains, vocabularies, and invariants.** A continuous-integration git hook, a test-tree methodology, a notifier, an autonomous clone, and an LSP injector share almost no concepts. A single combined mental model would force false unification and bury each product's real invariants.
+- **The products have disjoint domains, vocabularies, and invariants.** A continuous-integration git hook and a test-tree methodology share almost no concepts. A single combined mental model would force false unification and bury each product's real invariants.
 - **The monorepo-level "theory" is operational, not domain** — what lives here, how it's published, how the marketplace works. That belongs in [CLAUDE.md](CLAUDE.md), not here.
 - **So this is an index, not a seven-section mental model.** Do not convert it into one, and do not fold the per-product models into it. If you find yourself wanting a "shared" section, that concept belongs to a specific product — put it there.
 - **The mental-model validator will flag this file** as missing the seven named sections and carrying a rogue heading. That warning is **expected and intentional** here: this is the monorepo index, not a product mental model. Do not "fix" it by adding the seven sections.
