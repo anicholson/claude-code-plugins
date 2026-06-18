@@ -596,6 +596,51 @@ EOF
           <p><span class="lbl">Why</span> The most expensive failure mode is a model that never read the spec. Seeding it at <code>t=0</code> removes that risk before the first prompt.</p>
           <p><span class="lbl">Impact</span> Every session — and every parallel agent — begins holding the same contract: the architecture, the trees, and when to use each skill. No rediscovery.</p>
         </div>
+        <details class="real">
+          <summary>The exact text injected into the agent <span class="what">— Directions + Rules, verbatim</span></summary>
+<pre class="injected"><span class="hd"># Directions</span>
+
+Eagerly use these skills to fulfil operator requests, where applicable:
+
+- <span class="nm">change</span> — any behaviour change, before any code is discussed or written
+- <span class="nm">tdd</span> — implementing behaviour, writing code, or writing tests
+- <span class="nm">sync</span> — drift, gaps, staleness, or completeness
+- <span class="nm">setup</span> — no test framework is configured or TEST_TREES.md is absent
+- <span class="nm">workflow</span> — the full arc from idea to verified working software
+
+<span class="hd"># Rules</span>
+
+- <span class="nm">KISS</span> — complexity is bad; simplicity above almost all else
+- <span class="nm">YAGNI</span> — don't future-proof; implement only what you need now
+- <span class="nm">Subtract, don't add</span> — can this be achieved by simplification instead?
+- <span class="nm">No fake code</span> — no skeletons, placeholders, or temporary implementations
+- <span class="nm">Avoid indirection</span> — direct is better than conforming to arbitrary patterns
+- <span class="nm">Data over control flow</span> — push variability into data so the hot path stays uniform. Replace "inspect state, branch, decide" with "do the thing to whatever's there." Conditionals that switch on history are a smell; the steady-state loop should do the same thing every tick.
+- <span class="nm">Fail fast</span> — don't swallow errors; let the system fail when unexpected things happen
+- <span class="nm">Retry at the source</span> — the layer closest to the failure retries; every layer above derives its timeout from that layer's worst case and does not retry the same failure class
+- <span class="nm">Avoid nullability</span> — make things required; don't program defensively
+- <span class="nm">Explicit and expressive</span> — name for what things do, not how they're implemented
+- <span class="nm">No comments</span> — descriptive tests and expressive code obviate comments; comments bias agents against change, but trees and tests make the contract explicit so code can change radically.
+- <span class="nm">Composition over inheritance</span> — no `extends`; use hooks, functional utilities, component composition
+- <span class="nm">Typing</span> — type everything; no `any`
+- <span class="nm">Z-index</span> — avoid z-index; good layout doesn't rely on it
+- <span class="nm">Read docs</span> — use Context7 before using any library; don't guess API usage
+- <span class="nm">Consumer-driven</span> — implement only what a consumer already needs
+- <span class="nm">Resolve uncertainty</span> — look directly and remove optionality; don't hedge with fallbacks
+- <span class="nm">Act, don't ask</span> — if your reasoning already includes the right answer, act on it rather than externalising the decision
+- <span class="nm">pnpm</span> — use pnpm, not npm, for JS/TS
+- <span class="nm">Trees are the contract</span> — every expected behaviour and side effect goes in `## Test Trees`; every tree is verified by a test; every test drives the real implementation. If it's observable anywhere (filesystem, network, logs, next invocation), it belongs in the tree.
+- <span class="nm">Behaviour, not internals</span> — every tree describes what crosses its level's interface (inputs, outputs, side-effects). Never the implementation inside.
+- <span class="nm">Debugging means a test gap</span> — find the tree path that should have caught the bug, write the failing test, then fix the code.
+- <span class="nm">Hexagonal</span> — domain pure; I/O in adapters; dependencies point inward; each driven port ships with an in-memory twin
+- <span class="nm">Functional first</span> — the outermost layer is real, max-validity functional testing; the floor is the Journey — one curated arc, under 5 minutes, spanning capabilities and representative error paths, eventually succeeding.
+- <span class="nm">Outside-in</span> — start each capability from its outermost failing test; it pulls the inner layers into being, each TDD'd at its native layer.
+- <span class="nm">Layer completeness</span> — every layer owns complete coverage of its own seam. Journey/functional coverage is never coverage of the layers beneath; implement only once a failing test exists at the behaviour's own ground layer.
+- <span class="nm">Test layers</span> — Journey (curated cross-capability arc), System (one capability, whole-app, real driven adapters), Adapter (driving mocks app, driven hits real infra), Use-case (in-memory adapters), Domain (pure)
+- <span class="nm">Shared port contract</span> — one `*.contract.ts` suite per port, imported by both in-memory- and real-adapter test files
+- <span class="nm">One tree, one test file</span> — each tree reifies exactly one test file; the file's describe/it hierarchy mirrors the tree verbatim</pre>
+          <div class="cap">…then the full text of your MENTAL_MODEL.md and TEST_TREES.md is appended below this — the agent starts the session holding all three.</div>
+        </details>
       </div>
 
       <div class="stage usr">
