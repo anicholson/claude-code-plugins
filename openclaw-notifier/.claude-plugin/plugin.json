@@ -1,5 +1,0 @@
-{
-  "name": "openclaw-notifier",
-  "version": "1.0.2",
-  "description": "Notifies OpenClaw when a subagent completes a task"
-}
