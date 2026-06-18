@@ -55,6 +55,7 @@ MATRIX=(
   "mental-model-validator-smoke:claude"
   "describe-it-drift:claude"
   "diff-images:claude"
+  "second-opinion:claude"
 )
 
 TEST_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
