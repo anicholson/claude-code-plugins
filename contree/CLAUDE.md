@@ -17,7 +17,8 @@ Mechanisms:
 - **change skill** — set expected behaviour. Talks through the change, writes or modifies test trees before code exists.
 - **sync skill** — identify gaps and cruft. Compares test trees against implementation in both directions — surfaces drift, staleness, and missing coverage.
 - **tdd skill** — close gaps. Outside-in TDD where every test traces back to a test tree — one failing test at a time until the contract is fulfilled.
-- **workflow skill** — the full arc. Runs `change` → `sync` → `tdd` end to end — from idea to verified working software.
+- **workflow skill** — the full arc. Runs `change` → `sync` → `tdd` → `second-opinion` end to end — from idea to verified, independently reviewed working software.
+- **second-opinion skill** — review completed work with a different model. Sends the working-tree diff and the test-tree contract to Z.AI's GLM 5.2 (chat completions API, `ZAI_API_KEY`) and surfaces its independent review; fails loudly rather than fabricating a review. `sync` suggests it once the project is in sync.
 - **diff skill** — user-invoked (`/contree:diff`). Generates one image representing the working-tree change via OpenAI's gpt-image-2 model (images generations API, `OPENAI_API_KEY`), choosing what to depict from the nature of the change, its key details, and its audience; surfaces those choices for review; fails loudly rather than fabricating an image. Not hook-triggered.
 - **Stop hook** — guard the contract. Fires after every response, detecting drift between intent and implementation. Yields the turn silently when the response ends with a question, so questions to the user aren't buried under drift-check output.
 - **Mental-model validator (PostToolUse)** — after any tool call that edits MENTAL_MODEL.md, `hooks/post-update-check.sh` runs `hooks/validate-mental-model.sh` and surfaces its advisory findings (missing sections, rogue headings, cap overflow) via additionalContext JSON.
