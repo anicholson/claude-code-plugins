@@ -17,7 +17,7 @@
       "license": "MIT",
       "keywords": ["hooks", "git", "multi-agent", "sync", "trunk-based-development"]
     },
-{
+    {
       "name": "contree",
       "source": "./contree",
       "description": "Test trees as living requirements — TDD with auto-synced specifications in CLAUDE.md",
@@ -26,26 +26,6 @@
       },
       "license": "MIT",
       "keywords": ["skills", "hooks", "tdd", "testing", "test-trees", "requirements", "documentation"]
-    },
-    {
-      "name": "openclaw-notifier",
-      "source": "./openclaw-notifier",
-      "description": "Notifies OpenClaw when a subagent completes a task via SubagentStop hook",
-      "author": {
-        "name": "Eli Mydlarz"
-      },
-      "license": "MIT",
-      "keywords": ["hooks", "openclaw", "subagent", "notification", "multi-agent"]
-    },
-    {
-      "name": "climber",
-      "source": "./climber",
-      "description": "Climb up a level of abstraction — build an autonomous clone that directs a Claude Code session the way you do",
-      "author": {
-        "name": "Eli Mydlarz"
-      },
-      "license": "MIT",
-      "keywords": ["skills", "autonomy", "clone", "agent", "director", "proxy"]
     }
   ]
 }
