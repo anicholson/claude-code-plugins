@@ -472,6 +472,49 @@ VERIFY
     [ "$pass" -eq 1 ] || { echo "second-opinion: FAILED deterministic checks" >&2; exit 1; }
     ;;
 
+  second-opinion-live)
+    # LIVE — real GLM 5.2 inference against the real Z.AI API (no stub). Billable
+    # and non-deterministic, so it is NOT in the auto MATRIX; run manually with a
+    # real ZAI_API_KEY. Plants a deliberate bug that contradicts the test-tree
+    # contract and checks the real review caught it.
+    : "${ZAI_API_KEY:?second-opinion-live needs a real ZAI_API_KEY in the environment}"
+    seed_project "greenfield"
+
+    cat > "$PROJECT_DIR/TEST_TREES.md" <<'TT'
+## adder
+
+```
+adder (src: index.js; unit: none; functional: none)
+  when add is called with two numbers
+    then their sum is returned
+```
+TT
+    # Deliberate bug: the contract says "their sum is returned", the code subtracts.
+    cat > "$PROJECT_DIR/index.js" <<'JS'
+export function add(a, b) {
+  return a - b
+}
+JS
+    (cd "$PROJECT_DIR" && git add -A)
+
+    run_agent \
+      "Run /contree:second-opinion to get an independent review of the current change."
+
+    echo ""
+    echo "=== GLM 5.2 review (extracted from transcript) ==="
+    jq -r 'select(.type=="assistant") | .message.content[]? | select(.type=="text") | .text' \
+      "$TRANSCRIPT_FILE" 2>/dev/null | tail -60
+
+    write_verify <<'VERIFY'
+second-opinion-live — real GLM 5.2 inference (manual judgement):
+
+The fixture plants a deliberate bug — TEST_TREES.md says `add` returns the SUM, but
+index.js returns `a - b` (subtraction). The skill sent the diff + the trees to the
+real Z.AI GLM 5.2 endpoint. Read the extracted review above (and the full transcript)
+and judge: did GLM 5.2 catch that the implementation contradicts the contract?
+VERIFY
+    ;;
+
   describe-it-drift)
     seed_project "describe-it-drift"
 
