@@ -180,7 +180,7 @@ JS
   STUB_PORT="$port" STUB_MARKER="$STUB_MARKER" STUB_HITS="$STUB_HITS" node "$stub" &
   OPENAI_STUB_PID=$!
 
-  install_curl_shim 'https:\/\/api.openai.com\/v1' "http:\/\/127.0.0.1:$port\/v1"
+  install_curl_shim 'https:\/\/api.openai.com\/v1' "http://127.0.0.1:$port/v1"
 
   export OPENAI_API_KEY="test-key-mock"
   export OPENAI_BASE_URL="http://127.0.0.1:$port/v1"
