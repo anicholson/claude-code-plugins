@@ -1,6 +1,6 @@
 # contree
 
-**[Read the visual intro →](https://elimydlarz.github.io/claude-code-plugins/)** — a one-page explainer aimed at developers new to TDD.
+**[Read the visual intro →](https://elimydlarz.github.io/claude-code-plugins/contree/)** — a one-page explainer aimed at developers new to TDD.
 
 Test trees as living requirements. Combines test-driven development with automatic requirements synchronisation — your test trees in `TEST_TREES.md` ARE the specification, always up to date.
 
