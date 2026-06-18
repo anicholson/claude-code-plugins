@@ -131,7 +131,8 @@ install_curl_shim() {
   # Route a skill's curl recipe at a local stub by shadowing curl with a shim
   # earlier on PATH. The container runs as non-root testuser, so the shim lives
   # in a writable dir (not /usr/local/bin) and PATH is prepended for the agent.
-  # Args are the slash-escaped from/to URL fragments for bash ${a//from/to}.
+  # $from is the match pattern with slashes escaped (so the first / does not end
+  # the pattern); $to is the plain replacement URL. Used as bash ${a//from/to}.
   local from="$1" to="$2"
   local shimdir="/tmp/curl-shim"
   mkdir -p "$shimdir"
