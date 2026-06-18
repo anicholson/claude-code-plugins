@@ -6,9 +6,6 @@ Each product owns its mental model in its own `MENTAL_MODEL.md`:
 
 - [trunk-sync](trunk-sync/MENTAL_MODEL.md) — multi-agent continuous integration via a git hook, plus the seance/timeclock CLI.
 - [contree](contree/MENTAL_MODEL.md) — test trees as living requirements; outside-in layered TDD (Journey → System → hex inner layers).
-- [openclaw-notifier](openclaw-notifier/MENTAL_MODEL.md) — SubagentStop → fire-and-forget notification to the OpenClaw gateway.
-- [climber](climber/MENTAL_MODEL.md) — an autonomous clone built from mined transcripts, driven by a Stop-hook loop toward VISION.md.
-- [treecon](treecon/MENTAL_MODEL.md) — LSP-derived semantic context injected into the model's turn (pre-implementation).
 
 ## Why this file only references — and must stay that way
 
