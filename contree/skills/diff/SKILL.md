@@ -28,7 +28,7 @@ The image is an editorial choice, not a transcription of the diff. Decide what t
 
 ### 3. Generate the image with gpt-image-2
 
-Call OpenAI's images generations API with the `gpt-image-2` model (pinned id `gpt-image-2-2026-04-21`), authenticated with `OPENAI_API_KEY`. Write a prompt that captures your step-2 decisions. The response is base64 — decode it and save the returned image as a `.png` file in the project.
+Call OpenAI's images generations API with the `gpt-image-2` model (pinned id `gpt-image-2-2026-04-21`), authenticated with `OPENAI_API_KEY`. Write a prompt that captures your step-2 decisions. gpt-image-2 always returns base64 in `data[0].b64_json` — do not send a `response_format` parameter, the API rejects it. Decode the base64 and save the returned image as a `.png` file in the project.
 
 ```bash
 curl -sS -X POST "https://api.openai.com/v1/images/generations" \
@@ -38,8 +38,7 @@ curl -sS -X POST "https://api.openai.com/v1/images/generations" \
         model: "gpt-image-2-2026-04-21",
         prompt: $prompt,
         size: "1024x1024",
-        quality: "high",
-        response_format: "b64_json"
+        quality: "high"
       }')" \
   | jq -r '.data[0].b64_json' | base64 --decode > diff.png
 ```
