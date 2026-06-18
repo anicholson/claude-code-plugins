@@ -41,7 +41,7 @@
 
 - Tree language — EARS syntax, causal nesting, one-tree-one-file, leaf granularity; the grammar of the contract.
 - Test-layer taxonomy — Journey ▸ System ▸ Adapter ▸ Use-case ▸ Domain (+ Port contract); each layer owns its own seam.
-- Skill workflow — `setup` (configure) → `change` (set behaviour) → `sync` (find drift) → `tdd` (close gaps); `workflow` runs the arc.
+- Skill workflow — `setup` (configure) → `change` (set behaviour) → `sync` (find drift) → `tdd` (close gaps) → `second-opinion` (independent review from another model); `workflow` runs the arc.
 - Enforcement hooks — SessionStart, Stop drift-check, PostToolUse mental-model validator, UserPromptSubmit self-care.
 - Hexagonal architecture — domain pure, I/O in adapters, dependencies inward, a boundary linter holding the line.
 - Dual-harness packaging — one source directory, parallel `.claude-plugin` / `.codex-plugin` manifests, `CLAUDE_PLUGIN_ROOT` shared by both.
