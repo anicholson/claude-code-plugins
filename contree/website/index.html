@@ -715,6 +715,15 @@ last=$(<span class="fn">jq</span> -rs '<span class="st">last assistant text | tr
           <p><span class="lbl">Why</span> Docs rot because nothing checks them at the moment of change. This makes the check immediate and unavoidable — while the two guards stop it looping or talking over a question meant for you.</p>
           <p><span class="lbl">Impact</span> After every substantive response, the trees, mental model, CLAUDE.md, and README are reconciled against what just changed before the model is allowed to rest.</p>
         </div>
+        <details class="real">
+          <summary>The exact text pushed back to the agent <span class="what">— the four drift prompts, verbatim</span></summary>
+<pre class="injected"><span class="nm">MENTAL MODEL:</span> Did this task reveal any knowledge NOT already described in documentation, tests, and code? Default is no change. If a change is warranted: name which of the seven sections it belongs to (Core Domain Identity, World-to-Code Mapping, Ubiquitous Language, Bounded Contexts, Invariants, Decision Rationale, Temporal View); if none fits, it is not part of the mental model; prefer tightening an existing line over adding a new one; state what is true, not what to avoid; when the target section is at its cap, displace or merge an existing item rather than appending.
+<span class="nm">TEST TREES:</span> Have test trees and implementation drifted apart? If so, propose solutions.
+<span class="nm">CLAUDE.md:</span> Has CLAUDE.md content drifted from reality? If so, update it.
+<span class="nm">README:</span> Is the README out of date now? It should tell consumers what the project is, how to install it, how to configure it, and how to use it. If anything is stale or wrong, update it.
+If nothing needs attention, reply 0.</pre>
+          <div class="cap">written to stderr with exit 2 — the model must address each, or reply 0.</div>
+        </details>
         <div class="loopnote">
           ↺ <strong>The loop you've been watching.</strong> That <code>exit 2</code> turns the drift prompts into a new turn the model must answer — fix the docs, or reply <code>0</code> for all-clear. Only when the hook exits 0 does control return to you, and the turn completes.
         </div>
