@@ -64,6 +64,11 @@ load test_helper
   assert_success
 }
 
+@test "second-opinion skill exists" {
+  run test -f "$PROJECT_ROOT/skills/second-opinion/SKILL.md"
+  assert_success
+}
+
 # --- Skill frontmatter (generic validator) ---
 
 @test "every SKILL.md has non-empty name and description" {
