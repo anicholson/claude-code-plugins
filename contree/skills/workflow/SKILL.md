@@ -33,6 +33,10 @@ For each gap identified by sync, run the `tdd` skill process: confirm test tree,
 
 Run mutation testing at the end.
 
-### 4. DONE — intent and implementation are one
+### 4. SECOND OPINION — review completed work
 
-All test trees in `## Test Trees` should now have passing tests and working implementation.
+Once the work is synced and implemented, run the `second-opinion` skill process: send the change and the test-tree contract to Z.AL's GLM 5.2 and surface its independent review. A second model catches what a single perspective misses. Where it finds drift or gaps, route them back through `change`, `sync`, or `tdd`.
+
+### 5. DONE — intent and implementation are one
+
+All test trees in `## Test Trees` should now have passing tests and working implementation, and an independent model has reviewed the result.
