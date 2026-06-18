@@ -660,6 +660,14 @@ emit_additionalContext "look 20ft away for 20s — the 20-20-20 rule"</pre>
           <p><span class="lbl">Why</span> The discipline is about sustainable practice, not just clean code. State lives in files rather than memory, so the timer stays honest even when you're driving several agents at once.</p>
           <p><span class="lbl">Impact</span> Almost always a no-op. Once every 20 minutes of continuous work, Claude opens its reply with a brief eye-break nudge, then carries on with your request.</p>
         </div>
+        <details class="real">
+          <summary>The exact text injected into the agent <span class="what">— the nudge, when it fires</span></summary>
+<pre class="injected">Before addressing the user's request, mention the 20-20-20 rule: they have
+been at the keyboard for a while. Say something like: "Quick eye break: look
+at something 20 feet away for 20 seconds (20-20-20 rule)." Keep it brief,
+then continue with their request.</pre>
+          <div class="cap">delivered as additionalContext, so the model weaves it in rather than being interrupted.</div>
+        </details>
       </div>
 
       <div class="stage">
