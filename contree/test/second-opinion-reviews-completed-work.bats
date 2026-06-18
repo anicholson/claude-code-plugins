@@ -4,9 +4,24 @@ load test_helper
 
 SKILL="$PROJECT_ROOT/skills/second-opinion/SKILL.md"
 
-@test "second-opinion skill derives the completed work from the working-tree git diff" {
+@test "second-opinion skill determines the work to review from any natural-language indication the user gave" {
   run cat "$SKILL"
-  [[ "$output" == *"git diff"* ]]
+  [[ "$output" == *"natural-language"* || "$output" == *"natural language"* ]]
+  [[ "$output" == *"indicat"* ]]
+}
+
+@test "second-opinion skill absent a clear indication reviews the last non-trivial, naturally grouped changes, not a single commit and not only the working tree" {
+  run cat "$SKILL"
+  [[ "$output" == *"naturally grouped"* || "$output" == *"naturally-grouped"* ]]
+  [[ "$output" == *"non-trivial"* ]]
+  [[ "$output" == *"trunk-sync"* ]]
+  [[ "$output" == *"commit"* ]]
+  [[ "$output" == *"working tree"* ]]
+}
+
+@test "second-opinion skill gathers work that includes new files not yet tracked by git" {
+  run cat "$SKILL"
+  [[ "$output" == *"untracked"* ]]
 }
 
 @test "second-opinion skill reads the test trees as the contract the work must satisfy" {
@@ -15,7 +30,7 @@ SKILL="$PROJECT_ROOT/skills/second-opinion/SKILL.md"
   [[ "$output" == *"contract"* ]]
 }
 
-@test "second-opinion skill sends the work to Z.AI's GLM 5.2 chat completions API authenticated with ZAI_API_KEY" {
+@test "second-opinion skill sends the change and the test trees to Z.AI's GLM 5.2 chat completions API authenticated with ZAI_API_KEY" {
   run cat "$SKILL"
   [[ "$output" == *"glm-5.2"* ]]
   [[ "$output" == *"api.z.ai"* ]]
@@ -29,9 +44,9 @@ SKILL="$PROJECT_ROOT/skills/second-opinion/SKILL.md"
   [[ "$output" == *"attribut"* ]]
 }
 
-@test "second-opinion skill stops without calling the API when there is no change" {
+@test "second-opinion skill says so and stops without calling the API when there are no non-trivial changes to review" {
   run cat "$SKILL"
-  [[ "$output" == *"no change"* ]]
+  [[ "$output" == *"no non-trivial change"* || "$output" == *"nothing to review"* ]]
   [[ "$output" == *"stop"* ]]
 }
 
