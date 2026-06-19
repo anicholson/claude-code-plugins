@@ -2,9 +2,9 @@
 
 load test_helper
 
-SKILL="$PROJECT_ROOT/skills/diff/SKILL.md"
+SKILL="$PROJECT_ROOT/skills/diff-for-humans/SKILL.md"
 
-@test "diff skill determines the change to depict from any natural-language indication the user gave" {
+@test "diff-for-humans skill determines the change to depict from any natural-language indication the user gave" {
   run cat "$SKILL"
   [[ "$output" == *"natural-language"* || "$output" == *"natural language"* ]]
   [[ "$output" == *"indicat"* ]]
