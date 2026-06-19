@@ -52,7 +52,7 @@ Flow: `setup` prepares the project for test-tree-driven development → `change`
 - `skills/tdd/SKILL.md` — close gaps: outside-in TDD, one failing test at a time
 - `skills/workflow/SKILL.md` — the full arc: idea → contract → verified implementation → independent review
 - `skills/second-opinion/SKILL.md` — review completed work: determine the change from natural language (else the last non-trivial, naturally grouped change, untracked files included), send it + test-tree contract to Z.AI GLM 5.2 (`ZAI_API_KEY`), surface its review, fail loudly
-- `skills/diff/SKILL.md` — user-invoked `/contree:diff`: determine the change from natural language (else the last non-trivial, naturally grouped change, untracked files included), generate one image via OpenAI gpt-image-2; choose subject from nature/details/audience; surface choices; fail loudly
+- `skills/diff-for-humans/SKILL.md` — user-invoked `/contree:diff-for-humans`: determine the change from natural language (else the last non-trivial, naturally grouped change, untracked files included), generate one image via OpenAI gpt-image-2; choose subject from nature/technical substance (contracts, databases, behaviour, test trees)/details/audience; surface choices; fail loudly
 - `test/plugin.bats` — structural tests: plugin manifest, skill files, frontmatter, hook wiring
 - `test/pre-task-hook.bats` — SessionStart hook tests: rules, Directions, mental-model and test-tree framing, file interpolation
 - `test/post-task-hook.bats` — Stop hook tests: loop prevention, exit codes, question-mark yielding, nudge content
