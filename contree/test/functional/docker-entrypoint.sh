@@ -361,7 +361,7 @@ VERIFY
     ;;
 
   diff-images)
-    # Verifies the user-invoked /contree:diff skill end to end against a mocked
+    # Verifies the user-invoked /contree:diff-for-humans skill end to end against a mocked
     # gpt-image-2 endpoint. Claude harness only — the stub overrides OPENAI_API_KEY,
     # which the codex harness needs for its own model calls.
     seed_project "greenfield"
@@ -377,7 +377,7 @@ JS
     start_openai_image_stub
 
     run_agent \
-      "Run /contree:diff to generate an image of the current change."
+      "Run /contree:diff-for-humans to generate an image of the current change."
 
     kill "$OPENAI_STUB_PID" 2>/dev/null || true
 
@@ -576,7 +576,7 @@ VERIFY
     echo "  layered-workflow              — HTTP API: setup → workflow → drift → sync (every tree, every layer)"
     echo "  mental-model-validator-smoke  — one-shot: malformed MM + agent edit → verifies PostToolUse hook + validator"
     echo "  describe-it-drift             — one-shot: pre-seeded describe/it mismatch → verifies sync flags it"
-    echo "  diff-images                   — one-shot: staged change + mocked gpt-image-2 → verifies /contree:diff generates an image of the change"
+    echo "  diff-images                   — one-shot: staged change + mocked gpt-image-2 → verifies /contree:diff-for-humans generates an image of the change"
     echo "  second-opinion                — one-shot: staged change + mocked GLM 5.2 → verifies /contree:second-opinion reviews the change"
     echo "  second-opinion-live           — LIVE (billable, manual): planted bug + real GLM 5.2 → checks the real review catches it"
     echo ""
