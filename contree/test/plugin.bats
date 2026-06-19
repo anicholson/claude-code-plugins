@@ -59,8 +59,8 @@ load test_helper
   assert_success
 }
 
-@test "diff skill exists" {
-  run test -f "$PROJECT_ROOT/skills/diff/SKILL.md"
+@test "diff-for-humans skill exists" {
+  run test -f "$PROJECT_ROOT/skills/diff-for-humans/SKILL.md"
   assert_success
 }
 
