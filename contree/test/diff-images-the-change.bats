@@ -37,6 +37,15 @@ SKILL="$PROJECT_ROOT/skills/diff-for-humans/SKILL.md"
   [[ "$output" == *"audience"* ]]
 }
 
+@test "diff-for-humans skill foregrounds the technical substance of the change — contracts, databases, behaviour, test trees" {
+  run cat "$SKILL"
+  [[ "$output" == *"technical"* ]]
+  [[ "$output" == *"contract"* ]]
+  [[ "$output" == *"database"* ]]
+  [[ "$output" == *"behaviour"* ]]
+  [[ "$output" == *"test tree"* ]]
+}
+
 @test "diff-for-humans skill saves the returned image as a .png file" {
   run cat "$SKILL"
   [[ "$output" == *"save"* ]]
