@@ -31,9 +31,10 @@ For a wider grouping spanning several trunk-sync commits, diff the appropriate r
 
 ### 2. Decide what the image should depict
 
-The image is an editorial choice, not a transcription of the diff. Decide what to depict from three inputs:
+The image is an editorial choice, not a transcription of the diff. Decide what to depict from four inputs:
 
 - **the nature of the change** — a new capability, a refactor, a bug fix, a deletion, a config change? The kind of change sets the visual register.
+- **the technical substance** — foreground the concrete technical elements the change actually touches: the **contracts** and interfaces it changes, the **data and databases** (schemas, tables, migrations, records) it reads or writes, the **behaviour** it adds or alters, and the **test trees** that hold it to account. Render these as legible technical objects — a labelled schema, a contract boundary, a tree of behaviours — not as an abstract metaphor that hides the engineering. A teammate should be able to read the moving parts off the picture.
 - **the important details** — the one or two things a viewer most needs to grasp. Leave the rest out; an image that shows everything shows nothing.
 - **the intended audience** — a teammate reviewing the PR, a non-technical stakeholder, your future self. The audience sets the vocabulary and the level of abstraction.
 
