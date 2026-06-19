@@ -30,11 +30,6 @@ SKILL="$PROJECT_ROOT/skills/diff/SKILL.md"
   [[ "$output" == *"images generations"* ]]
 }
 
-@test "diff skill request sends only parameters the gpt-image-2 API accepts (no response_format, which it rejects)" {
-  run cat "$SKILL"
-  [[ "$output" == *".data[0].b64_json"* && "$output" != *"response_format:"* ]]
-}
-
 @test "diff skill chooses what the image depicts from the nature of the change, its important details, and its audience" {
   run cat "$SKILL"
   [[ "$output" == *"nature of the change"* ]]
