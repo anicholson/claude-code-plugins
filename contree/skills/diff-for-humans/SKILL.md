@@ -1,15 +1,15 @@
 ---
-name: diff
-description: "Generate a single image that represents the current change, using OpenAI's gpt-image-2 model. TRIGGER when: the user runs /diff, or asks to see, picture, illustrate, or visualise the current change or diff."
+name: diff-for-humans
+description: "Generate a single image that explains the current change to a human, using OpenAI's gpt-image-2 model — foregrounding the technical substance the change touches (contracts, databases, behaviour, test trees). TRIGGER when: the user runs /diff-for-humans, or asks to see, picture, illustrate, or visualise the current change or diff."
 ---
 
-# Diff
+# Diff for Humans
 
-Turns the current change into one image — a picture of what this diff does — using OpenAI's **gpt-image-2** model. Invoked on demand; nothing fires automatically.
+Turns the current change into one image — a picture of what this diff does, made legible to a human — using OpenAI's **gpt-image-2** model. The image is technical, not decorative: it shows the concrete elements the change touches (contracts, databases, behaviour, test trees), not an abstract metaphor. Invoked on demand; nothing fires automatically.
 
 ## When to Use
 
-- The user runs `/diff`.
+- The user runs `/diff-for-humans`.
 - The user asks to see, picture, illustrate, or visualise the current change.
 
 ## Process
