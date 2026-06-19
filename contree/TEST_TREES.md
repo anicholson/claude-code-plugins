@@ -391,13 +391,14 @@ dual-harness-compatibility (src: .claude-plugin/plugin.json, .codex-plugin/plugi
 ## diff-images-the-change
 
 ```
-diff-images-the-change (src: skills/diff/SKILL.md; unit: test/diff-images-the-change.bats; functional: test/functional/docker-entrypoint.sh)
-  when the diff skill is invoked
+diff-images-the-change (src: skills/diff-for-humans/SKILL.md; unit: test/diff-images-the-change.bats; functional: test/functional/docker-entrypoint.sh)
+  when the diff-for-humans skill is invoked
     then it determines the change to depict from any natural-language indication the user gave
     and absent a clear indication it depicts the last non-trivial, naturally grouped changes — not a single commit, since trunk-sync commits continuously, and not only the working tree
     and the change it gathers includes new files not yet tracked by git
     and it generates an image representing that change using OpenAI's gpt-image-2 model via the images generations API
     and it chooses what the image depicts from the nature of the change, its important details, and its intended audience
+    and it foregrounds the technical substance the change touches — contracts, data and databases, behaviour, and test trees — as concrete technical elements rather than only an abstract metaphor
     and it saves the returned image as a .png file
     and it surfaces those choices to the user for review
   when there are no non-trivial changes to depict
