@@ -79,6 +79,13 @@ run_hook_in() {
   [[ "$output" == *"Journey and functional coverage is never coverage of the layers beneath"* ]]
 }
 
+@test "session start directs the agent to decide obvious questions itself rather than asking the user" {
+  run_hook_in "$BATS_TEST_TMPDIR"
+  [[ "$output" == *"Decide, don't ask"* ]]
+  [[ "$output" == *"Run the ladder before asking"* ]]
+  [[ "$output" == *"only escalate"* ]]
+}
+
 # --- Skill directions ---
 
 @test "session start directs the agent to eagerly use the listed skills to fulfil operator requests where applicable" {
