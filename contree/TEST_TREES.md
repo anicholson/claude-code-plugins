@@ -107,6 +107,7 @@ pre-task-hook (src: hooks/session-start.sh; unit: test/pre-task-hook.bats; funct
     and the agent is directed to describe each level's observable behaviour at its interface — inputs, outputs, and side-effects — not the implementation inside it
     and the agent is directed that every layer owns complete coverage of its own behaviour — a higher-layer test, green or red, never excuses a missing lower-layer test, and overlap across layers is intentional
     and the agent is directed that journey and functional coverage is never coverage of the layers beneath — implementation waits for a ground-level failing test under the journey/functional failure
+    and the agent is directed to decide obvious questions itself rather than asking the user — consulting these rules and the mental model first, then its own best judgment from the code in front of it, escalating to the user only a consequential, genuinely under-determined choice that neither resolves
     and the agent is directed to eagerly use the listed skills to fulfil operator requests where applicable
     and the agent is directed to use the change skill for any behaviour change, before any code is discussed or written
     and the agent is directed to use the tdd skill when implementing behaviour, writing code, or writing tests
