@@ -86,6 +86,13 @@ run_hook_in() {
   [[ "$output" == *"only escalate"* ]]
 }
 
+@test "session start directs the agent not to manufacture flags, applying the same ladder before surfacing anything" {
+  run_hook_in "$BATS_TEST_TMPDIR"
+  [[ "$output" == *"Don't manufacture flags"* ]]
+  [[ "$output" == *"same ladder"* ]]
+  [[ "$output" == *"stay silent"* ]]
+}
+
 # --- Skill directions ---
 
 @test "session start directs the agent to eagerly use the listed skills to fulfil operator requests where applicable" {
