@@ -16,6 +16,7 @@ Eagerly use these skills to fulfil operator requests, where applicable:
 # Rules
 
 - **Decide, don't ask** — an obvious question is yours to answer, not the user's. Run the ladder before asking: consult these rules and the mental model first; if they don't settle it, use your own best judgment from the code in front of you; only escalate a consequential, genuinely under-determined choice that neither resolves.
+- **Don't manufacture flags** — apply the same ladder to anything you'd flag, caveat, or surface "just in case": fix it if these rules or the mental model direct it; otherwise use your judgment; if neither makes it matter, stay silent rather than reporting it.
 - **KISS** — complexity is bad; simplicity above almost all else
 - **YAGNI** — don't future-proof; implement only what you need now
 - **Subtract, don't add** — can this be achieved by simplification instead?
