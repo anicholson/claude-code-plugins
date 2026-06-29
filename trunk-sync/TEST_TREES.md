@@ -152,6 +152,8 @@ Migration note: trunk-sync was previously specified as a flat `## Requirements` 
       then a single-agent message is returned
     when an agent has a task
       then the task description is included
+    when an agent has recorded progress
+      then its last completed step and remaining steps are included on that agent's line
     when multiple agents are clocked in
       then all are listed
     when the elapsed minutes value is rounded
@@ -160,8 +162,19 @@ Migration note: trunk-sync was previously specified as a flat `## Requirements` 
       then the message tells the agent to run the test suite before starting
       and it explains failing tests are checkpoints of unfinished WIP to resume
       and it scopes resumable WIP to work not part of a still-clocked-in agent's
+      and it tells the agent to record its own last step and remaining steps with `trunk-sync progress` as work proceeds and before it pauses
     when this is the first clock-in and other agents are clocked in
       then both the clocked-in roster and the run-tests nudge are included
+
+  formatSessionStartSummary
+    when no other timecards are clocked in
+      then null is returned
+    when other agents are clocked in
+      then each is listed with its branch, task, last completed step, and remaining steps
+      and the agent is told to resume unfinished WIP that is not owned by a still-clocked-in agent
+      and the agent is told to record its own progress with `trunk-sync progress` as work proceeds and before it pauses
+    when a clocked-in timecard has no recorded progress
+      then that agent's line shows its task without progress fields
 
 ### Domain: git (src: src/lib/git.ts; unit: src/lib/git.test.ts; integration: none; functional: none)
 
