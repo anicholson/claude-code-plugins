@@ -107,6 +107,17 @@ Migration note: trunk-sync was previously specified as a flat `## Requirements` 
     if a transcript line is not valid JSON
       then it is skipped without throwing
 
+  extractProgressFromTranscript
+    when the transcript contains the agent's plan or todo state
+      then the most recently completed step is returned as lastStep
+      and the outstanding steps are returned as remainingSteps
+    when the transcript records no plan or todo state
+      then lastStep and remainingSteps are null
+    when an extracted step exceeds the length cap
+      then it is truncated at the cap
+    if a transcript line is not valid JSON
+      then it is skipped without throwing
+
   summarizeDeletions
     when called with no files
       then an empty summary is returned
