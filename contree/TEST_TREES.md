@@ -90,7 +90,7 @@ outside-in-tdd (src: skills/tdd/SKILL.md; unit: test/outside-in-tdd.bats; functi
     and the higher-layer test passing is not treated as sufficient coverage for the inner unit
     and overlap between the inner tree's coverage and the higher-layer test is intentional, not waste
   when descending the layers from a failing higher-layer test
-    then each layer's failing test guides the next failing test one layer down — Journey to System to Adapter to Use-case to Domain or Port
+    then each layer's failing test guides the next failing test one layer down — Journey to System to Component to Adapter to Use-case to Domain or Port
     and descent continues to the lowest layer the behaviour reaches
     and descent never stops at a higher layer because the behaviour appears already covered there
     and coverage at a higher layer never justifies skipping a test at a lower layer
