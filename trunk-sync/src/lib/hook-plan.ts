@@ -282,24 +282,46 @@ export function classifyTimecards(
 }
 
 /**
- * Format a message showing who else is clocked in.
- * Returns null if no other agents are working.
+ * Format the message an agent sees when it clocks in.
+ * Shows who else is working, and on the agent's first clock-in of the session
+ * nudges it to run the tests — failing tests are checkpoints of unfinished WIP
+ * left by an earlier agent, resumable when not owned by a still-clocked-in agent.
+ * Returns null when there is nothing to say.
  */
-export function formatClockInMessage(clockedIn: Timecard[], now: Date): string | null {
-  if (clockedIn.length === 0) return null;
+export function formatClockInMessage(
+  clockedIn: Timecard[],
+  now: Date,
+  isFirstClockIn: boolean,
+): string | null {
+  const sections: string[] = [];
 
-  const lines = clockedIn.map((tc) => {
-    const age = now.getTime() - new Date(tc.lastActiveAt).getTime();
-    const agoStr = formatAge(age);
-    const taskStr = tc.task ? ` — "${tc.task}"` : "";
-    return `- ${tc.sessionId.slice(0, 8)} on ${tc.hostname} (branch: ${tc.branch}, ${agoStr} ago)${taskStr}`;
-  });
+  if (clockedIn.length > 0) {
+    const lines = clockedIn.map((tc) => {
+      const age = now.getTime() - new Date(tc.lastActiveAt).getTime();
+      const agoStr = formatAge(age);
+      const taskStr = tc.task ? ` — "${tc.task}"` : "";
+      return `- ${tc.sessionId.slice(0, 8)} on ${tc.hostname} (branch: ${tc.branch}, ${agoStr} ago)${taskStr}`;
+    });
+    sections.push(
+      `TRUNK-SYNC CLOCK-IN: ${clockedIn.length} other agent${clockedIn.length > 1 ? "s" : ""} clocked in. Continue your work as planned — no action required.`,
+      ...lines,
+    );
+  }
 
-  return [
-    `TRUNK-SYNC CLOCK-IN: ${clockedIn.length} other agent${clockedIn.length > 1 ? "s" : ""} clocked in. Continue your work as planned — no action required.`,
-    ...lines,
-    "If you share resources (ports, test databases, build locks), coordinate accordingly. Otherwise, ignore this message.",
-  ].join("\n");
+  if (isFirstClockIn) {
+    sections.push(
+      "TRUNK-SYNC WIP: Run the test suite before starting. Failing tests are checkpoints marking where an earlier agent left off — any failing test that is not part of a still-clocked-in agent's work is unfinished WIP for you to resume.",
+    );
+  }
+
+  if (clockedIn.length > 0) {
+    sections.push(
+      "If you share resources (ports, test databases, build locks), coordinate accordingly. Otherwise, ignore this message.",
+    );
+  }
+
+  if (sections.length === 0) return null;
+  return sections.join("\n");
 }
 
 function formatAge(ms: number): string {
