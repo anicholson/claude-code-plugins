@@ -825,6 +825,37 @@ describe("amendWithTranscriptSnapshot", () => {
     assert.ok(!existsSync(join(dir, ".transcripts")));
   });
 
+  it("snapshots by default when commit-transcripts is unset", () => {
+    // No config file → defaults to ON (session records committed for seance)
+    const transcriptPath = join(tmpHome, "session.jsonl");
+    writeFileSync(transcriptPath, jsonl({ type: "user", message: { role: "user", content: "task" } }));
+
+    const filePath = join(dir, "default-snap.txt");
+    writeFileSync(filePath, "content\n");
+
+    const plan: HookPlan = {
+      action: "commit-and-sync",
+      commit: {
+        filesToStage: [filePath],
+        filesToRemove: [],
+        subject: "auto: write default-snap.txt",
+        body: null,
+      },
+      sync: null,
+      clockIn: null,
+    };
+    const input = makeInput({
+      tool_input: { file_path: filePath },
+      transcript_path: transcriptPath,
+      session_id: "abcdef12-3456-7890-abcd-ef1234567890",
+    });
+    const state = makeState(dir);
+
+    executePlan(plan, input, state);
+
+    assert.ok(existsSync(join(dir, ".transcripts")));
+  });
+
   it("skips snapshot when no transcript_path", () => {
     writeFileSync(join(tmpHome, ".trunk-sync"), "commit-transcripts=true\n");
 
