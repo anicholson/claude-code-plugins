@@ -356,11 +356,13 @@ composable-testing (src: skills/setup/SKILL.md; unit: test/composable-testing.ba
     then Domain tests are colocated with source (*.domain.test.*)
     and Use-case tests are colocated with the use-case (*.use-case.test.*)
     and Adapter tests are colocated with the adapter — driving or driven (*.adapter.test.*)
+    and Component tests live under test/component/ (*.component.test.*)
     and System tests live under test/system/ (*.system.test.*)
     and Journey tests live under test/journey/ (*.journey.test.*)
+    and Component tests wire real driving and driven adapters for one capability, doubling externals only at the edge — an in-memory database and stubbed outbound HTTP
     and System tests wire real driven adapters at the highest tolerable realism by default
     and Journey tests wire real driving and driven adapters across the multi-capability arc at max realism
-    and when breadth at max realism is unaffordable, coverage leans on the Journey and pushes combinatorial detail to inner layers — never a broad in-memory-wired System suite
+    and exhaustive single-capability breadth lives at the Component and Use-case layers — never a broad real-infrastructure System suite
     and each outbound port has an in-memory adapter used by Use-case tests
     and each outbound port has a shared contract suite imported by both in-memory and real adapter tests
     and every layer produces tree-shaped output
