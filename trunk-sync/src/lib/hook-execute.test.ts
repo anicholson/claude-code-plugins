@@ -988,6 +988,43 @@ describe("clockIn", () => {
     assert.equal(content.clockedInAt, "2026-03-27T10:00:00.000Z");
     assert.equal(content.lastActiveAt, "2026-03-27T10:05:00.000Z");
   });
+
+  it("preserves agent-authored lastStep and remainingSteps across updates", () => {
+    const plan: ClockInPlan = {
+      timecardPath: ".trunk-sync/timeclock/test-session.json",
+      timecard: {
+        sessionId: "test-session",
+        pid: process.pid,
+        hostname: "test-host",
+        clockedInAt: "2026-03-27T10:05:00.000Z",
+        lastActiveAt: "2026-03-27T10:05:00.000Z",
+        branch: "main",
+        task: null,
+        lastStep: null,
+        remainingSteps: null,
+      },
+    };
+    const timeclockDir = join(dir, ".trunk-sync", "timeclock");
+    mkdirSync(timeclockDir, { recursive: true });
+    // Agent recorded progress on a prior call (via `trunk-sync progress`)
+    writeFileSync(join(timeclockDir, "test-session.json"), JSON.stringify({
+      sessionId: "test-session",
+      pid: process.pid,
+      hostname: "test-host",
+      clockedInAt: "2026-03-27T10:00:00.000Z",
+      lastActiveAt: "2026-03-27T10:00:00.000Z",
+      branch: "main",
+      task: null,
+      lastStep: "wired the CLI",
+      remainingSteps: "add the functional test",
+    }));
+    // The hook fires again and re-clocks-in — progress must survive
+    clockIn(dir, plan, "Some freshly-derived task");
+    const content = JSON.parse(readFileSync(join(timeclockDir, "test-session.json"), "utf-8")) as Timecard;
+    assert.equal(content.lastStep, "wired the CLI");
+    assert.equal(content.remainingSteps, "add the functional test");
+    assert.equal(content.task, "Some freshly-derived task");
+  });
 });
 
 describe("readTimecards", () => {
