@@ -587,6 +587,10 @@ setup_repos
 echo "A's content" > "$WT_A/a-file.txt"
 echo "B's content" > "$WT_B/b-file.txt"
 
+# Returning agents — isolate this test from the first-clock-in WIP nudge
+seed_clockin race-a
+seed_clockin race-b
+
 # Run both hooks concurrently — they race to push to origin/main
 cd "$WT_A"
 HOOK_EXIT_A=0
