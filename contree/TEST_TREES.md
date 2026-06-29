@@ -61,6 +61,7 @@ outside-in-tdd (src: skills/tdd/SKILL.md; unit: test/outside-in-tdd.bats; functi
     then it is carried by the exhaustive cheap layers — Use-case and Component — never by a broad real-infrastructure System suite
   when writing a Use-case test
     then the in-memory adapter for each outbound port is wired
+    and exhaustive single-behaviour orchestration coverage lives here, isolated from real adapters
   when writing an Adapter test for an in-memory or real driven adapter
     then the shared port contract suite is imported and run against the adapter
   when writing an Adapter test for a real driven adapter
