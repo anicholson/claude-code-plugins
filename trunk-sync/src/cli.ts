@@ -4,6 +4,7 @@ import { createRequire } from "node:module";
 import { configCommand } from "./commands/config.js";
 import { installCommand } from "./commands/install.js";
 import { seanceCommand } from "./commands/seance.js";
+import { progressCommand } from "./commands/progress.js";
 
 const require = createRequire(import.meta.url);
 const pkg = require("../package.json") as { version: string };
