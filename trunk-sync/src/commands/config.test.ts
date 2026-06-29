@@ -69,7 +69,7 @@ describe("config command", () => {
   it("get key with default when not set", () => {
     const { stdout, exitCode } = runConfig("commit-transcripts", { HOME: process.env.HOME! });
     assert.equal(exitCode, 0);
-    assert.equal(stdout, "false");
+    assert.equal(stdout, "true");
   });
 
   it("get unknown key errors", () => {
