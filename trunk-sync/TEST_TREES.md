@@ -329,6 +329,8 @@ Migration note: trunk-sync was previously specified as a flat `## Requirements` 
   executePlan with clock-in
     when a commit fires with runtime context
       then a timecard is committed alongside the code change
+    when the agent clocks in for the first time in a session
+      then exit 2 is returned with a message telling the agent to run the tests and resume any unfinished WIP
     when other agents are clocked in
       then exit 2 is returned with a throttled clock-in message
     when the throttle file is fresh
