@@ -28,10 +28,30 @@ create_transcript() {
   jq -cn --arg msg "$message" '{type:"user", message:{role:"user", content:$msg}}' > "$path"
 }
 
+throttle_path() { echo "${TMPDIR:-/tmp}/trunk-sync-clockin-$1"; }
+
+# Mark a session as having already clocked in, so the first-clock-in WIP nudge
+# (run-the-tests / resume-WIP, exit 2) does not fire in tests that aren't about it.
+seed_clockin() { [[ -n "$1" ]] && printf '%s' "$(( $(date +%s) * 1000 ))" > "$(throttle_path "$1")"; }
+clear_clockin() { [[ -n "$1" ]] && rm -f "$(throttle_path "$1")"; }
+
 run_hook() {
   local input="$1"
   HOOK_EXIT=0
   HOOK_STDERR=""
+  # Default: a returning agent (already clocked in), so existing assertions hold.
+  seed_clockin "$(printf '%s' "$input" | jq -r '.session_id // ""')"
+  local stderr_file="$TMPDIR_BASE/stderr"
+  printf '%s' "$input" | bash "$HOOK" >/dev/null 2>"$stderr_file" || HOOK_EXIT=$?
+  HOOK_STDERR=$(cat "$stderr_file")
+}
+
+# Like run_hook, but as the session's very first clock-in (WIP nudge may fire).
+run_hook_first_clockin() {
+  local input="$1"
+  HOOK_EXIT=0
+  HOOK_STDERR=""
+  clear_clockin "$(printf '%s' "$input" | jq -r '.session_id // ""')"
   local stderr_file="$TMPDIR_BASE/stderr"
   printf '%s' "$input" | bash "$HOOK" >/dev/null 2>"$stderr_file" || HOOK_EXIT=$?
   HOOK_STDERR=$(cat "$stderr_file")
