@@ -118,6 +118,7 @@ Migration note: trunk-sync was previously specified as a flat `## Requirements` 
   buildClockInPlan
     when the runtime context provides a session id and branch
       then a clock-in plan with the timecard path is returned
+      and the timecard initializes lastStep and remainingSteps to null
     if the session id is null
       then null is returned
     if the current branch is empty
