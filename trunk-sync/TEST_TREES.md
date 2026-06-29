@@ -319,6 +319,7 @@ Migration note: trunk-sync was previously specified as a flat `## Requirements` 
       then the timeclock directory is created and a valid timecard is written
     when a timecard already exists for this session
       then clockedInAt is preserved across updates
+      and lastStep and remainingSteps are preserved across updates, since only `trunk-sync progress` sets them
 
   readTimecards
     when the timeclock directory does not exist
