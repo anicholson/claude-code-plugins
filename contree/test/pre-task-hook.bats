@@ -79,6 +79,14 @@ run_hook_in() {
   [[ "$output" == *"Journey and functional coverage is never coverage of the layers beneath"* ]]
 }
 
+@test "session start directs the agent to descend to the lowest level and fold back up" {
+  run_hook_in "$BATS_TEST_TMPDIR"
+  [[ "$output" == *"Descend to the lowest level, then fold back up"* ]]
+  [[ "$output" == *"lowest layer the behaviour reaches"* ]]
+  [[ "$output" == *"never stop descending because"* ]]
+  [[ "$output" == *"fold back up"* ]]
+}
+
 @test "session start directs the agent to decide obvious questions itself rather than asking the user" {
   run_hook_in "$BATS_TEST_TMPDIR"
   [[ "$output" == *"Decide, don't ask"* ]]
