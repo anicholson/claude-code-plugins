@@ -304,12 +304,12 @@ Migration note: trunk-sync was previously specified as a flat `## Requirements` 
       then the local target branch is updated to match origin
 
   amendWithTranscriptSnapshot
-    while `commit-transcripts=true`
+    while `commit-transcripts` is unset or any value other than `false` — the default-on behaviour
       when the hook fires with a transcript path
         then the transcript is snapshotted into `.transcripts/` and the code commit is amended to include it
       if the snapshot operation fails
         then the hook continues without aborting
-    while `commit-transcripts=false`
+    while `commit-transcripts=false` — the explicit opt-out
       then no snapshot is created
     if no transcript_path is provided
       then no snapshot is created
