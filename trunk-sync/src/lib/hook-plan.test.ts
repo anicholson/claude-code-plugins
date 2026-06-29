@@ -518,6 +518,8 @@ describe("classifyTimecards", () => {
       lastActiveAt: "2026-03-27T10:04:00.000Z",
       branch: "main",
       task: null,
+      lastStep: null,
+      remainingSteps: null,
       ...overrides,
     };
   }
