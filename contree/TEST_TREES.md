@@ -79,13 +79,21 @@ outside-in-tdd (src: skills/tdd/SKILL.md; unit: test/outside-in-tdd.bats; functi
     and observe the test failing
     then fix the implementation, observe the test passing, and move on
   when a failing higher-layer test surfaces inner behaviour that requires new code
-    then a tree for the inner unit is added at its native ground layer before code is written
+    then the failing higher-layer test is run and its failure is read to identify the next layer down to descend into
+    and a tree for the inner unit is added at its native ground layer before code is written
     and the inner unit's own failing test is written before any implementation lands
     and implementation is not written off the journey/functional failure alone — only once the failing ground-level test exists beneath it
     and the higher-layer test passing is not treated as sufficient coverage for the inner unit
     and overlap between the inner tree's coverage and the higher-layer test is intentional, not waste
-  when all inner-layer tests pass
-    then the System test passes, then the Journey test passes
+  when descending the layers from a failing higher-layer test
+    then each layer's failing test guides the next failing test one layer down — Journey to System to Adapter to Use-case to Domain or Port
+    and descent continues to the lowest layer the behaviour reaches
+    and descent never stops at a higher layer because the behaviour appears already covered there
+    and coverage at a higher layer never justifies skipping a test at a lower layer
+    and every layer the behaviour touches ends with its own complete coverage, written down to the lowest level
+  when the lowest-layer failing test for the behaviour is made to pass
+    then the layers fold back up — each higher-layer test passes in turn as the layers beneath it are satisfied, up to the Journey
+    and a higher-layer test still failing means a layer beneath it lacks coverage, so another lower failing test is written before retrying upward
   when all trees for a slice have passing tests
     then run mutation testing against Domain and Use-case layers as final validation
     and suggest the user runs sync
