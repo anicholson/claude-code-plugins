@@ -271,6 +271,10 @@ change-decomposes-across-layers (src: skills/change/SKILL.md; unit: test/change-
     and that outermost tree is the only tree written up front — System and inner-layer trees are added only as a failing journey/functional test reveals the need for them
     and trees are named for the subject with observable behaviour at their layer
     and every tree reifies exactly one test file
+  when decomposing a capability across the test layers
+    then the layers pair two orientations across two realism tiers — behaviour-oriented (Use-case, Journey) and system-oriented (Component, System)
+    and Use-case is to Component as Journey is to System — the cheap tier doubles what it can, the real tier integrates everything affordable
+    and Use-case and Component are always written and carry exhaustive coverage; System and Journey are selective, validating the same surfaces with real everything
   when an inner-layer tree is added
     then it exists because the failing journey/functional test at max realism cannot be satisfied without it
     and inner-layer trees are never designed up front from speculation about decomposition
