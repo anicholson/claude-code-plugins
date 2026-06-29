@@ -381,7 +381,7 @@ export function executePlan(
 function amendWithTranscriptSnapshot(input: HookInput, state: RepoState): void {
   try {
     const config = readConfig();
-    if (config.get("commit-transcripts") !== "true") return;
+    if (config.get("commit-transcripts") === "false") return;
     if (!input.transcript_path || !input.session_id) return;
 
     const expanded = input.transcript_path.replace(/^~/, homedir());
