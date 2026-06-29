@@ -21,7 +21,15 @@ export function progressCommand(args: string[]): void {
     return;
   }
 
-  const sessionId = args.find((a) => !a.startsWith("--"));
+  const positionals: string[] = [];
+  for (let i = 0; i < args.length; i++) {
+    if (args[i] === "--last" || args[i] === "--next") {
+      i++;
+      continue;
+    }
+    if (!args[i].startsWith("--")) positionals.push(args[i]);
+  }
+  const sessionId = positionals[0];
   if (!sessionId) {
     console.error(`Missing session id.\n\n${USAGE}`);
     process.exit(1);
