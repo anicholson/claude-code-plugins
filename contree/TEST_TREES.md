@@ -212,6 +212,8 @@ setup-generates-trees (src: skills/setup/SKILL.md; unit: test/setup-generates-tr
     then those layers run in Docker
     and test artefacts are torn down afterwards
     and secrets are passed via environment variables
+  when Component tests run
+    then they run in-process with an in-memory database and stubbed outbound HTTP, needing no external services
 ```
 
 ## setup-installs-architectural-linter
