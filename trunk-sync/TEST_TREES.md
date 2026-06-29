@@ -171,7 +171,6 @@ Migration note: trunk-sync was previously specified as a flat `## Requirements` 
     when other agents are clocked in
       then each is listed with its branch, task, last completed step, and remaining steps
       and the agent is told to resume unfinished WIP that is not owned by a still-clocked-in agent
-      and the agent is told to record its own progress with `trunk-sync progress` as work proceeds and before it pauses
     when a clocked-in timecard has no recorded progress
       then that agent's line shows its task without progress fields
 
