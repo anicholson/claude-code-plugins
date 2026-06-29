@@ -108,7 +108,6 @@ pre-task-hook (src: hooks/session-start.sh; unit: test/pre-task-hook.bats; funct
   when a session starts
     then MENTAL_MODEL.md contents are displayed
     and TEST_TREES.md contents are displayed
-    and when PROGRESS.md exists at the project root its contents are surfaced as an offer to continue the pending work, so the agent asks the user whether to resume it or start fresh rather than silently loading it
     and the agent is directed to use the mental model's existing concepts, vocabulary, and decisions rather than inventing parallel ones
     and the agent is directed to preserve the mental model's invariants, surfacing conflict when a task appears to require breaking one rather than routing around it
     and the agent is directed to flag the mental model as wrong, incomplete, or misleading rather than silently reshaping it through code
