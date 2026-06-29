@@ -450,7 +450,7 @@ Migration note: trunk-sync was previously specified as a flat `## Requirements` 
     when `config <key>` is called
       then the single value is printed
     when `config <key>` is called for a key that has a built-in default and is unset
-      then the default is printed (e.g. `commit-transcripts` defaults to `false`)
+      then the default is printed (e.g. `commit-transcripts` defaults to `true`, so session records are committed and pushed unless opted out)
     if `config <key>` is called for an unknown key
       then it exits 1 with `Unknown key`
     when `config unset <key>` is called
