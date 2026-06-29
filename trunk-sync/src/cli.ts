@@ -17,6 +17,7 @@ Commands:
   install   Install the trunk-sync Claude Code plugin
   seance    Find which Claude session wrote a line of code
   config    Read or write trunk-sync configuration
+  progress  Record your last step and remaining steps into your timecard
 
 Options:
   --version  Show version
