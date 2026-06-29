@@ -470,6 +470,18 @@ Migration note: trunk-sync was previously specified as a flat `## Requirements` 
     when the config file contains comments and blank lines
       then they are preserved on read
 
+### Use-case: progress (src: src/commands/progress.ts; unit: src/commands/progress.test.ts; integration: none; functional: test/trunk-sync.test.sh)
+
+  progress command
+    then `--help` prints usage
+    when called with a session id, a last step, and remaining steps
+      then the matching timecard's lastStep and remainingSteps are set
+      and clockedInAt, task, pid, and branch are preserved
+    when no timecard yet exists for the session id
+      then a timecard is created carrying the recorded progress
+    if the session id is missing
+      then it exits 1 with a usage message
+
 ### System: hook-sync (functional: test/trunk-sync.test.sh)
 
   every Edit/Write/Bash tool use
