@@ -650,6 +650,10 @@ setup_repos
 echo "A's version" > "$WT_A/seed.txt"
 echo "B's version" > "$WT_B/seed.txt"
 
+# Returning agents — isolate this test from the first-clock-in WIP nudge
+seed_clockin conf-a
+seed_clockin conf-b
+
 cd "$WT_A"
 HOOK_EXIT_A=0
 STDERR_FILE_A="$TMPDIR_BASE/stderr-conflict-a"
