@@ -130,6 +130,9 @@ last_body() {
 TMPDIR_BASE=$(cd "$(mktemp -d)" && pwd -P)
 trap 'rm -rf "$TMPDIR_BASE"' EXIT
 
+# Isolate clock-in throttle files to this run's temp dir (the hook reads $TMPDIR).
+export TMPDIR="$TMPDIR_BASE"
+
 setup_repos() {
   cd "$TMPDIR_BASE"
   rm -rf "$TMPDIR_BASE/remote.git" "$TMPDIR_BASE/project" "$TMPDIR_BASE/wt-a" "$TMPDIR_BASE/wt-b"
