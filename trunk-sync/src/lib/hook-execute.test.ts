@@ -1082,6 +1082,11 @@ describe("executePlan with clock-in", () => {
     };
     const input = makeInput({ tool_input: { file_path: filePath } });
     const state = makeState(dir);
+
+    // Suppress the first-clock-in nudge so this test stays focused on the commit
+    const throttlePath = join(process.env.TMPDIR || "/tmp", "trunk-sync-clockin-my-session");
+    writeFileSync(throttlePath, String(Date.now()));
+
     const result = executePlan(plan, input, state);
     assert.equal(result.exitCode, 0);
 
@@ -1089,6 +1094,51 @@ describe("executePlan with clock-in", () => {
     const files = execSync("git diff-tree --no-commit-id --name-only -r HEAD", { cwd: dir, encoding: "utf-8" }).trim();
     assert.ok(files.includes(".trunk-sync/timeclock/my-session.json"));
     assert.ok(files.includes("code.txt"));
+
+    unlinkSync(throttlePath);
+  });
+
+  it("emits a run-tests / resume-WIP message on the first clock-in even with no other agents", () => {
+    const filePath = join(dir, "code.txt");
+    writeFileSync(filePath, "code\n");
+    const clockInPlan: ClockInPlan = {
+      timecardPath: ".trunk-sync/timeclock/my-session.json",
+      timecard: {
+        sessionId: "my-session",
+        pid: process.pid,
+        hostname: "test-host",
+        clockedInAt: new Date().toISOString(),
+        lastActiveAt: new Date().toISOString(),
+        branch: "main",
+        task: null,
+      },
+    };
+    const plan: HookPlan = {
+      action: "commit-and-sync",
+      commit: {
+        filesToStage: [filePath],
+        filesToRemove: [],
+        subject: "auto: write code.txt",
+        body: null,
+      },
+      sync: null,
+      clockIn: clockInPlan,
+    };
+    const input = makeInput({ tool_input: { file_path: filePath } });
+    const state = makeState(dir);
+
+    // No throttle file → this is the session's first clock-in
+    const throttlePath = join(process.env.TMPDIR || "/tmp", "trunk-sync-clockin-my-session");
+    try { unlinkSync(throttlePath); } catch { /* ignore */ }
+
+    const result = executePlan(plan, input, state);
+    assert.equal(result.exitCode, 2, `expected exit 2, got ${result.exitCode}. stderr: ${result.stderr}`);
+    assert.ok(result.stderr?.includes("TRUNK-SYNC WIP"), `expected TRUNK-SYNC WIP in: ${result.stderr}`);
+    assert.ok(result.stderr?.includes("Run the test suite"));
+    assert.ok(result.stderr?.includes("resume"));
+    assert.ok(!result.stderr?.includes("TRUNK-SYNC CLOCK-IN"), `expected no roster when solo: ${result.stderr}`);
+
+    unlinkSync(throttlePath);
   });
 
   it("returns exit 2 with clock-in message when other agents clocked in", () => {
