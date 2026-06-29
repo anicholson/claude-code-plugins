@@ -158,6 +158,24 @@ post-task-hook (src: hooks/stop-drift-check.sh; unit: test/post-task-hook.bats; 
     then no missing-file nudge is emitted, because presence is judged at the project root rather than the hook's working directory
 ```
 
+## handover-skill-pauses-work
+
+```
+handover-skill-pauses-work (src: skills/handover/SKILL.md; unit: test/handover-skill-pauses-work.bats; integration: none; functional: none)
+  when the handover skill is invoked
+    then it runs the same drift review the stop hook runs — MENTAL MODEL, TEST TREES, CLAUDE.md, and README — against the current project state
+    and it writes PROGRESS.md at the project root capturing established progress and the planned next steps, so another session can resume the work in context
+    and PROGRESS.md is overwritten with current state rather than appended to, so stale progress cannot accumulate
+    and it tells the user the work is paused and can be continued by starting a fresh session, which surfaces PROGRESS.md automatically
+    and its logic lives inline in the skill rather than shelling out to a plugin-root-relative script, since CLAUDE_PLUGIN_ROOT is not reliably available to skills
+  when the handover skill is invoked and PROGRESS.md already exists from a prior handover
+    then the prior progress is replaced by the current state
+  when there is no work in progress to capture
+    then PROGRESS.md records that the work is complete and there are no next steps, rather than omitting the file
+  if the drift review finds that trees, CLAUDE.md, or README have drifted from reality
+    then the drift is recorded in PROGRESS.md as a next step, so the resuming session resolves it
+```
+
 ## post-update-hook
 
 ```
