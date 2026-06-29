@@ -250,14 +250,16 @@ function executeClockIn(
       // best-effort
     }
 
-    // Check throttle before returning clock-in message
-    if (clockedIn.length > 0) {
-      const lastWarning = readThrottleTimestamp(plan.timecard.sessionId);
-      const nowMs = now.getTime();
-      if (lastWarning === null || (nowMs - lastWarning) >= THROTTLE_MS) {
-        writeThrottleTimestamp(plan.timecard.sessionId, nowMs);
-        return formatClockInMessage(clockedIn, now);
-      }
+    // The first clock-in of a session always speaks (run the tests, resume WIP);
+    // the co-worker roster repeats at most once per throttle window.
+    const lastWarning = readThrottleTimestamp(plan.timecard.sessionId);
+    const nowMs = now.getTime();
+    const isFirstClockIn = lastWarning === null;
+    const throttleElapsed = isFirstClockIn || (nowMs - lastWarning) >= THROTTLE_MS;
+
+    if (isFirstClockIn || (clockedIn.length > 0 && throttleElapsed)) {
+      writeThrottleTimestamp(plan.timecard.sessionId, nowMs);
+      return formatClockInMessage(clockedIn, now, isFirstClockIn);
     }
 
     return null;
