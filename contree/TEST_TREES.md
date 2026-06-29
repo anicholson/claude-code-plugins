@@ -52,10 +52,13 @@ outside-in-tdd (src: skills/tdd/SKILL.md; unit: test/outside-in-tdd.bats; functi
     and the arc walks representative error paths, not every error, and eventually succeeds
     and the journey is curated and kept runnable in under 5 minutes, trimmed to the highest-impact and most-recent steps
   when writing a System test
-    then real driven adapters are wired at the highest tolerable realism by default
-  while breadth at max realism is unaffordable
-    then coverage leans on the Journey and pushes combinatorial detail to inner layers
-    and the System layer is never diluted into a broad in-memory-wired suite
+    then real driving and driven adapters are wired whole-app for one capability at the highest tolerable realism — the same surface a Component test covers, validated against real infrastructure
+    and System tests are selective, not exhaustive — real-everything is expensive, so it is spent on the highest-impact capabilities and expanded over time
+  when writing a Component test
+    then real driving and driven adapters are wired whole-app for one capability, with externals doubled only at the edge — an in-memory database and stubbed outbound HTTP
+    and exhaustive single-capability behaviour coverage lives here, because doubling only the edges keeps it cheap enough to always write
+  when breadth coverage is required
+    then it is carried by the exhaustive cheap layers — Use-case and Component — never by a broad real-infrastructure System suite
   when writing a Use-case test
     then the in-memory adapter for each outbound port is wired
   when writing an Adapter test for an in-memory or real driven adapter
