@@ -145,7 +145,7 @@ Migration note: trunk-sync was previously specified as a flat `## Requirements` 
       then each is classified correctly
 
   formatClockInMessage
-    when no other agents are clocked in
+    when no other agents are clocked in and this is not the first clock-in
       then null is returned
     when one other agent is clocked in without a task
       then a single-agent message is returned
@@ -155,6 +155,12 @@ Migration note: trunk-sync was previously specified as a flat `## Requirements` 
       then all are listed
     when the elapsed minutes value is rounded
       then the formatting matches the elapsed wall time
+    when this is the first clock-in
+      then the message tells the agent to run the test suite before starting
+      and it explains failing tests are checkpoints of unfinished WIP to resume
+      and it scopes resumable WIP to work not part of a still-clocked-in agent's
+    when this is the first clock-in and other agents are clocked in
+      then both the clocked-in roster and the run-tests nudge are included
 
 ### Domain: git (src: src/lib/git.ts; unit: src/lib/git.test.ts; integration: none; functional: none)
 
