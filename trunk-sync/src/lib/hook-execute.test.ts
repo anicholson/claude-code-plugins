@@ -794,7 +794,7 @@ describe("amendWithTranscriptSnapshot", () => {
   });
 
   it("skips snapshot when commit-transcripts=false", () => {
-    // No config file → defaults to false
+    writeFileSync(join(tmpHome, ".trunk-sync"), "commit-transcripts=false\n");
 
     const transcriptPath = join(tmpHome, "session.jsonl");
     writeFileSync(transcriptPath, jsonl({ type: "user", message: { role: "user", content: "task" } }));
