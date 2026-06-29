@@ -612,6 +612,7 @@ describe("formatClockInMessage", () => {
       clockedInAt: "2026-03-27T10:00:00.000Z",
       lastActiveAt: "2026-03-27T10:04:30.000Z",
       branch: "main", task: "Fix the login bug",
+      lastStep: null, remainingSteps: null,
     }];
     const msg = formatClockInMessage(timecards, now, false)!;
     assert.match(msg, /"Fix the login bug"/);
