@@ -645,6 +645,7 @@ describe("formatClockInMessage", () => {
       sessionId: "abcdef12-0000-0000-0000-000000000000",
       pid: 1, hostname: "h", clockedInAt: "2026-03-27T10:00:00.000Z",
       lastActiveAt: "2026-03-27T10:02:00.000Z", branch: "main", task: null,
+      lastStep: null, remainingSteps: null,
     }];
     const msg = formatClockInMessage(timecards, now, false)!;
     assert.match(msg, /3m ago/);
