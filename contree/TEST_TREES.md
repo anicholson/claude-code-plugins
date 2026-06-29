@@ -124,9 +124,7 @@ pre-task-hook (src: hooks/session-start.sh; unit: test/pre-task-hook.bats; funct
     and the agent is directed to use the sync skill when asked about drift, gaps, staleness, or completeness
     and the agent is directed to use the setup skill when no test framework is configured or TEST_TREES.md is absent
     and the agent is directed to use the workflow skill for the full arc from idea to verified working software
-    and the agent is directed to use the handover skill when context is low or the user wants to pause and continue the work in another session
 ```
-
 
 ## post-task-hook
 
