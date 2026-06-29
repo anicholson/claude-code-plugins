@@ -150,3 +150,21 @@ SKILL="$PROJECT_ROOT/skills/tdd/SKILL.md"
   [[ "$output" == *"Overlap between layers is the intended shape"* || "$output" == *"overlap across layers is intentional"* ]]
   [[ "$output" == *"never a reason to skip"* ]]
 }
+
+@test "tdd descends from each failing higher-layer test to the lowest layer the behaviour reaches" {
+  run cat "$SKILL"
+  [[ "$output" == *"read its failure"* ]]
+  [[ "$output" == *"lowest layer"* ]]
+  [[ "$output" == *"never stop descending because"* || "$output" == *"Never stop descending because"* ]]
+}
+
+@test "tdd writes the full ladder of tests down to the lowest level" {
+  run cat "$SKILL"
+  [[ "$output" == *"full ladder of tests down to the lowest level"* ]]
+}
+
+@test "tdd folds back up once the lowest-layer test passes" {
+  run cat "$SKILL"
+  [[ "$output" == *"fold back up"* || "$output" == *"FOLD BACK UP"* ]]
+  [[ "$output" == *"a layer beneath it lacks coverage"* || "$output" == *"a layer beneath is missing coverage"* ]]
+}
