@@ -47,6 +47,16 @@ Consider potential resource conflicts: ports, build locks, test databases.
 
 Agents with dead processes are automatically clocked out. Remote agents that go silent are clocked out after 5 minutes. The message is throttled to avoid noise.
 
+On its **first** clock-in of a session, an agent is also nudged to run the test suite:
+
+```
+TRUNK-SYNC WIP: Run the test suite before starting. Failing tests are checkpoints marking
+where an earlier agent left off — any failing test that is not part of a still-clocked-in
+agent's work is unfinished WIP for you to resume.
+```
+
+Failing tests are the checkpoint of a previous agent's progress. Cross-referencing them against who is still clocked in tells a fresh agent which unfinished work is orphaned and safe to pick up.
+
 ## Seance — summon the author of any line of code
 
 Point at any line, and seance rewinds the codebase and the agent's session back to the exact moment that line was written. Ask the agent what it was thinking, why it made that choice, what it considered and rejected. Works for both Claude and Codex commits — seance reads the commit body's `Agent:` field and forks the matching CLI.
