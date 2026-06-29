@@ -356,12 +356,14 @@ Migration note: trunk-sync was previously specified as a flat `## Requirements` 
 
   runSessionStart
     when the session-start hook fires
-      then timecards are read and classified, the starting session excluded
-      and the clocked-in agents' progress summary is printed to stdout for injection into the starting agent's context
-    when no other agents are clocked in
-      then nothing is printed
+      then the starting agent's own session id and the instruction to record progress with `trunk-sync progress <id> --last "…" --next "…"` are printed to stdout for injection into context
+      and timecards are read and classified, the starting session excluded
+      when other agents are clocked in
+        then their authored progress summary is appended to the output
+      when no other agents are clocked in
+        then only the own-id and record-progress instruction are printed
     if the timeclock directory does not exist
-      then nothing is printed and the hook exits 0
+      then the own-id and record-progress instruction are still printed and the hook exits 0
 
 ### Use-case: install (src: src/commands/install.ts; unit: src/commands/install.test.ts; integration: none; functional: none)
 
