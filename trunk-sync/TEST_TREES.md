@@ -485,6 +485,12 @@ Migration note: trunk-sync was previously specified as a flat `## Requirements` 
     then the command is rejected with the same feedback as Bash
     when the git command is in the read-only allowlist
       then it is allowed through
+  every session start
+    when other agents are clocked in on the project
+      then their progress — branch, task, last completed step, and remaining steps — is surfaced to the starting agent so it discovers work already in flight
+      and the starting agent is told to resume unfinished WIP not owned by a still-clocked-in agent
+    when no other agents are clocked in
+      then nothing is surfaced
   when a merge conflict arises during sync
     then exit 2 surfaces self-contained conflict-resolution instructions
     when the agent edits the conflicted file and the hook fires again
