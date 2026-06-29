@@ -624,6 +624,7 @@ describe("formatClockInMessage", () => {
         sessionId: "aaaa0000-0000-0000-0000-000000000000",
         pid: 1, hostname: "mac-1", clockedInAt: "2026-03-27T10:00:00.000Z",
         lastActiveAt: "2026-03-27T10:04:00.000Z", branch: "main", task: "Add tests",
+        lastStep: null, remainingSteps: null,
       },
       {
         sessionId: "bbbb0000-0000-0000-0000-000000000000",
