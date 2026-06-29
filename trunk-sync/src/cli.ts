@@ -47,6 +47,9 @@ switch (command) {
   case "config":
     configCommand(subArgs);
     break;
+  case "progress":
+    progressCommand(subArgs);
+    break;
   default:
     console.error(`Unknown command: ${command}\n`);
     console.log(USAGE);
