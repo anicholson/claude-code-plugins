@@ -162,7 +162,6 @@ Migration note: trunk-sync was previously specified as a flat `## Requirements` 
       then the message tells the agent to run the test suite before starting
       and it explains failing tests are checkpoints of unfinished WIP to resume
       and it scopes resumable WIP to work not part of a still-clocked-in agent's
-      and it tells the agent to record its own last step and remaining steps with `trunk-sync progress` as work proceeds and before it pauses
     when this is the first clock-in and other agents are clocked in
       then both the clocked-in roster and the run-tests nudge are included
 
