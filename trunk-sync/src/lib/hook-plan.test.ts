@@ -581,8 +581,8 @@ describe("classifyTimecards", () => {
 describe("formatClockInMessage", () => {
   const now = new Date("2026-03-27T10:05:00.000Z");
 
-  it("returns null when no agents clocked in", () => {
-    assert.equal(formatClockInMessage([], now), null);
+  it("returns null when no other agents are clocked in and this is not the first clock-in", () => {
+    assert.equal(formatClockInMessage([], now, false), null);
   });
 
   it("formats single agent without task", () => {
@@ -593,7 +593,7 @@ describe("formatClockInMessage", () => {
       lastActiveAt: "2026-03-27T10:04:30.000Z",
       branch: "main", task: null,
     }];
-    const msg = formatClockInMessage(timecards, now)!;
+    const msg = formatClockInMessage(timecards, now, false)!;
     assert.match(msg, /1 other agent clocked in/);
     assert.match(msg, /abcdef12 on my-macbook/);
     assert.match(msg, /branch: main/);
@@ -610,7 +610,7 @@ describe("formatClockInMessage", () => {
       lastActiveAt: "2026-03-27T10:04:30.000Z",
       branch: "main", task: "Fix the login bug",
     }];
-    const msg = formatClockInMessage(timecards, now)!;
+    const msg = formatClockInMessage(timecards, now, false)!;
     assert.match(msg, /"Fix the login bug"/);
   });
 
@@ -627,7 +627,7 @@ describe("formatClockInMessage", () => {
         lastActiveAt: "2026-03-27T10:02:00.000Z", branch: "feature", task: null,
       },
     ];
-    const msg = formatClockInMessage(timecards, now)!;
+    const msg = formatClockInMessage(timecards, now, false)!;
     assert.match(msg, /2 other agents clocked in/);
     assert.match(msg, /aaaa0000 on mac-1/);
     assert.match(msg, /bbbb0000 on mac-2/);
@@ -640,8 +640,32 @@ describe("formatClockInMessage", () => {
       pid: 1, hostname: "h", clockedInAt: "2026-03-27T10:00:00.000Z",
       lastActiveAt: "2026-03-27T10:02:00.000Z", branch: "main", task: null,
     }];
-    const msg = formatClockInMessage(timecards, now)!;
+    const msg = formatClockInMessage(timecards, now, false)!;
     assert.match(msg, /3m ago/);
+  });
+
+  it("nudges the agent to run the tests and resume WIP on the first clock-in", () => {
+    const msg = formatClockInMessage([], now, true)!;
+    assert.match(msg, /TRUNK-SYNC WIP/);
+    assert.match(msg, /Run the test suite/);
+    assert.match(msg, /checkpoints/);
+    assert.match(msg, /resume/);
+    assert.match(msg, /still-clocked-in agent's work/);
+  });
+
+  it("includes both the clocked-in roster and the run-tests nudge on the first clock-in with others present", () => {
+    const timecards: Timecard[] = [{
+      sessionId: "abcdef12-3456-7890-abcd-ef1234567890",
+      pid: 123, hostname: "my-macbook",
+      clockedInAt: "2026-03-27T10:00:00.000Z",
+      lastActiveAt: "2026-03-27T10:04:30.000Z",
+      branch: "main", task: "Refactoring auth",
+    }];
+    const msg = formatClockInMessage(timecards, now, true)!;
+    assert.match(msg, /1 other agent clocked in/);
+    assert.match(msg, /"Refactoring auth"/);
+    assert.match(msg, /TRUNK-SYNC WIP/);
+    assert.match(msg, /Run the test suite/);
   });
 });
 
