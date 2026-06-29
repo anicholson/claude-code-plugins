@@ -44,7 +44,7 @@ outside-in-tdd (src: skills/tdd/SKILL.md; unit: test/outside-in-tdd.bats; functi
     and inner layers are not designed up front
   when implementing a tree
     then each when/then path becomes one failing test, written one at a time in tree order
-    and the test is written at the tree's layer (Journey / System / Adapter / Use-case / Domain)
+    and the test is written at the tree's layer (Journey / System / Component / Adapter / Use-case / Domain)
     and the test file reifies the tree — describe/it hierarchy mirrors when/then verbatim
     and existing trees are not modified silently
   when writing a Journey test
