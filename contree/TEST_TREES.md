@@ -155,27 +155,6 @@ post-task-hook (src: hooks/stop-drift-check.sh; unit: test/post-task-hook.bats; 
     then no missing-file nudge is emitted, because presence is judged at the project root rather than the hook's working directory
 ```
 
-## handover-skill-pauses-work
-
-```
-handover-skill-pauses-work (src: skills/handover/SKILL.md; unit: test/handover-skill-pauses-work.bats; integration: none; functional: none)
-  when the handover skill is invoked
-    then it runs the same drift review the stop hook runs — MENTAL MODEL, TEST TREES, CLAUDE.md, and README — against the current project state
-    and it writes PROGRESS.md at the project root capturing established progress and the planned next steps, so another session can resume the work in context
-    and PROGRESS.md is overwritten with current state rather than appended to, so stale progress cannot accumulate
-    and it tells the user the work is paused and can be continued by starting a fresh session, which surfaces PROGRESS.md as an offer to continue
-    and its logic lives inline in the skill rather than shelling out to a plugin-root-relative script, since CLAUDE_PLUGIN_ROOT is not reliably available to skills
-  when the handover skill is invoked and PROGRESS.md already exists from a prior handover
-    then the prior progress is replaced by the current state
-  when the work the skill is handing over is complete and there are no next steps to capture
-    then PROGRESS.md is deleted rather than left as a tombstone, so the file's existence means pending work and its absence means nothing is in flight
-  if the drift review finds that trees, CLAUDE.md, or README have drifted from reality
-    then the drift is recorded in PROGRESS.md as a next step, so the resuming session resolves it
-  if the user runs the handover skill while another handover is already in flight in a different session of the same project
-    then the skill overwrites PROGRESS.md, and the contract that one handover is in flight at a time per project is stated so the user coordinates across sessions rather than expecting concurrent handovers to be preserved
-```
-
-
 ## post-update-hook
 
 ```
