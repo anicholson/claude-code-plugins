@@ -3,7 +3,7 @@ import { join } from "node:path";
 import { homedir } from "node:os";
 
 const DEFAULTS: Record<string, string> = {
-  "commit-transcripts": "false",
+  "commit-transcripts": "true",
 };
 
 const USAGE = `Usage: trunk-sync config                   Show all config
