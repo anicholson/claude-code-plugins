@@ -120,16 +120,21 @@ export function clockIn(repoRoot, plan, task) {
     const dir = join(repoRoot, ".trunk-sync", "timeclock");
     mkdirSync(dir, { recursive: true });
     const filePath = join(repoRoot, plan.timecardPath);
-    // Preserve clockedInAt from existing timecard if present
+    // Preserve clockedInAt and agent-authored progress from existing timecard if present
     let timecard = { ...plan.timecard, task };
     try {
         const existing = JSON.parse(readFileSync(filePath, "utf-8"));
         if (existing.clockedInAt) {
             timecard = { ...timecard, clockedInAt: existing.clockedInAt };
         }
+        timecard = {
+            ...timecard,
+            lastStep: existing.lastStep ?? null,
+            remainingSteps: existing.remainingSteps ?? null,
+        };
     }
     catch {
-        // No existing file — use plan's clockedInAt
+        // No existing file — use plan's clockedInAt and null progress
     }
     writeFileSync(filePath, JSON.stringify(timecard, null, 2) + "\n");
 }
@@ -349,7 +354,7 @@ export function executePlan(plan, input, state) {
 function amendWithTranscriptSnapshot(input, state) {
     try {
         const config = readConfig();
-        if (config.get("commit-transcripts") !== "true")
+        if (config.get("commit-transcripts") === "false")
             return;
         if (!input.transcript_path || !input.session_id)
             return;

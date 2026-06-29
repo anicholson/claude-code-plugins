@@ -2,7 +2,7 @@ import { readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { homedir } from "node:os";
 const DEFAULTS = {
-    "commit-transcripts": "false",
+    "commit-transcripts": "true",
 };
 const USAGE = `Usage: trunk-sync config                   Show all config
        trunk-sync config <key>               Get a value
