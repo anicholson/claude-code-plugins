@@ -364,6 +364,15 @@ Migration note: trunk-sync was previously specified as a flat `## Requirements` 
     if `.trunk-sync` is unwritable
       then the hook still exits 0 (clock-in is best-effort)
 
+  runSessionStart
+    when the session-start hook fires
+      then timecards are read and classified, the starting session excluded
+      and the clocked-in agents' progress summary is printed to stdout for injection into the starting agent's context
+    when no other agents are clocked in
+      then nothing is printed
+    if the timeclock directory does not exist
+      then nothing is printed and the hook exits 0
+
 ### Use-case: install (src: src/commands/install.ts; unit: src/commands/install.test.ts; integration: none; functional: none)
 
   install command
