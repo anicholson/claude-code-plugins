@@ -50,7 +50,7 @@ Write **one** failing test at the outermost layer the slice needs. For a new use
 
 ### 3. IDENTIFY LAYER, THEN RED (inner)
 
-Before writing the next test, decompose the failing path into the layers it touches. Pick the **outermost untested layer** and write one failing test there. **Descend like this until you reach the behaviour's own ground layer — and do not write any implementation until a failing test exists at that ground layer, sitting *under* the journey/functional failure.** Journey and functional coverage is not coverage of the layers beneath: a Journey or System test, red or green, never licenses implementing the unit beneath it. "Already covered above" is the signal to write the unit's own failing test, not to skip it.
+Run the failing higher-layer test and read its failure — it names what is missing and points at the next layer down. Decompose the failing path into the layers it touches, pick the **outermost untested layer**, and write one failing test there. **Keep descending — one layer at a time, through every layer the behaviour touches — to the lowest layer it reaches, and do not write any implementation until a failing test exists at that ground layer, sitting *under* the journey/functional failure.** Never stop descending because the behaviour looks already covered above: Journey and functional coverage is not coverage of the layers beneath, and a Journey or System test, red or green, never licenses implementing the unit beneath it. "Already covered above" is the signal to write the unit's own failing test, not to skip it. Write the full ladder of tests down to the lowest level.
 
 Questions in order:
 
