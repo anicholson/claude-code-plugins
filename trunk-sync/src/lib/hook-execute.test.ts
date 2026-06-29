@@ -910,6 +910,8 @@ describe("clockIn", () => {
         lastActiveAt: "2026-03-27T10:05:00.000Z",
         branch: "main",
         task: null,
+        lastStep: null,
+        remainingSteps: null,
       },
     };
     clockIn(dir, plan, "Fix the login bug");
@@ -933,6 +935,8 @@ describe("clockIn", () => {
         lastActiveAt: "2026-03-27T10:05:00.000Z",
         branch: "main",
         task: null,
+        lastStep: null,
+        remainingSteps: null,
       },
     };
     // Write first timecard
@@ -1067,6 +1071,8 @@ describe("executePlan with clock-in", () => {
         lastActiveAt: new Date().toISOString(),
         branch: "main",
         task: null,
+        lastStep: null,
+        remainingSteps: null,
       },
     };
     const plan: HookPlan = {
@@ -1111,6 +1117,8 @@ describe("executePlan with clock-in", () => {
         lastActiveAt: new Date().toISOString(),
         branch: "main",
         task: null,
+        lastStep: null,
+        remainingSteps: null,
       },
     };
     const plan: HookPlan = {
@@ -1168,6 +1176,8 @@ describe("executePlan with clock-in", () => {
         lastActiveAt: new Date().toISOString(),
         branch: "main",
         task: null,
+        lastStep: null,
+        remainingSteps: null,
       },
     };
     const plan: HookPlan = {
@@ -1222,6 +1232,8 @@ describe("executePlan with clock-in", () => {
         lastActiveAt: new Date().toISOString(),
         branch: "main",
         task: null,
+        lastStep: null,
+        remainingSteps: null,
       },
     };
     const plan: HookPlan = {
@@ -1275,6 +1287,8 @@ describe("executePlan with clock-in", () => {
         lastActiveAt: new Date().toISOString(),
         branch: "main",
         task: null,
+        lastStep: null,
+        remainingSteps: null,
       },
     };
     const plan: HookPlan = {
@@ -1315,6 +1329,8 @@ describe("executePlan with clock-in", () => {
         lastActiveAt: new Date().toISOString(),
         branch: "main",
         task: null,
+        lastStep: null,
+        remainingSteps: null,
       },
     };
     const plan: HookPlan = {
