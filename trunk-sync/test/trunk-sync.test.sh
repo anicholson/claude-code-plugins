@@ -32,8 +32,8 @@ throttle_path() { echo "${TMPDIR:-/tmp}/trunk-sync-clockin-$1"; }
 
 # Mark a session as having already clocked in, so the first-clock-in WIP nudge
 # (run-the-tests / resume-WIP, exit 2) does not fire in tests that aren't about it.
-seed_clockin() { [[ -n "$1" ]] && printf '%s' "$(( $(date +%s) * 1000 ))" > "$(throttle_path "$1")"; }
-clear_clockin() { [[ -n "$1" ]] && rm -f "$(throttle_path "$1")"; }
+seed_clockin() { [[ -n "$1" ]] || return 0; printf '%s' "$(( $(date +%s) * 1000 ))" > "$(throttle_path "$1")"; }
+clear_clockin() { [[ -n "$1" ]] || return 0; rm -f "$(throttle_path "$1")"; }
 
 run_hook() {
   local input="$1"
