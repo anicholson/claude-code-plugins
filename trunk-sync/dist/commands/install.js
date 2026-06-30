@@ -1,18 +1,19 @@
 import { execSync } from "node:child_process";
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { copyFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
 import { homedir } from "node:os";
 import { getGitRoot, commandExists } from "../lib/git.js";
 const REPO = "elimydlarz/claude-code-plugins";
 const MARKETPLACE_NAME = "elimydlarz";
 export function installCommand(args) {
     if (args.includes("--help") || args.includes("-h")) {
-        console.log(`Usage: trunk-sync install [--client claude|codex] [--scope user|project]
+        console.log(`Usage: trunk-sync install [--client claude|codex|opencode] [--scope user|project]
 
 Installs the trunk-sync plugin for the chosen agent CLI.
 
 Options:
-  --client <name>  Target CLI: "claude" (default) or "codex"
+  --client <name>  Target CLI: "claude" (default), "codex", or "opencode"
   --scope <scope>  (claude only) Installation scope: "project" (default) or "user"
                    project — active in this repo only (.claude/plugins.json)
                    user    — active in all repos (~/.claude/plugins.json)
@@ -29,7 +30,11 @@ Options:
         installCodex();
         return;
     }
-    console.error(`Invalid client: ${client}. Must be "claude" or "codex".`);
+    if (client === "opencode") {
+        installOpencode();
+        return;
+    }
+    console.error(`Invalid client: ${client}. Must be "claude", "codex", or "opencode".`);
     process.exit(1);
 }
 function installClaude(args) {
@@ -88,6 +93,44 @@ function installClaude(args) {
 
 Every file edit will now auto-commit and sync to the remote.
 Works on main, on branches, or in worktrees.`);
+}
+function installOpencode() {
+    const projectRoot = getGitRoot() ?? process.cwd();
+    if (!getGitRoot()) {
+        console.warn("Warning: not inside a git repository. trunk-sync needs git to auto-commit and sync.");
+    }
+    const sourceDir = join(dirname(fileURLToPath(import.meta.url)), "..", "..", ".opencode");
+    const targetDir = join(projectRoot, ".opencode");
+    // plugin file is trunk-sync's own — copy it verbatim
+    mkdirSync(join(targetDir, "plugin"), { recursive: true });
+    copyFileSync(join(sourceDir, "plugin", "trunk-sync.ts"), join(targetDir, "plugin", "trunk-sync.ts"));
+    mergeOpencodePackageJson(join(sourceDir, "package.json"), join(targetDir, "package.json"));
+    mergeOpencodeConfig(join(sourceDir, "opencode.json"), join(targetDir, "opencode.json"));
+    console.log(`Installed trunk-sync into ${targetDir}.
+
+OpenCode will auto-install @elimydlarz/trunk-sync on its next start.
+Every edit then commits with Agent: opencode and the active Model.`);
+}
+function mergeOpencodePackageJson(sourcePath, targetPath) {
+    const source = JSON.parse(readFileSync(sourcePath, "utf-8"));
+    const target = existsSync(targetPath)
+        ? JSON.parse(readFileSync(targetPath, "utf-8"))
+        : {};
+    target.dependencies = { ...target.dependencies, ...source.dependencies };
+    writeFileSync(targetPath, JSON.stringify(target, null, 2) + "\n");
+}
+function mergeOpencodeConfig(sourcePath, targetPath) {
+    const source = JSON.parse(readFileSync(sourcePath, "utf-8"));
+    const target = existsSync(targetPath)
+        ? JSON.parse(readFileSync(targetPath, "utf-8"))
+        : {};
+    const merged = { ...target, ...source };
+    merged.permission = {
+        ...target.permission,
+        ...source.permission,
+        bash: { ...target.permission?.bash, ...source.permission?.bash },
+    };
+    writeFileSync(targetPath, JSON.stringify(merged, null, 2) + "\n");
 }
 function installCodex() {
     if (!commandExists("jq")) {
