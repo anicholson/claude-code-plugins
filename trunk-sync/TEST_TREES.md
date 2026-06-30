@@ -13,6 +13,8 @@ Migration note: trunk-sync was previously specified as a flat `## Requirements` 
       then every field is populated
     when called with input missing optional fields
       then those fields default to null
+    when the input carries agent and model (the OpenCode adapter's payload)
+      then agent and model are populated
     if the input is not valid JSON
       then it throws
 
