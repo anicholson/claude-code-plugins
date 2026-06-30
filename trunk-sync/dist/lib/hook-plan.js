@@ -8,6 +8,8 @@ export function parseHookInput(json) {
         tool_input: raw.tool_input ?? {},
         session_id: raw.session_id ?? null,
         transcript_path: raw.transcript_path ?? null,
+        agent: raw.agent ?? undefined,
+        model: raw.model ?? undefined,
     };
 }
 /**
