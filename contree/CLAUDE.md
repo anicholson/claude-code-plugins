@@ -4,10 +4,11 @@
 
 A plugin that unifies test-tree-driven development with living requirements. Test trees ARE the requirements — they live in `TEST_TREES.md` at the project root, describe what the system does using EARS syntax, and are kept in sync with implementation automatically.
 
-Ships under two harnesses from the same `skills/` and `hooks/` directories:
+Ships under three harnesses. Claude Code and Codex share the same `skills/` and `hooks/` directories; OpenCode reuses the same `skills/` but reimplements the enforcement hooks as a single TypeScript plugin (it has no `hooks.json`/SessionStart/Stop lifecycle):
 
 - **Claude Code** — `.claude-plugin/plugin.json` + `hooks/hooks.json`.
 - **Codex CLI** — `.codex-plugin/plugin.json` declaring `"hooks": "./hooks/hooks.json"`. Codex injects `CLAUDE_PLUGIN_ROOT` (and `PLUGIN_ROOT`) into hook command env, so the existing hook commands work verbatim. `apply_patch` is aliased to match the `Edit|Write|MultiEdit` PostToolUse matcher. SessionStart plain stdout becomes `additionalContext`. Stop hook stdin includes `transcript_path` (same shape as Claude). **Codex requires `[features] plugin_hooks = true` in `~/.codex/config.toml`** — the feature is `Stage::UnderDevelopment, default_enabled: false` in codex 0.128, so without opt-in `hooks.json` is ignored. Net (with the flag set): full enforcement on both harnesses from the same hook scripts and hooks.json.
+- **OpenCode** — `.opencode/plugin/contree.ts` (Bun runs the TypeScript directly, no build). The Stop drift-check becomes a `session.idle` event that re-drives the turn via `client.session.prompt` (guarded against looping, yielding when the last response ends in a question); the PostToolUse mental-model validator becomes `tool.execute.after` mutating the tool result; rules + Directions ship as `.opencode/contree.md`, referenced from `.opencode/opencode.json` `instructions`. Skills work via OpenCode's `.claude/skills/` fallback. Self-care is not ported.
 
 Mechanisms:
 
