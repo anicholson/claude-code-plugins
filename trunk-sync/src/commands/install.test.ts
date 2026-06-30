@@ -196,6 +196,52 @@ describe("install command", () => {
     assert.ok(marketplace.plugins.find((p: { name: string }) => p.name === "trunk-sync"));
   });
 
+  it("--client opencode writes the shipped .opencode files into the project root", () => {
+    const { exitCode } = runInstall("--client opencode", undefined, gitDir);
+    assert.equal(exitCode, 0);
+
+    assert.ok(
+      existsSync(join(gitDir, ".opencode", "plugin", "trunk-sync.ts")),
+      "plugin file present",
+    );
+
+    const pkg = JSON.parse(readFileSync(join(gitDir, ".opencode", "package.json"), "utf-8"));
+    assert.ok(pkg.dependencies["@elimydlarz/trunk-sync"], "package depends on trunk-sync");
+
+    const config = JSON.parse(readFileSync(join(gitDir, ".opencode", "opencode.json"), "utf-8"));
+    assert.equal(config.permission.bash["git *"], "deny", "git write denied");
+  });
+
+  it("--client opencode is idempotent across repeated runs", () => {
+    runInstall("--client opencode", undefined, gitDir);
+    runInstall("--client opencode", undefined, gitDir);
+
+    const pkg = JSON.parse(readFileSync(join(gitDir, ".opencode", "package.json"), "utf-8"));
+    assert.equal(Object.keys(pkg.dependencies).length, 1);
+
+    const config = JSON.parse(readFileSync(join(gitDir, ".opencode", "opencode.json"), "utf-8"));
+    assert.equal(config.permission.bash["git *"], "deny");
+  });
+
+  it("--client opencode preserves unrelated config in an existing opencode.json", () => {
+    const dir = join(gitDir, ".opencode");
+    mkdirSync(dir, { recursive: true });
+    writeFileSync(
+      join(dir, "opencode.json"),
+      JSON.stringify({
+        theme: "tokyonight",
+        permission: { bash: { "rm *": "deny" } },
+      }) + "\n",
+    );
+
+    runInstall("--client opencode", undefined, gitDir);
+
+    const config = JSON.parse(readFileSync(join(dir, "opencode.json"), "utf-8"));
+    assert.equal(config.theme, "tokyonight", "unrelated top-level config preserved");
+    assert.equal(config.permission.bash["rm *"], "deny", "unrelated permission rule preserved");
+    assert.equal(config.permission.bash["git *"], "deny", "trunk-sync rule merged in");
+  });
+
   it("rejects invalid --client value", () => {
     const { stderr, exitCode } = runInstall("--client gemini");
     assert.equal(exitCode, 1);
