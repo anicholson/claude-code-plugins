@@ -108,7 +108,7 @@ function installOpencode() {
     mergeOpencodeConfig(join(sourceDir, "opencode.json"), join(targetDir, "opencode.json"));
     console.log(`Installed trunk-sync into ${targetDir}.
 
-OpenCode will auto-install @elimydlarz/trunk-sync on its next start.
+OpenCode will auto-install @anicholson/trunk-sync on its next start.
 Every edit then commits with Agent: opencode and the active Model.`);
 }
 function mergeOpencodePackageJson(sourcePath, targetPath) {
