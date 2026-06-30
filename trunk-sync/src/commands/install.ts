@@ -139,7 +139,7 @@ function installOpencode(): void {
 
   console.log(`Installed trunk-sync into ${targetDir}.
 
-OpenCode will auto-install @elimydlarz/trunk-sync on its next start.
+OpenCode will auto-install @anicholson/trunk-sync on its next start.
 Every edit then commits with Agent: opencode and the active Model.`);
 }
 
