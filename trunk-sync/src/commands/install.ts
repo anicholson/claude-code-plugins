@@ -116,6 +116,66 @@ Every file edit will now auto-commit and sync to the remote.
 Works on main, on branches, or in worktrees.`);
 }
 
+function installOpencode(): void {
+  const projectRoot = getGitRoot() ?? process.cwd();
+  if (!getGitRoot()) {
+    console.warn(
+      "Warning: not inside a git repository. trunk-sync needs git to auto-commit and sync."
+    );
+  }
+
+  const sourceDir = join(dirname(fileURLToPath(import.meta.url)), "..", "..", ".opencode");
+  const targetDir = join(projectRoot, ".opencode");
+
+  // plugin file is trunk-sync's own — copy it verbatim
+  mkdirSync(join(targetDir, "plugin"), { recursive: true });
+  copyFileSync(
+    join(sourceDir, "plugin", "trunk-sync.ts"),
+    join(targetDir, "plugin", "trunk-sync.ts")
+  );
+
+  mergeOpencodePackageJson(join(sourceDir, "package.json"), join(targetDir, "package.json"));
+  mergeOpencodeConfig(join(sourceDir, "opencode.json"), join(targetDir, "opencode.json"));
+
+  console.log(`Installed trunk-sync into ${targetDir}.
+
+OpenCode will auto-install @elimydlarz/trunk-sync on its next start.
+Every edit then commits with Agent: opencode and the active Model.`);
+}
+
+interface OpencodePackageJson {
+  dependencies?: Record<string, string>;
+  [key: string]: unknown;
+}
+
+function mergeOpencodePackageJson(sourcePath: string, targetPath: string): void {
+  const source = JSON.parse(readFileSync(sourcePath, "utf-8")) as OpencodePackageJson;
+  const target: OpencodePackageJson = existsSync(targetPath)
+    ? (JSON.parse(readFileSync(targetPath, "utf-8")) as OpencodePackageJson)
+    : {};
+  target.dependencies = { ...target.dependencies, ...source.dependencies };
+  writeFileSync(targetPath, JSON.stringify(target, null, 2) + "\n");
+}
+
+interface OpencodeConfig {
+  permission?: { bash?: Record<string, string>; [key: string]: unknown };
+  [key: string]: unknown;
+}
+
+function mergeOpencodeConfig(sourcePath: string, targetPath: string): void {
+  const source = JSON.parse(readFileSync(sourcePath, "utf-8")) as OpencodeConfig;
+  const target: OpencodeConfig = existsSync(targetPath)
+    ? (JSON.parse(readFileSync(targetPath, "utf-8")) as OpencodeConfig)
+    : {};
+  const merged: OpencodeConfig = { ...target, ...source };
+  merged.permission = {
+    ...target.permission,
+    ...source.permission,
+    bash: { ...target.permission?.bash, ...source.permission?.bash },
+  };
+  writeFileSync(targetPath, JSON.stringify(merged, null, 2) + "\n");
+}
+
 function installCodex(): void {
   if (!commandExists("jq")) {
     console.error("jq is required. Install: brew install jq / apt install jq");
