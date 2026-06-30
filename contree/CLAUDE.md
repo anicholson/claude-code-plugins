@@ -44,9 +44,11 @@ Flow: `setup` prepares the project for test-tree-driven development → `change`
 - `hooks/self-care-20-20-20.sh` — UserPromptSubmit hook: reminds user of the 20-20-20 rule after 20 min of keyboard time
 - `hooks/post-update-check.sh` — PostToolUse hook: when MENTAL_MODEL.md is edited, runs `validate-mental-model.sh` and surfaces findings to Claude via additionalContext JSON
 - `hooks/validate-mental-model.sh` — advisory validator: checks MENTAL_MODEL.md for the seven named sections, section caps, rogue headings, and file presence
-- `.opencode/plugin/contree.ts` — OpenCode plugin (self-contained TS, Bun runs it): Stop drift-check as a `session.idle` re-drive (loop-guarded, yields on a trailing question), mental-model validator as `tool.execute.after` mutating the tool result
+- `.opencode/plugin/contree.ts` — OpenCode plugin (Bun runs the TS, no build): Stop drift-check as a `session.idle` re-drive (loop-guarded, yields on a trailing question), mental-model validator as `tool.execute.after` mutating the tool result, self-care 20-20-20 as a `chat.message` heartbeat nudge
+- `.opencode/lib/contree-core.ts` — pure logic for the plugin (validator, drift nudges, question-yield, self-care continuity); unit-tested in `.opencode/lib/contree-core.test.ts` (`bun test`)
 - `.opencode/contree.md` — rules + Directions for OpenCode (no SessionStart), referenced by `.opencode/opencode.json` `instructions`
 - `.opencode/opencode.json` — OpenCode config wiring the rules instructions file
+- `.opencode/skill` — symlink to `../skills`, so OpenCode discovers contree's skills from one self-contained bundle (`cp -rL` materialises them)
 - `website/index.html` — self-contained explainer site (no build step) pitching contree to developers new to TDD: bridges from test-first to test-trees, living requirements, the layered architecture, the workflow, and the Claude Code hook mechanics (the four hooks, their stdout/stderr-exit-2/additionalContext injection channels, and the Stop-hook control flow). Published to GitHub Pages at https://elimydlarz.github.io/claude-code-plugins/contree/ by the repo-root `.github/workflows/pages.yml` workflow, which stages `contree/website/` into `_site/contree/` (one subdir per plugin, so other plugins can add their own pages) and deploys on push to main
 - `rules/integration-testing.md` — standalone integration-testing rules (not a skill)
 - `scripts/validate-skill-frontmatter.sh` — bats-only utility: asserts every `skills/*/SKILL.md` has non-empty `name` and `description`
