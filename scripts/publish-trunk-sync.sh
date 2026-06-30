@@ -101,6 +101,6 @@ claude plugin marketplace update elimydlarz
 claude plugin install trunk-sync@elimydlarz
 
 echo ""
-echo "published @elimydlarz/trunk-sync v$VERSION"
-echo "  npm: https://www.npmjs.com/package/@elimydlarz/trunk-sync"
-echo "  git: https://github.com/elimydlarz/claude-code-plugins"
+echo "published @anicholson/trunk-sync v$VERSION"
+echo "  npm: https://www.npmjs.com/package/@anicholson/trunk-sync"
+echo "  git: https://github.com/anicholson/claude-code-plugins"
