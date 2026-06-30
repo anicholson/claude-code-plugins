@@ -65,7 +65,7 @@
 - The ground-level gate exists because agents skip lower tests claiming "already covered"; declaring journey/functional coverage not-coverage forces implementation down to a failing test at the behaviour's own layer.
 - Hexagonal layering is chosen over "unit/integration/functional" because seams give sharper targets; a green higher layer can still hide an untested seam.
 - Trees live in `TEST_TREES.md`, not a separate requirements doc, so spec and tests can never drift into two truths.
-- One source directory with parallel manifests avoids duplicating skills/hooks per harness; `CLAUDE_PLUGIN_ROOT` lets identical commands run on both.
+- One source directory with parallel manifests avoids duplicating skills/hooks across Claude Code and Codex; `CLAUDE_PLUGIN_ROOT` lets identical commands run on both. OpenCode has no `hooks.json`/Stop/SessionStart lifecycle, so its enforcement is reimplemented as a plugin (events, not shell scripts) against the same trees — the one harness where the hooks cannot be shared verbatim.
 - Enforcement is hook-driven (Stop, PostToolUse) rather than advisory prose, because rules in text alone get ignored under pressure.
 - The mental model is fixed at seven capped sections so it stays a theory, not a dumping ground.
 
