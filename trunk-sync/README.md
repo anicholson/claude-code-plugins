@@ -9,7 +9,7 @@ Two pieces: a **per-edit hook** — on Claude Code, Codex CLI, and OpenCode — 
 ## Install
 
 ```bash
-npm install -g @elimydlarz/trunk-sync
+npm install -g @anicholson/trunk-sync
 trunk-sync install                  # Claude Code, project scope
 trunk-sync install --scope user     # Claude Code, all repos
 trunk-sync install --client codex   # OpenAI Codex CLI
