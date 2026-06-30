@@ -162,7 +162,7 @@ post-task-hook (src: hooks/stop-drift-check.sh; unit: test/post-task-hook.bats; 
 ## opencode-plugin
 
 ```
-opencode-plugin (src: .opencode/plugin/contree.ts; unit: none; functional: none)
+opencode-plugin (src: .opencode/plugin/contree.ts; unit: .opencode/lib/contree-core.test.ts; functional: none)
   when the OpenCode session goes idle after a response that does not end with a question
     then the same drift nudges (mental-model, test-trees, CLAUDE.md, README) are injected as a follow-up turn that re-drives the agent
   when the session goes idle after a response that ends with a question
@@ -175,6 +175,11 @@ opencode-plugin (src: .opencode/plugin/contree.ts; unit: none; functional: none)
     then the validator runs against the post-edit content and its findings are surfaced to the agent
   when a file other than MENTAL_MODEL.md is edited
     then the validator does not run
+  when a new user message arrives after at least 20 minutes of continuous activity, with no gap longer than 5 minutes between messages
+    then a 20-20-20 eye-break reminder is prepended to the agent's context
+    and the reminder is throttled to at most once per 20 minutes
+  while continuous activity is under 20 minutes
+    then no eye-break reminder is injected
 ```
 
 ## post-update-hook
