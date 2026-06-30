@@ -57,7 +57,7 @@
 - Each outbound Port has an in-memory twin and a real adapter, both bound by one shared contract suite.
 - Trees are never modified silently; drift is never resolved unilaterally — both surface to the user.
 - Behaviour, not internals: a tree describes only what crosses its layer's seam.
-- The same hooks and skills run unchanged under both Claude Code and Codex.
+- The same hooks and skills run unchanged under Claude Code and Codex; OpenCode shares the skills but reimplements the hooks as a plugin against the same contract.
 
 ## Decision Rationale
 
