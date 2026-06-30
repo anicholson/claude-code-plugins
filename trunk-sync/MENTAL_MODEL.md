@@ -32,7 +32,7 @@
 ## Bounded Contexts
 
 - Hook (continuous integration) — the auto commit/pull/push loop and conflict surfacing.
-- CLI install — marketplace registration + plugin install across Claude Code and Codex.
+- CLI install — marketplace registration for Claude Code and Codex; merging project-root `.opencode/` files for OpenCode (no marketplace).
 - Seance — provenance-driven session reconstruction and resume.
 - Timeclock — cross-machine agent presence and resource-conflict signalling.
 - Config — the `~/.trunk-sync` key=value store.
