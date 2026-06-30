@@ -133,6 +133,11 @@ trap 'rm -rf "$TMPDIR_BASE"' EXIT
 # Isolate clock-in throttle files to this run's temp dir (the hook reads $TMPDIR).
 export TMPDIR="$TMPDIR_BASE"
 
+# Isolate ~/.trunk-sync to this run's temp dir so the suite neither reads the
+# developer's real config (which would make the default-config test depend on it)
+# nor deletes it during cleanup. The hook resolves config via homedir().
+export HOME="$TMPDIR_BASE"
+
 setup_repos() {
   cd "$TMPDIR_BASE"
   rm -rf "$TMPDIR_BASE/remote.git" "$TMPDIR_BASE/project" "$TMPDIR_BASE/wt-a" "$TMPDIR_BASE/wt-b"
