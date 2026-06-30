@@ -41,7 +41,7 @@
 
 - The hook owns all git operations during a sync; agents only edit files, never run git.
 - Conflicts are resolved by editing file contents; the hook completes the merge on the next fire.
-- Every commit carries `Session:` and `Agent:`; `TranscriptPath:` is added when the payload provides one.
+- Every commit carries `Session:` and `Agent:`; `TranscriptPath:` and `Model:` are added when the payload provides them.
 - `dist/` is committed (minus tests and `.d.ts`) because marketplace installs run the compiled hook.
 - Pure logic is unit-tested; git/fs callers use real temp repos — never mocks for git.
 - Every exported function ships with tests in the same PR.
