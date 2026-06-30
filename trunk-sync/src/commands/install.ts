@@ -36,7 +36,12 @@ Options:
     return;
   }
 
-  console.error(`Invalid client: ${client}. Must be "claude" or "codex".`);
+  if (client === "opencode") {
+    installOpencode();
+    return;
+  }
+
+  console.error(`Invalid client: ${client}. Must be "claude", "codex", or "opencode".`);
   process.exit(1);
 }
 
