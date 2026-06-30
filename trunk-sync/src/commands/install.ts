@@ -10,12 +10,12 @@ const MARKETPLACE_NAME = "elimydlarz";
 
 export function installCommand(args: string[]): void {
   if (args.includes("--help") || args.includes("-h")) {
-    console.log(`Usage: trunk-sync install [--client claude|codex] [--scope user|project]
+    console.log(`Usage: trunk-sync install [--client claude|codex|opencode] [--scope user|project]
 
 Installs the trunk-sync plugin for the chosen agent CLI.
 
 Options:
-  --client <name>  Target CLI: "claude" (default) or "codex"
+  --client <name>  Target CLI: "claude" (default), "codex", or "opencode"
   --scope <scope>  (claude only) Installation scope: "project" (default) or "user"
                    project — active in this repo only (.claude/plugins.json)
                    user    — active in all repos (~/.claude/plugins.json)
