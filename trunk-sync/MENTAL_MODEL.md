@@ -52,6 +52,7 @@
 
 - The hook handles git so agents stay focused on content and never corrupt the shared branch with ad-hoc git.
 - The functional-core / imperative-shell split keeps decision logic pure and fast to unit-test.
+- OpenCode reuses the same `hook-entry` via a thin in-process plugin that subprocesses it with `cwd` = project, rather than reimplementing git; the OpenCode adapter stamps `Agent:` (and `Model:`) explicitly because `apply_patch` is shared with Codex, so tool-name inference cannot tell them apart.
 - Seance finds Codex rollouts by scanning `~/.codex/sessions/<date>/`; placing a rewritten rollout at the canonical path is sufficient — no DB insertion, do not add it.
 - Timecards are committed (not local-only) so presence is visible across machines.
 - `dist/` is tracked because marketplace installs have no build step.
