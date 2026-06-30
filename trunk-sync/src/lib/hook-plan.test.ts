@@ -69,6 +69,19 @@ describe("parseHookInput", () => {
     assert.equal(result.transcript_path, null);
   });
 
+  it("populates agent and model from the OpenCode adapter's payload", () => {
+    const json = JSON.stringify({
+      tool_name: "edit",
+      tool_input: { file_path: "/repo/file.ts" },
+      session_id: "ses_abc",
+      agent: "opencode",
+      model: "anthropic/claude-sonnet-4-6",
+    });
+    const result = parseHookInput(json);
+    assert.equal(result.agent, "opencode");
+    assert.equal(result.model, "anthropic/claude-sonnet-4-6");
+  });
+
   it("throws on invalid JSON", () => {
     assert.throws(() => parseHookInput("not json"));
   });
