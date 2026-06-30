@@ -9,7 +9,7 @@ This is the **elimydlarz** monorepo — source code, plugin marketplace, and doc
 Products in this repo:
 
 - **trunk-sync** — multi-agent sync hook + seance CLI. The per-edit hook runs on Claude Code and Codex (stdin hook via `scripts/trunk-sync.sh`) and on OpenCode (the `src/opencode-plugin.ts` plugin shipped under `.opencode/`, which subprocesses the same `hook-entry`). npm package `@elimydlarz/trunk-sync`.
-- **contree** — test trees as living requirements: setup, change, sync, and TDD skills with stop hook + coding rules. Ships as both a Claude Code plugin and a Codex CLI plugin from one `contree/` directory: shared `skills/` and `hooks/` referenced by parallel `.claude-plugin/plugin.json` and `.codex-plugin/plugin.json` manifests. Codex sets `CLAUDE_PLUGIN_ROOT` in hook env, so the same hook commands run unchanged.
+- **contree** — test trees as living requirements: setup, change, sync, and TDD skills with stop hook + coding rules. Ships from one `contree/` directory across three harnesses. Claude Code and Codex share `skills/` and `hooks/` via parallel `.claude-plugin/plugin.json` and `.codex-plugin/plugin.json` manifests (Codex sets `CLAUDE_PLUGIN_ROOT` in hook env, so the same hook commands run unchanged). OpenCode reuses `skills/` but reimplements the hooks as a single `.opencode/plugin/contree.ts` plugin — the Stop drift-check as a `session.idle` re-drive, the mental-model validator as `tool.execute.after` — since OpenCode has no `hooks.json` lifecycle.
 
 Users add this repo as a marketplace (`claude plugin marketplace add elimydlarz/claude-code-plugins`), then install individual plugins. The marketplace uses relative paths (`"source": "./trunk-sync"`) so plugins are installed directly from this repo.
 
