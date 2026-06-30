@@ -78,15 +78,15 @@ describe("continuousStretchSeconds", () => {
 });
 
 describe("shouldSelfCareNudge", () => {
+  // heartbeats 300s apart (= the gap threshold, not exceeding it) → a continuous run
+  const TWENTY_MIN = [0, 300, 600, 900, 1200];
   it("nudges after >= 20 min of continuous activity when not recently nudged", () => {
-    const hb = [0, 600, 1200]; // continuous, stretch = 1200 = WINDOW
-    expect(shouldSelfCareNudge(hb, 1200, null, 1200, 300)).toBe(true);
+    expect(shouldSelfCareNudge(TWENTY_MIN, 1200, null, 1200, 300)).toBe(true);
   });
   it("does not nudge before 20 min of continuous activity", () => {
-    expect(shouldSelfCareNudge([0, 600], 600, null, 1200, 300)).toBe(false);
+    expect(shouldSelfCareNudge([0, 300, 600], 600, null, 1200, 300)).toBe(false);
   });
   it("does not nudge again within the throttle window", () => {
-    const hb = [0, 600, 1200];
-    expect(shouldSelfCareNudge(hb, 1200, 100, 1200, 300)).toBe(false); // last nudge 1100s ago < 1200
+    expect(shouldSelfCareNudge(TWENTY_MIN, 1200, 100, 1200, 300)).toBe(false); // last nudge 1100s ago < 1200
   });
 });
