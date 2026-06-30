@@ -27,7 +27,7 @@
 - Clock in / clock out — agents register/deregister work; dead PIDs (local) and stale (30 min, remote) timecards auto-clock-out.
 - Worktree — optional isolated working tree for multi-agent runs.
 - Conflict feedback — exit 2 with a stderr message; the agent fixes file content only.
-- Install scope — project by default, `--scope user` for all repos, `--client codex` for the Codex marketplace path.
+- Install scope — project by default, `--scope user` for all repos; `--client codex` for the Codex marketplace path, `--client opencode` to write project `.opencode/` files.
 
 ## Bounded Contexts
 
