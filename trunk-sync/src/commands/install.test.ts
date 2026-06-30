@@ -206,7 +206,7 @@ describe("install command", () => {
     );
 
     const pkg = JSON.parse(readFileSync(join(gitDir, ".opencode", "package.json"), "utf-8"));
-    assert.ok(pkg.dependencies["@anicholson/trunk-sync"], "package depends on trunk-sync");
+    assert.ok(pkg.dependencies["@dotnich/trunk-sync"], "package depends on trunk-sync");
 
     const config = JSON.parse(readFileSync(join(gitDir, ".opencode", "opencode.json"), "utf-8"));
     assert.equal(config.permission.bash["git *"], "deny", "git write denied");
