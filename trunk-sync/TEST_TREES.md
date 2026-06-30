@@ -415,7 +415,11 @@ Migration note: trunk-sync was previously specified as a flat `## Requirements` 
       then an `elimydlarz` entry is upserted into `$HOME/.agents/plugins/marketplace.json`
       and the operation is idempotent across repeated runs
       and unrelated existing plugins in the marketplace are preserved
-    if `--client` is neither `claude` nor `codex`
+    when run with `--client opencode`
+      then the shipped `.opencode/` files are written into the project root (plugin, package.json, opencode.json)
+      and the operation is idempotent across repeated runs
+      and unrelated existing config in opencode.json is preserved
+    if `--client` is neither `claude`, `codex`, nor `opencode`
       then it is rejected
 
 ### Use-case: seance (src: src/commands/seance.ts; unit: none; integration: src/commands/seance.test.ts; functional: none)
