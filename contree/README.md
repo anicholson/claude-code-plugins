@@ -39,6 +39,8 @@ claude plugin install contree@elimydlarz --scope user
 
 **Codex CLI** — install via `/plugins` in the Codex CLI, pointing at this repository. Skills run by default; hooks require enabling codex's under-development `plugin_hooks` feature: `codex features enable plugin_hooks`. Codex sets `CLAUDE_PLUGIN_ROOT` in hook command env so the existing scripts work unchanged.
 
+**OpenCode** — no marketplace; install by copying the shipped files into your project. Copy `.opencode/` (the `contree.ts` plugin + the rules instructions) into your project root, and copy `skills/` into `.claude/skills/` (which OpenCode discovers). Merge the `instructions` entry from `.opencode/opencode.json` into your own `opencode.json` if you keep one. The drift-check then re-drives each turn and the mental-model validator runs on every `MENTAL_MODEL.md` edit.
+
 ## How it works
 
 1. Run `/contree:setup` — sets up test framework, generates test trees in `TEST_TREES.md`
