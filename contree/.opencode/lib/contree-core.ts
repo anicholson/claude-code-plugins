@@ -63,5 +63,29 @@ export function buildDriftNudges(mentalModelExists: boolean, readmeExists: boole
   return lines.join("\n");
 }
 
+export function continuousStretchSeconds(heartbeats: number[], now: number, gapThreshold = 300): number {
+  const earlier = heartbeats.filter((t) => t < now).sort((a, b) => b - a);
+  let stretchStart = now;
+  let prev = now;
+  for (const ts of earlier) {
+    if (prev - ts > gapThreshold) break;
+    stretchStart = ts;
+    prev = ts;
+  }
+  return now - stretchStart;
+}
+
+export function shouldSelfCareNudge(
+  heartbeats: number[],
+  now: number,
+  lastNudge: number | null,
+  window = 1200,
+  gapThreshold = 300,
+): boolean {
+  if (continuousStretchSeconds(heartbeats, now, gapThreshold) < window) return false;
+  if (lastNudge !== null && now - lastNudge < window) return false;
+  return true;
+}
+
 export const SELF_CARE_NUDGE =
   "Before addressing the user's request, mention the 20-20-20 rule: they have been at the keyboard for a while. Say something like: \"Quick eye break: look at something 20 feet away for 20 seconds (20-20-20 rule).\" Keep it brief, then continue with their request.";
