@@ -1,5 +1,5 @@
 {
-  "name": "@anicholson/trunk-sync",
+  "name": "@dotnich/trunk-sync",
   "version": "3.8.6",
   "type": "module",
   "publishConfig": {
