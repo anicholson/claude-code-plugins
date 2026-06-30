@@ -13,6 +13,7 @@ npm install -g @elimydlarz/trunk-sync
 trunk-sync install                  # Claude Code, project scope
 trunk-sync install --scope user     # Claude Code, all repos
 trunk-sync install --client codex   # OpenAI Codex CLI
+trunk-sync install --client opencode # OpenCode
 ```
 
 That's it. Every file edit is now committed and pushed automatically.
@@ -21,13 +22,13 @@ The Codex install writes an entry to `~/.agents/plugins/marketplace.json`; finis
 
 ### OpenCode
 
-OpenCode has no marketplace — install by copying the shipped `.opencode/` files into your project root:
+Run the install from your project root:
 
 ```bash
-cp -r "$(npm root -g)/@elimydlarz/trunk-sync/.opencode" .
+trunk-sync install --client opencode
 ```
 
-That drops in `.opencode/plugin/trunk-sync.ts` (the auto-commit plugin) and `.opencode/package.json` (which makes OpenCode auto-install the package on next start). It also ships `.opencode/opencode.json` with a `permission` block that lets the agent run read-only git (diff/log/show) but blocks writes — merge that block into your own `opencode.json` if you keep config elsewhere. Every edit then commits with `Agent: opencode` and the active `Model:`.
+That writes `.opencode/plugin/trunk-sync.ts` (the auto-commit plugin) and `.opencode/package.json` (which makes OpenCode auto-install the package on next start). It also writes `.opencode/opencode.json` with a `permission` block that lets the agent run read-only git (diff/log/show) but blocks writes — an existing `opencode.json` is merged, not overwritten, so your own config and permission rules are preserved. Every edit then commits with `Agent: opencode` and the active `Model:`.
 
 **Prerequisites:** [Claude Code](https://docs.anthropic.com/en/docs/claude-code), [Codex CLI](https://developers.openai.com/codex), or [OpenCode](https://opencode.ai), `jq`, a git repo (a remote `origin` is needed for push/sync; without one it commits locally).
 
