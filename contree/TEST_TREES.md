@@ -159,6 +159,24 @@ post-task-hook (src: hooks/stop-drift-check.sh; unit: test/post-task-hook.bats; 
     then no missing-file nudge is emitted, because presence is judged at the project root rather than the hook's working directory
 ```
 
+## opencode-plugin
+
+```
+opencode-plugin (src: .opencode/plugin/contree.ts; unit: none; functional: none)
+  when the OpenCode session goes idle after a response that does not end with a question
+    then the same drift nudges (mental-model, test-trees, CLAUDE.md, README) are injected as a follow-up turn that re-drives the agent
+  when the session goes idle after a response that ends with a question
+    then no nudges are injected, yielding the turn to the user
+  when the drift check has already re-driven the current user turn
+    then it does not re-inject, preventing an infinite idle→prompt loop
+  when a new user message arrives
+    then the re-drive guard is rearmed so the next idle drives a fresh drift check
+  when MENTAL_MODEL.md is edited via a tool call
+    then the validator runs against the post-edit content and its findings are surfaced to the agent
+  when a file other than MENTAL_MODEL.md is edited
+    then the validator does not run
+```
+
 ## post-update-hook
 
 ```
