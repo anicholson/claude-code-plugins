@@ -1,5 +1,5 @@
 {
   "dependencies": {
-    "@anicholson/trunk-sync": "^3.8.6"
+    "@dotnich/trunk-sync": "^3.8.6"
   }
 }
