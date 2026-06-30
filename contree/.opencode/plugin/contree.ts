@@ -1,86 +1,48 @@
 import { existsSync, readFileSync } from "node:fs";
 import { join, basename } from "node:path";
+import {
+  endsWithQuestion,
+  validateMentalModel,
+  buildDriftNudges,
+  shouldSelfCareNudge,
+  SELF_CARE_NUDGE,
+} from "../lib/contree-core.ts";
 
-// --- pure helpers ---
+const HEARTBEAT_PRUNE_AGE = 3600;
 
-function endsWithQuestion(text: string): boolean {
-  return text.replace(/\s+$/, "").endsWith("?");
+function nowSeconds(): number {
+  const override = process.env.CONTREE_NOW;
+  return override ? Number(override) : Math.floor(Date.now() / 1000);
 }
-
-const SECTION_CAPS: Record<string, number> = {
-  "Core Domain Identity": 5,
-  "World-to-Code Mapping": 15,
-  "Ubiquitous Language": 30,
-  "Bounded Contexts": 7,
-  "Invariants": 10,
-  "Decision Rationale": 7,
-  "Temporal View": 10,
-};
-
-function validateMentalModel(content: string | null): string[] {
-  if (content === null) return ["MENTAL_MODEL.md is missing"];
-  const findings: string[] = [];
-  const seen = new Set<string>();
-  const counts: Record<string, number> = {};
-  let section: string | null = null;
-  for (const line of content.split("\n")) {
-    const heading = line.match(/^## (.+)$/);
-    if (heading) {
-      section = heading[1];
-      if (!(section in SECTION_CAPS)) {
-        findings.push(`${section} is a rogue heading, not one of the seven named sections`);
-      } else {
-        seen.add(section);
-      }
-      continue;
-    }
-    if (section && /^[-*] /.test(line)) counts[section] = (counts[section] ?? 0) + 1;
-  }
-  for (const s of Object.keys(SECTION_CAPS)) {
-    if (!seen.has(s)) findings.push(`${s} section is missing`);
-  }
-  for (const s of Object.keys(counts)) {
-    if (counts[s] > SECTION_CAPS[s]) {
-      findings.push(`${s} exceeds its cap of ${SECTION_CAPS[s]} (has ${counts[s]} items)`);
-    }
-  }
-  return findings;
-}
-
-function buildDriftNudges(projectDir: string): string {
-  const lines: string[] = [];
-  lines.push(
-    existsSync(join(projectDir, "MENTAL_MODEL.md"))
-      ? "MENTAL MODEL: Did this task reveal any knowledge NOT already described in documentation, tests, and code? Default is no change. If a change is warranted, name which of the seven sections it belongs to; prefer tightening an existing line over adding a new one; state what is true, not what to avoid."
-      : "MENTAL MODEL: MENTAL_MODEL.md is missing at the project root. Create it with these seven H2 sections in order: Core Domain Identity, World-to-Code Mapping, Ubiquitous Language, Bounded Contexts, Invariants, Decision Rationale, Temporal View.",
-  );
-  lines.push("TEST TREES: Have test trees and implementation drifted apart? If so, propose solutions.");
-  lines.push("CLAUDE.md: Has CLAUDE.md content drifted from reality? If so, update it.");
-  lines.push(
-    existsSync(join(projectDir, "README.md"))
-      ? "README: Is the README out of date now? It should tell consumers what the project is, how to install it, configure it, and use it. If anything is stale or wrong, update it."
-      : "README: README.md is missing at the project root. Create it so consumers can understand what the project is, how to install it, configure it, and use it.",
-  );
-  lines.push("If nothing needs attention, reply 0.");
-  return lines.join("\n");
-}
-
-// --- the plugin ---
 
 export const Contree = async ({ directory, client }: any) => {
   const lastTextBySession = new Map<string, string>();
   const drivenThisTurn = new Set<string>();
   const selfInjected = new Set<string>();
+  const heartbeats: number[] = [];
+  let lastNudge: number | null = null;
 
   return {
-    "chat.message": async (input: any) => {
+    "chat.message": async (input: any, output: any) => {
       // Our own re-drive prompt also arrives as a message — consume the flag and
-      // do NOT rearm, or idle→prompt→idle loops forever. A real user message rearms.
+      // do NOT rearm or record activity, or idle→prompt→idle loops forever.
       if (selfInjected.has(input.sessionID)) {
         selfInjected.delete(input.sessionID);
         return;
       }
-      drivenThisTurn.delete(input.sessionID);
+      drivenThisTurn.delete(input.sessionID); // real user message → rearm the drift guard
+
+      // Self-care: a real user message is keyboard activity. After 20 min of
+      // continuous activity, prepend a 20-20-20 eye-break reminder (throttled).
+      const now = nowSeconds();
+      heartbeats.push(now);
+      const recent = heartbeats.filter((t) => now - t <= HEARTBEAT_PRUNE_AGE);
+      heartbeats.length = 0;
+      heartbeats.push(...recent);
+      if (shouldSelfCareNudge(heartbeats, now, lastNudge)) {
+        lastNudge = now;
+        if (Array.isArray(output?.parts)) output.parts.unshift({ type: "text", text: SELF_CARE_NUDGE });
+      }
     },
 
     "experimental.text.complete": async (input: any, output: any) => {
@@ -109,8 +71,12 @@ export const Contree = async ({ directory, client }: any) => {
       if (endsWithQuestion(lastTextBySession.get(sessionID) ?? "")) return; // yield to the user
       drivenThisTurn.add(sessionID);
       selfInjected.add(sessionID);
+      const nudges = buildDriftNudges(
+        existsSync(join(directory, "MENTAL_MODEL.md")),
+        existsSync(join(directory, "README.md")),
+      );
       await client.session
-        .prompt({ path: { id: sessionID }, body: { parts: [{ type: "text", text: buildDriftNudges(directory) }] } })
+        .prompt({ path: { id: sessionID }, body: { parts: [{ type: "text", text: nudges }] } })
         .catch(() => {});
     },
   };
