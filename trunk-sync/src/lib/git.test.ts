@@ -8,6 +8,7 @@ import {
   parseFileRef,
   extractSessionId,
   extractTranscriptPath,
+  extractModel,
   extractAgent,
   blame,
   getCommitBody,
@@ -84,10 +85,22 @@ describe("extractTranscriptPath", () => {
   });
 });
 
+describe("extractModel", () => {
+  it("returns the identifier when the body contains Model: <provider/model>", () => {
+    const body = "Session: abc\nAgent: opencode\nModel: anthropic/claude-sonnet-4-6";
+    assert.equal(extractModel(body), "anthropic/claude-sonnet-4-6");
+  });
+
+  it("returns null when there is no Model line", () => {
+    assert.equal(extractModel("Session: abc\nAgent: opencode"), null);
+  });
+});
+
 describe("extractAgent", () => {
-  it("returns the name when the body contains Agent: <name>", () => {
+  it("returns that agent name when the body contains Agent: claude, codex, or opencode", () => {
     assert.equal(extractAgent("Session: abc\nAgent: codex"), "codex");
     assert.equal(extractAgent("Session: abc\nAgent: claude"), "claude");
+    assert.equal(extractAgent("Session: abc\nAgent: opencode"), "opencode");
   });
 
   it("returns codex when no Agent line and TranscriptPath is under ~/.codex/", () => {

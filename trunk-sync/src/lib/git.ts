@@ -58,9 +58,14 @@ export function extractTranscriptPath(body: string): string | null {
   return match ? match[1].trim() : null;
 }
 
-export function extractAgent(body: string): "claude" | "codex" {
-  const match = body.match(/^Agent:\s*(claude|codex)/m);
-  if (match) return match[1] as "claude" | "codex";
+export function extractModel(body: string): string | null {
+  const match = body.match(/^Model:\s*(.+)/m);
+  return match ? match[1].trim() : null;
+}
+
+export function extractAgent(body: string): "claude" | "codex" | "opencode" {
+  const match = body.match(/^Agent:\s*(claude|codex|opencode)/m);
+  if (match) return match[1] as "claude" | "codex" | "opencode";
   const transcriptPath = extractTranscriptPath(body);
   if (transcriptPath && transcriptPath.startsWith("~/.codex/")) return "codex";
   return "claude";

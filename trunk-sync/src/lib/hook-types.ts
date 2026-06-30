@@ -1,9 +1,13 @@
-/** Raw JSON from Claude's PostToolUse hook stdin */
+/** Normalized hook input — from Claude/Codex stdin JSON, or built by a harness adapter (OpenCode) */
 export interface HookInput {
   tool_name: string | null;
   tool_input: { file_path?: string };
   session_id: string | null;
   transcript_path: string | null;
+  /** Explicit agent stamp from a harness adapter; when absent the agent is inferred from tool_name */
+  agent?: "claude" | "codex" | "opencode";
+  /** Active model identifier (provider/model) when the harness exposes it */
+  model?: string | null;
 }
 
 /** Git state gathered before planning */

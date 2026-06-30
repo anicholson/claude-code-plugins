@@ -352,6 +352,23 @@ describe("buildCommitBody", () => {
       assert.match(body ?? "", /^Agent: codex$/m, `tool ${tool_name}`);
     }
   });
+
+  it("uses an explicit agent, overriding tool-name inference", () => {
+    const input = makeInput({ tool_name: "Edit", agent: "opencode", transcript_path: null });
+    const body = buildCommitBody(input, "src/main.ts");
+    assert.match(body ?? "", /^Agent: opencode$/m);
+  });
+
+  it("includes Model when the input carries a model", () => {
+    const input = makeInput({ agent: "opencode", model: "anthropic/claude-sonnet-4-6", transcript_path: null });
+    const body = buildCommitBody(input, "src/main.ts");
+    assert.match(body ?? "", /^Model: anthropic\/claude-sonnet-4-6$/m);
+  });
+
+  it("omits the Model line when the input carries no model", () => {
+    const body = buildCommitBody(makeInput({ transcript_path: null }), "src/main.ts");
+    assert.doesNotMatch(body ?? "", /^Model:/m);
+  });
 });
 
 // ── extractTaskFromTranscript ────────────────────────────────────────

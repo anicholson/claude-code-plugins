@@ -84,6 +84,13 @@ Migration note: trunk-sync was previously specified as a flat `## Requirements` 
       then the body includes `Agent: claude`
     when the input tool is Codex's apply_patch/local_shell
       then the body includes `Agent: codex`
+    when the input carries an explicit agent
+      then the body's Agent line uses that agent (e.g. `Agent: opencode`)
+      and the explicit agent overrides tool-name inference
+    when the input carries a model
+      then the body includes `Model: <provider/model>`
+    when the input carries no model
+      then the body omits the Model line
 
   extractTaskFromTranscript
     when the transcript starts with a user message
@@ -204,9 +211,15 @@ Migration note: trunk-sync was previously specified as a flat `## Requirements` 
     when there is no TranscriptPath line
       then null is returned
 
+  extractModel
+    when the body contains `Model: <provider/model>`
+      then the identifier is returned
+    when there is no Model line
+      then null is returned
+
   extractAgent
-    when the body contains `Agent: <name>`
-      then `<name>` is returned
+    when the body contains `Agent: claude`, `Agent: codex`, or `Agent: opencode`
+      then that agent name is returned
     if there is no Agent line and TranscriptPath is under `~/.codex/`
       then "codex" is returned
     if there is no Agent line and TranscriptPath is absent or under `~/.claude/`
@@ -243,6 +256,21 @@ Migration note: trunk-sync was previously specified as a flat `## Requirements` 
       then the filename is returned
     when the commit contains no `.transcripts/` file
       then null is returned
+
+### Domain: opencode-handlers (src: src/lib/opencode-handlers.ts; unit: src/lib/opencode-handlers.test.ts; integration: none; functional: none)
+
+  opencodeToolEventToHookInput
+    then session_id is taken from the OpenCode event's sessionID
+    and agent is "opencode"
+    and transcript_path is null, since OpenCode has no single transcript file
+    when an edit or write tool event carries a file path in its args
+      then tool_name is the OpenCode tool name and file_path is that path
+    when a bash or apply_patch tool event carries no file path
+      then file_path is null, so the commit falls back to scanning modified tracked files
+    when the active model for the session is known
+      then model is set to its `provider/model` identifier
+    when the active model for the session is unknown
+      then model is null
 
 ### Use-case: hook-execute (src: src/lib/hook-execute.ts; unit: none; integration: src/lib/hook-execute.test.ts; functional: test/trunk-sync.test.sh)
 
@@ -497,6 +525,14 @@ Migration note: trunk-sync was previously specified as a flat `## Requirements` 
   every local_shell tool use whose command starts with `git`
     then the command is rejected with the same feedback as Bash
     when the git command is in the read-only allowlist
+      then it is allowed through
+  every OpenCode edit/write/bash/apply_patch tool use
+    then the changed file is staged and committed, stamped `Agent: opencode` and the active model as `Model: <provider/model>`
+    when a remote is configured
+      then HEAD is pushed to the remote's default branch after the commit
+  every OpenCode bash tool use whose command starts with `git`
+    then it is denied by the trunk-sync permission block in opencode.json
+    when the git command is in the read-only allowlist (diff, log, show, clone)
       then it is allowed through
   every session start
     when other agents are clocked in on the project

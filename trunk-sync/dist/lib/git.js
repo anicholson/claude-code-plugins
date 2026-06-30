@@ -50,8 +50,12 @@ export function extractTranscriptPath(body) {
     const match = body.match(/^TranscriptPath:\s*(.+)/m);
     return match ? match[1].trim() : null;
 }
+export function extractModel(body) {
+    const match = body.match(/^Model:\s*(.+)/m);
+    return match ? match[1].trim() : null;
+}
 export function extractAgent(body) {
-    const match = body.match(/^Agent:\s*(claude|codex)/m);
+    const match = body.match(/^Agent:\s*(claude|codex|opencode)/m);
     if (match)
         return match[1];
     const transcriptPath = extractTranscriptPath(body);

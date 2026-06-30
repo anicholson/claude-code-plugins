@@ -140,7 +140,8 @@ export function buildCommitBody(
 ): string | null {
   if (!input.session_id) return null;
   let body = `Session: ${input.session_id}`;
-  body += `\nAgent: ${agentForTool(input.tool_name)}`;
+  body += `\nAgent: ${input.agent ?? agentForTool(input.tool_name)}`;
+  if (input.model) body += `\nModel: ${input.model}`;
   if (input.transcript_path) body += `\nTranscriptPath: ${input.transcript_path}`;
   return body;
 }
