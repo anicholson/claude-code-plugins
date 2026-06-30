@@ -1,0 +1,117 @@
+import { existsSync, readFileSync } from "node:fs";
+import { join, basename } from "node:path";
+
+// --- pure helpers ---
+
+export function endsWithQuestion(text: string): boolean {
+  return text.replace(/\s+$/, "").endsWith("?");
+}
+
+const SECTION_CAPS: Record<string, number> = {
+  "Core Domain Identity": 5,
+  "World-to-Code Mapping": 15,
+  "Ubiquitous Language": 30,
+  "Bounded Contexts": 7,
+  "Invariants": 10,
+  "Decision Rationale": 7,
+  "Temporal View": 10,
+};
+
+export function validateMentalModel(content: string | null): string[] {
+  if (content === null) return ["MENTAL_MODEL.md is missing"];
+  const findings: string[] = [];
+  const seen = new Set<string>();
+  const counts: Record<string, number> = {};
+  let section: string | null = null;
+  for (const line of content.split("\n")) {
+    const heading = line.match(/^## (.+)$/);
+    if (heading) {
+      section = heading[1];
+      if (!(section in SECTION_CAPS)) {
+        findings.push(`${section} is a rogue heading, not one of the seven named sections`);
+      } else {
+        seen.add(section);
+      }
+      continue;
+    }
+    if (section && /^[-*] /.test(line)) counts[section] = (counts[section] ?? 0) + 1;
+  }
+  for (const s of Object.keys(SECTION_CAPS)) {
+    if (!seen.has(s)) findings.push(`${s} section is missing`);
+  }
+  for (const s of Object.keys(counts)) {
+    if (counts[s] > SECTION_CAPS[s]) {
+      findings.push(`${s} exceeds its cap of ${SECTION_CAPS[s]} (has ${counts[s]} items)`);
+    }
+  }
+  return findings;
+}
+
+export function buildDriftNudges(projectDir: string): string {
+  const lines: string[] = [];
+  lines.push(
+    existsSync(join(projectDir, "MENTAL_MODEL.md"))
+      ? "MENTAL MODEL: Did this task reveal any knowledge NOT already described in documentation, tests, and code? Default is no change. If a change is warranted, name which of the seven sections it belongs to; prefer tightening an existing line over adding a new one; state what is true, not what to avoid."
+      : "MENTAL MODEL: MENTAL_MODEL.md is missing at the project root. Create it with these seven H2 sections in order: Core Domain Identity, World-to-Code Mapping, Ubiquitous Language, Bounded Contexts, Invariants, Decision Rationale, Temporal View.",
+  );
+  lines.push("TEST TREES: Have test trees and implementation drifted apart? If so, propose solutions.");
+  lines.push("CLAUDE.md: Has CLAUDE.md content drifted from reality? If so, update it.");
+  lines.push(
+    existsSync(join(projectDir, "README.md"))
+      ? "README: Is the README out of date now? It should tell consumers what the project is, how to install it, configure it, and use it. If anything is stale or wrong, update it."
+      : "README: README.md is missing at the project root. Create it so consumers can understand what the project is, how to install it, configure it, and use it.",
+  );
+  lines.push("If nothing needs attention, reply 0.");
+  return lines.join("\n");
+}
+
+// --- the plugin ---
+
+export const Contree = async ({ directory, client }: any) => {
+  const lastTextBySession = new Map<string, string>();
+  const drivenThisTurn = new Set<string>();
+  const selfInjected = new Set<string>();
+
+  return {
+    "chat.message": async (input: any) => {
+      // Our own re-drive prompt also arrives as a message — consume the flag and
+      // do NOT rearm, or idle→prompt→idle loops forever. A real user message rearms.
+      if (selfInjected.has(input.sessionID)) {
+        selfInjected.delete(input.sessionID);
+        return;
+      }
+      drivenThisTurn.delete(input.sessionID);
+    },
+
+    "experimental.text.complete": async (input: any, output: any) => {
+      if (output?.text) lastTextBySession.set(input.sessionID, output.text);
+    },
+
+    "tool.execute.after": async (input: any, output: any) => {
+      const fp = input?.args?.filePath;
+      const isMentalModelEdit =
+        (input.tool === "edit" || input.tool === "write") &&
+        typeof fp === "string" &&
+        basename(fp) === "MENTAL_MODEL.md";
+      if (!isMentalModelEdit) return;
+      const mmPath = join(directory, "MENTAL_MODEL.md");
+      const content = existsSync(mmPath) ? readFileSync(mmPath, "utf-8") : null;
+      const findings = validateMentalModel(content);
+      if (findings.length && output) {
+        output.output = `${output.output ?? ""}\n\nMENTAL_MODEL.md validator findings:\n${findings.join("\n")}`;
+      }
+    },
+
+    event: async ({ event }: any) => {
+      if (event.type !== "session.idle") return;
+      const sessionID = event.properties?.sessionID ?? event.properties?.info?.id;
+      if (!sessionID || drivenThisTurn.has(sessionID)) return;
+      if (endsWithQuestion(lastTextBySession.get(sessionID) ?? "")) return; // yield to the user
+      drivenThisTurn.add(sessionID);
+      selfInjected.add(sessionID);
+      await client.session
+        .prompt({ path: { id: sessionID }, body: { parts: [{ type: "text", text: buildDriftNudges(directory) }] } })
+        .catch(() => {});
+    },
+  };
+};
