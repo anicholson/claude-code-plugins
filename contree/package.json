@@ -6,6 +6,7 @@
   },
   "scripts": {
     "test": "bats --pretty test/",
+    "test:opencode": "bun test ./.opencode/lib/",
     "test:functional": "bash test/functional/docker-run.sh all"
   }
 }
