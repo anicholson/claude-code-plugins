@@ -4,7 +4,7 @@ A distributed file system for multi-agent software engineering, built on Git.
 
 Many Claude Code agents can work in the same repo at once — on worktrees, across remote machines, on [OpenClaw](https://openclaw.com), any mix. Everything stays in sync, agents work around each other, nothing gets left behind, and there's nothing manual to do. If you're confused about some code an agent wrote, you can summon its author with Seance.
 
-Two pieces: a **Claude Code / Codex CLI hook** that turns Git into continuous integration for agents, and a **CLI** with install, config, and seance commands.
+Two pieces: a **per-edit hook** — on Claude Code, Codex CLI, and OpenCode — that turns Git into continuous integration for agents, and a **CLI** with install, config, and seance commands.
 
 ## Install
 
