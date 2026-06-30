@@ -25,7 +25,8 @@
     "scripts/",
     "hooks/",
     "rules/",
-    ".claude-plugin/"
+    ".claude-plugin/",
+    ".opencode/"
   ],
   "devDependencies": {
     "@types/node": "^22",
