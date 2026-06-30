@@ -3,7 +3,7 @@ import { join, basename } from "node:path";
 
 // --- pure helpers ---
 
-export function endsWithQuestion(text: string): boolean {
+function endsWithQuestion(text: string): boolean {
   return text.replace(/\s+$/, "").endsWith("?");
 }
 
@@ -17,7 +17,7 @@ const SECTION_CAPS: Record<string, number> = {
   "Temporal View": 10,
 };
 
-export function validateMentalModel(content: string | null): string[] {
+function validateMentalModel(content: string | null): string[] {
   if (content === null) return ["MENTAL_MODEL.md is missing"];
   const findings: string[] = [];
   const seen = new Set<string>();
@@ -47,7 +47,7 @@ export function validateMentalModel(content: string | null): string[] {
   return findings;
 }
 
-export function buildDriftNudges(projectDir: string): string {
+function buildDriftNudges(projectDir: string): string {
   const lines: string[] = [];
   lines.push(
     existsSync(join(projectDir, "MENTAL_MODEL.md"))
