@@ -22,6 +22,8 @@ src/lib/hook-plan.test.ts     — unit tests for pure logic (fast, no repos)
 src/lib/hook-execute.ts       — gathers git state, executes the plan
 src/lib/hook-execute.test.ts  — integration tests (temp repos)
 src/lib/hook-entry.ts         — entry point: reads stdin, wires layers, exits
+src/lib/opencode-handlers.ts  — pure: map an OpenCode tool.execute.after event onto HookInput
+src/opencode-plugin.ts        — OpenCode plugin: track model, run hook-entry per edit (.opencode/ ships the install)
 
 src/cli.ts                    — CLI entry point, argv dispatch
 src/commands/install.ts       — trunk-sync install
