@@ -19,7 +19,17 @@ That's it. Every file edit is now committed and pushed automatically.
 
 The Codex install writes an entry to `~/.agents/plugins/marketplace.json`; finish in Codex with `/plugins install trunk-sync`.
 
-**Prerequisites:** [Claude Code](https://docs.anthropic.com/en/docs/claude-code) or [Codex CLI](https://developers.openai.com/codex), `jq`, a git repo with a remote (`origin`).
+### OpenCode
+
+OpenCode has no marketplace — install by copying the shipped `.opencode/` files into your project root:
+
+```bash
+cp -r "$(npm root -g)/@elimydlarz/trunk-sync/.opencode" .
+```
+
+That drops in `.opencode/plugin/trunk-sync.ts` (the auto-commit plugin) and `.opencode/package.json` (which makes OpenCode auto-install the package on next start). It also ships `.opencode/opencode.json` with a `permission` block that lets the agent run read-only git (diff/log/show) but blocks writes — merge that block into your own `opencode.json` if you keep config elsewhere. Every edit then commits with `Agent: opencode` and the active `Model:`.
+
+**Prerequisites:** [Claude Code](https://docs.anthropic.com/en/docs/claude-code), [Codex CLI](https://developers.openai.com/codex), or [OpenCode](https://opencode.ai), `jq`, a git repo (a remote `origin` is needed for push/sync; without one it commits locally).
 
 ## How it works
 
