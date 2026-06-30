@@ -44,7 +44,7 @@
 - Skill workflow — `setup` (configure) → `change` (set behaviour) → `sync` (find drift) → `tdd` (close gaps) → `second-opinion` (independent review from another model); `workflow` runs the arc.
 - Enforcement hooks — SessionStart, Stop drift-check, PostToolUse mental-model validator, UserPromptSubmit self-care.
 - Hexagonal architecture — domain pure, I/O in adapters, dependencies inward, a boundary linter holding the line.
-- Dual-harness packaging — one source directory, parallel `.claude-plugin` / `.codex-plugin` manifests, `CLAUDE_PLUGIN_ROOT` shared by both.
+- Multi-harness packaging — one source directory; Claude Code and Codex share `hooks/` via parallel `.claude-plugin` / `.codex-plugin` manifests and `CLAUDE_PLUGIN_ROOT`; OpenCode reuses `skills/` but reimplements enforcement as one `.opencode/plugin/contree.ts` (no `hooks.json` lifecycle), the Stop hook becoming a `session.idle` re-drive and the validator a `tool.execute.after`.
 
 ## Invariants
 
